@@ -1,0 +1,78 @@
+---
+title: "Spatial analysis and species selection"
+author: "Juliano Palacios Abrantes et al"
+date: "2023-10-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+library(MyFunctions)
+
+my_lib(
+  c(
+    "readxl",
+    "tidyverse",
+    "sf",
+    "st",
+    "janitor",
+    # For grid estimation 
+    "spatialEco", "geosphere","raster","units","matrixStats","rmapshaper", "igraph"
+  )
+)
+
+# Fix new updates of sf package
+sf::sf_use_s2(use_s2 = FALSE)
+
+select <- dplyr::select
+
+knitr::opts_chunk$set(echo = TRUE)
+
+
+data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
+
+```
+
+# Pre-Analysis
+
+This script's objective is prepare the spatial and species data for the project. For the species, we want to kow what information we already have for modelling. For the spatial component we want to re-grid all shapefiles used in the project to match the DBEM while identifying which gird cells are Protected by an MPA, which are surrounding an MPA, and which are absent. 
+
+## Species explortion
+
+# Load Species data
+
+```{r species_list, eval = F, echo = F}
+
+# ETP species list provided by MarViva
+etp_species_metadata <- read_excel(paste0(data_path,"species/lenfest_species_metadata.xlsx"))
+
+# Species
+etp_species <- etp_species_metadata %>% 
+  select(species)
+
+# DBEM species
+dbem_species <- my_path("Spp",name ="dbem_spp_list.csv", read = T)
+
+# Exploited species
+exploited_species <- my_data("sau_species") %>% 
+  filter(taxon_key %in% dbem_species$taxon_key)
+
+# Find matching species
+etp_matching_species <- etp_species %>% 
+  filter(species %in% exploited_species$taxon_name) %>% 
+  group_by(species) %>% 
+  tally() %>% 
+  mutate(dbem = "yes") %>% 
+  select(-n)
+  
+# Incorporate data into metadata
+etp_species_metadata_update <- etp_species_metadata %>% 
+  left_join(etp_matching_species,
+            by = "species") %>% 
+  mutate(dbem = ifelse(is.na(dbem),"no",dbem))
+
+# write_csv(etp_species_metadata_update,
+#           paste0(data_path,"species/etp_species_metadata.csv"),
+#           )
+
+```
