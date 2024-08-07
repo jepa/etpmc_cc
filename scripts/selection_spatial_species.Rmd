@@ -85,8 +85,10 @@ etp_species_metadata_update <- etp_species_metadata %>%
 
 ```{r grid, eval = T, echo = F}
 
+# World grid
 grid <- read_sf(paste0(data_path,"spatial/worldsq_ea/", name ="worldsq_EA.shp"))
 
+# cut the ETP region
 grid <- grid %>% filter(Lat > -4 & Lat < 9 & Lon > -95 & Lon < -77)
 
 ggplot(grid) +
@@ -100,13 +102,16 @@ ggplot(grid) +
 
 mpa_name <- 
   # "Galapagos_Ecuador"
-  "Hermandad_Ecuador"
+  # "Hermandad_Ecuador"
   # "Yurupari _Malpelo_Colombia"
-  #"PN_IslaCoco_CostaRica"
-  #"Malpelo_Colombia"
-  #"CoibaCoord_Panama"
-  #"Coiba_Panama" 
-  #"PN_IslaCoco_CostaRica"
+  # "PN_IslaCoco_CostaRica"
+  # "Malpelo_Colombia"
+  # "CoibaCoord_Panama"
+  # "Coiba_Panama"
+  # "PN_IslaCoco_CostaRica"
+  # "AMM_Bicentenario_CostaRica"
+  # "CLomas Sub  Cuenca PacNor"
+  "Gorgona"
 
 path_mpa <- paste0(data_path,"spatial/cmar_capas/",mpa_name,".shp")
 
@@ -291,3 +296,6 @@ ggsave(
 )
 
 ```
+
+
+## Create MPA layer
