@@ -66,7 +66,7 @@ etp_matching_species <- etp_species %>%
   tally() %>% 
   mutate(dbem = "yes") %>% 
   select(-n)
-  
+
 # Incorporate data into metadata
 etp_species_metadata_update <- etp_species_metadata %>% 
   left_join(etp_matching_species,
@@ -111,15 +111,15 @@ mpa_name <-
   # "PN_IslaCoco_CostaRica"
   # "AMM_Bicentenario_CostaRica"
   # "CLomas Sub  Cuenca PacNor"
-  "Gorgona"
+  # "Gorgona"
 
 path_mpa <- paste0(data_path,"spatial/cmar_capas/",mpa_name,".shp")
 
 
 suppressMessages(
-mpa_sf <- st_read(path_mpa) %>% 
-  # Remove the Z component for ease computation
-  st_zm(drop = TRUE)
+  mpa_sf <- st_read(path_mpa) %>% 
+    # Remove the Z component for ease computation
+    st_zm(drop = TRUE)
 )
 #get out coordinate reference system information 
 # st_crs(mpa_sf)
@@ -194,9 +194,9 @@ grid2 <- grid2 %>%
   ) 
 
 
-  ggplot() +
-    geom_sf(data = grid2, aes(fill = prop)) +
-    scale_fill_viridis_b("Proportion of grid\nprotected")
+ggplot() +
+  geom_sf(data = grid2, aes(fill = prop)) +
+  scale_fill_viridis_b("Proportion of grid\nprotected")
 ```
 
 #### 1.4 Find surrounding grid cells 
@@ -281,14 +281,14 @@ grid_sc1 <- grid_sc1 %>%
   mutate(FE_prop = if_else(surrounding %in% "surrounding",(prop_allocate/n_surround$n) +1 , prop),
          status = ifelse(surrounding %in% "surrounding","surrounding",status),
          status = ifelse(is.na(status),"unprotected",status)
-         )
+  )
 
 ggplot() +
   geom_sf(data = subset(grid_sc1, grid_sc1$FE_prop != 1),
           aes(fill = FE_prop)) +
   geom_sf(data = mpa_sf, aes(), fill = NA, color = "white") +
   scale_fill_viridis_b()
-  
+
 # Save data
 ggsave(
   paste0(data_path,"spatial/gridded/",mpa_name,"_fe.png"),
@@ -297,5 +297,82 @@ ggsave(
 
 ```
 
+### Save grided mpa FE
 
-## Create MPA layer
+```{r eval = T, echo = F}
+
+# Go back to df
+grid_df <- as.data.frame(grid_sc1) %>% 
+  select(index = Seq,FE_prop,status) %>%  
+  mutate(mpa = mpa_name) %>% 
+  filter(!is.na(FE_prop))
+
+# Save data
+write_csv(
+  grid_df,
+  paste0(data_path,"spatial/gridded/",mpa_name,"_fe.csv"),
+)
+
+
+```
+
+### Create MPA layer
+
+```{r save_layers, eval = F}
+
+# Load all grid cells
+list_mpas <- list.files(paste0(data_path,"spatial/gridded/"),pattern = ".csv",full.names = T)
+
+mpas_grid <- bind_rows(
+  lapply(list_mpas, read_csv)
+)
+
+mpas_grid %>% 
+  left_join(dbem_grid) %>% 
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = mpa
+    )
+  ) +
+  scale_fill_viridis_d() +
+  my_land_map() +
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-4,9)
+  )
+
+# Save grid with all mpas
+write_csv(
+  mpas_grid,
+  paste0(data_path,"spatial/gridded/all_mpa_grid_fe.csv"),
+)
+
+
+
+# Load DBEM grid
+my_data("dbem_coords") %>% 
+  left_join(mpas_grid,
+            by = "index") %>% 
+  mutate(FE_prop = ifelse(is.na(FE_prop),1,
+                          ifelse(FE_prop < 0,0,
+                                 FE_prop)
+  )
+  ) %>% 
+  # ggplot() +
+  # geom_tile(
+  #   aes(
+  #     x = lon,
+  #     y = lat,
+  #     fill = FE_prop
+  #   )
+  # ) %>%
+  select(FE_prop) %>% 
+  write.table(file = paste0(data_path,"spatial/compute_canada/etp_m_reserve.txt"),
+              sep="\t", col.names = F, row.names = F)
+
+
+```
+
