@@ -59,12 +59,12 @@ mpa_name <-
   # "Hermandad_Ecuador"
   # "Yurupari _Malpelo_Colombia"
   # "PN_IslaCoco_CostaRica"
-  # "Malpelo_Colombia"
+  "Malpelo_Colombia"
   # "CoibaCoord_Panama"
   # "Coiba_Panama"
   # "PN_IslaCoco_CostaRica"
   # "AMM_Bicentenario_CostaRica"
-  "CLomas Sub  Cuenca PacNor"
+  # "CLomas Sub  Cuenca PacNor"
   # "Gorgona"
 
 path_mpa <- paste0(data_path,"spatial/cmar_capas/",mpa_name,".shp")
@@ -81,8 +81,8 @@ st_crs(mpa_sf)$epsg
 crs <- st_crs(mpa_sf)
 
 
-ggplot(mpa_sf) +
-  geom_sf(aes(), fill = "salmon")
+# ggplot(mpa_sf) +
+  # geom_sf(aes(), fill = "salmon")
 
 ggsave(
   paste0(data_path,"spatial/gridded/",mpa_name,".png"),
@@ -331,6 +331,97 @@ my_data("dbem_coords") %>%
   select(FE_prop) %>% 
   write.table(file = paste0(data_path,"spatial/compute_canada/etp_m_reserve.txt"),
               sep="\t", col.names = F, row.names = F)
+
+
+```
+
+# Create SF will all MPAs
+
+```{r}
+mpa_name <- c(
+  "Galapagos_Ecuador",
+  "Hermandad_Ecuador",
+  "Yurupari _Malpelo_Colombia",
+  "PN_IslaCoco_CostaRica",
+  "Malpelo_Colombia",
+  "CoibaCoord_Panama",
+  "Coiba_Panama",
+  "PN_IslaCoco_CostaRica",
+  "AMM_Bicentenario_CostaRica",
+  "CLomas Sub  Cuenca PacNor",
+  "Gorgona"
+)
+
+path_mpa <- paste0(data_path,"spatial/cmar_capas/",mpa_name,".shp")
+
+
+sf_list <- lapply(path_mpa, st_read)
+
+# Check the CRS of each sf object and determine a common CRS
+common_crs <- st_crs(sf_list[[1]])  # You can choose any sf object or a standard CRS
+
+# Transform all sf objects to the common CRS
+sf_list_transformed <- lapply(sf_list, function(x) st_transform(x, crs = common_crs))
+
+# Identify the common columns
+common_cols <- Reduce(intersect, lapply(sf_list_transformed, names))
+
+# Standardize each sf object to have the same columns
+sf_list_standardized <- lapply(sf_list_transformed, function(x) {
+  x[common_cols]
+})
+
+# Combine the standardized sf objects
+combined_sf <- do.call(rbind, sf_list_standardized)
+
+
+
+ggplot(data = combined_sf) +
+  geom_sf() +
+  theme_minimal()
+
+
+write_sf(combined_sf,
+         paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
+
+```
+
+# Extract ICCAT grid
+
+```{r}
+
+dbem_sf <-st_as_sf(dbem_grid,
+                   coords = c("lon", "lat")
+) %>% 
+  st_set_crs(4326) #%>%
+# st_transform(crs = "+proj=eck4")
+
+st_crs(dbem_sf) = 4326
+
+
+# RFMO regions
+# RFMO data
+sf_rfmo <- my_sf("RFMO") %>% 
+  filter(rfmo_nm_s %in% c("IATTC")) %>% 
+  group_by(rfmo_nm_s) %>% 
+  summarise(geometry = st_union(geometry))
+
+st_crs(sf_rfmo) = 4326
+
+rfmo_dbem <- st_join(dbem_sf,
+                     sf_rfmo,
+                     join = st_intersects)
+
+# Select only high seas (i.e., remove waters within EEZs)
+rfmo_dbem_hs <- rfmo_dbem %>% 
+  as.data.frame()%>% 
+  select(-geometry) %>% 
+  clean_names() %>% 
+  filter(!is.na(rfmo_nm_s)) # remove areas where no tuna RFMO exists (some high seas pockets)
+
+
+write_csv(rfmo_dbem_hs,
+          paste0(data_path,"spatial/iattc_gridded.csv"))
 
 
 ```
