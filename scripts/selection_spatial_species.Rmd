@@ -77,5 +77,16 @@ etp_species_metadata_update <- etp_species_metadata %>%
 #           paste0(data_path,"species/etp_species_metadata.csv"),
 #           )
 
+
+dbem_species %>% 
+  filter(taxon_name %in% etp_matching_species$species) %>% 
+  select(taxon_key) %>% 
+  write.table(file = paste0(data_path,"species/EtpSppList10.txt"),
+              sep="\t", col.names = F, row.names = F)
+
+
 ```
+
+# Create species list
+
 

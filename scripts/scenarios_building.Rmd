@@ -132,7 +132,7 @@ sq_dbem_grid <- dbem_grid %>%
   
 
 
-# wite grid for compute canada
+# Wirte grid for compute canada
 sq_dbem_grid %>% 
   select(f_finale) %>% 
   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq.txt"),
