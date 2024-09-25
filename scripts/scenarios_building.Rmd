@@ -50,32 +50,44 @@ mpas_grid <- read_csv(grid_path) %>%
 # Load Fishing effort data
 scenarios <- read_excel(paste0(data_path,"spatial/scenarios_info.xlsx"))
 
+# combined mpas
+combined_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
 
-
+# DBEM grid
+dbem_grid <- my_data("dbem_coords")
 
 unique(mpas_grid$mpa_abrev)
 
 ```
+## Re-calculate fishing effort
+
+We need to re-calculate fishing effort for the MPAs that are smaller than our grid cell. We asume that only a fraction of the grid is protected, however, given the different characteristics of each scenario, fishing mortality needs to be adjusted for such fraction. This way, we allocated fishing effort as a fraction of F_MSY (F/F_MSY) as follows:
+
+When a gird cell is protected and the management scenario allows for fishing in the whole area then $\frac{F}{FMSY}$ = *f_scen*.where *f_scen*is the fishing effort determined at the workshop. When a gird cell is protected and the management plan restricts some level of fishing, then 
+
+$$\frac{F}{FMSY} = (f_{prop}*f_{scen})+((1-f_{prop})*f_{out})$$
+where $f_{prop}$ is the proportion of the grid that is protected by the MPA, $f_{scen}$ is the fishing effort allowed within the MPA as defined by the workshop, and $f_{out}$ is the scenario fishing level of un-protected grid cells. 
+
+For grid cells that are surrounding an MPA, $\frac{F}{FMSY}$ = $f_{prop}*f_{out}$ to account for the often reported re-allocation of fishing effort given MPA restrictions. Finally, for all other grid cells within the EEZs of Costa Rica, Colombia, Ecuador and Panama (*unprotected*) $\frac{F}{FMSY}$ = $f_{out}$.
 
 
 ```{r}
 
-mpas_grid %>% 
+sq_mpa_grid_f <- mpas_grid %>% 
   left_join(scenarios %>% filter(scen == "status_quo")) %>% 
   mutate(
     # For protected areas
-    finale = ifelse(status == "protected" & f_plan == 1,f_scen,
-                    ifelse(status == "protected" & f_plan != 1,(fe_prop*f_scen)+((1-fe_prop)*f_out),
+    f_finale = ifelse(status == "protected" & f_plan == 1,f_scen,
+                    ifelse(status == "protected" & f_plan != 1,((1-fe_prop)*f_scen)+(fe_prop*f_out),
                            ifelse(status == "surrounding",fe_prop*f_out,
                            f_scen
                            )
     )
   )
   ) %>%   
-  select(-2,-6:-9,-notes) %>%
-  filter(status == "surrounding") %>% 
-  View()
+  select(-2,-6:-9,-notes) 
 
+# Tests with these grids (see notebook page 144)
 # grid parcial f 118276
 # grid NO F 119702
 
@@ -83,5 +95,77 @@ mpas_grid %>%
 ```
 
 
+## Merge MPA grid with rest of the world
+
+Here we merged the MPA grid and create the DBEM layer for Compute Canada (CC)
+
+```{r}
+
+regional_index_sq <- read.csv(paste0(data_path,"spatial/iattc_gridded.csv")) %>% 
+   # filter(eez_name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>% 
+  select(index) %>% 
+  # mutate(rfmo_name = "IATTC") %>% 
+  # bind_rows(
+  # my_path("Spa","SAU/SAU_RFMO", "RFMO_Index_Code.csv", read = T)
+  # ) %>% 
+  # filter(rfmo_name == "IATTC") %>% 
+  select(index) %>% 
+  mutate(f_finale = 1.3,
+         status = "unprotected",
+         mpa_abrev = NA,
+         scen = "status quo") %>% 
+  left_join(dbem_grid)
 
 
+
+sq_dbem_grid <- dbem_grid %>% 
+  left_join(sq_mpa_grid_f,
+            by ="index") %>% 
+  select(index,lon,lat,status,mpa_abrev,status,scen,f_finale) %>% 
+  mutate(
+    # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
+    f_finale = ifelse(is.na(status) & index %in% regional_index_sq$index, 1.3,
+                      ifelse(is.na(status) & ! index %in% regional_index_sq$index,1, f_finale)
+    )
+  ) %>% 
+  distinct(index, .keep_all = T)
+  
+
+
+# wite grid for compute canada
+sq_dbem_grid %>% 
+  select(f_finale) %>% 
+  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq.txt"),
+              sep="\t", col.names = F, row.names = F)
+
+```
+
+
+## Plot Map for supplements
+
+
+```{r}
+sq_dbem_grid %>% 
+  # filter(status == "protected") %>% 
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = f_finale,
+      color = f_finale
+    ) 
+  ) +
+  # scale_fill_gradient2() +
+  # scale_color_gradient2() +
+  scale_fill_viridis_b() +
+  scale_color_viridis_b() +
+  # geom_sf(data = combined_sf, aes(), fill = "transparent", color = "white")  +
+  my_land_map()
+  # coord_sf(
+  #   xlim = c(-95,-77),
+  #   ylim = c(-4,9)
+  # )
+
+
+```
