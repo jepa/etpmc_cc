@@ -1,0 +1,81 @@
+---
+title: "Scenarios Construction"
+author: "Juliano Palacios-Abrantes"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+library(MyFunctions)
+
+my_lib(
+  c(
+    "readxl",
+    "tidyverse",
+    "sf",
+    "st",
+    "janitor",
+    # For grid estimation 
+    "spatialEco", "geosphere","raster","units","matrixStats","rmapshaper", "igraph"
+  )
+)
+
+# Fix new updates of sf package
+sf::sf_use_s2(use_s2 = FALSE)
+
+select <- dplyr::select
+
+knitr::opts_chunk$set(echo = TRUE)
+
+
+# Change paths to your computer
+
+data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
+
+```
+
+# Scenario Status quo
+
+**i. Status Quo:** This scenario aims to represent, as accurately as possible, the current management of the region in terms of fishing and conservation. To inform this scenario, questions were asked regarding current levels of illegal fishing (if any), monitoring and surveillance of Marine Protected Areas (MPAs), fishing effort outside protected areas, and management strategies for MPAs. Participants responded based on their experience in the subject and in each protected area. This scenario was used as a starting point in the model to later compare with alternative management scenarios.
+
+
+```{r}
+
+# Load Grid data
+grid_path <- paste0(data_path,"spatial/gridded/all_mpa_grid_fe.csv")
+mpas_grid <- read_csv(grid_path) %>% 
+  rename(mpa_abrev = mpa)
+
+# Load Fishing effort data
+scenarios <- read_excel(paste0(data_path,"spatial/scenarios_info.xlsx"))
+
+
+
+
+unique(mpas_grid$mpa_abrev)
+
+```
+
+
+```{r}
+
+mpas_grid %>% 
+  left_join(scenarios %>% filter(scen == "status_quo")) %>% 
+  mutate(
+    # For protected areas
+    finale = ifelse(f_plan == 1,f_scen,(fe_prop*f_scen)+((1-fe_prop)*f_out))
+  ) %>%   
+  select(-2,-6:-9,-notes) %>%
+  filter(status == "protected") %>% 
+  View()
+
+# grid parcial f 118276
+# grid NO F 119702
+
+
+```
+
+
+
+
