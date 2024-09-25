@@ -64,10 +64,16 @@ mpas_grid %>%
   left_join(scenarios %>% filter(scen == "status_quo")) %>% 
   mutate(
     # For protected areas
-    finale = ifelse(f_plan == 1,f_scen,(fe_prop*f_scen)+((1-fe_prop)*f_out))
+    finale = ifelse(status == "protected" & f_plan == 1,f_scen,
+                    ifelse(status == "protected" & f_plan != 1,(fe_prop*f_scen)+((1-fe_prop)*f_out),
+                           ifelse(status == "surrounding",fe_prop*f_out,
+                           f_scen
+                           )
+    )
+  )
   ) %>%   
   select(-2,-6:-9,-notes) %>%
-  filter(status == "protected") %>% 
+  filter(status == "surrounding") %>% 
   View()
 
 # grid parcial f 118276
