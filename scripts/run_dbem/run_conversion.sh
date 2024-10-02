@@ -4,11 +4,11 @@
 #SBATCH --nodes=1 # number of node MUST be 1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1        # number of processes
-#SBATCH --mem=2G
+#SBATCH --mem=4G
 #SBATCH -t 00-01:00:00
 #SBATCH --mail-user=j.palacios@oceans.ubc.ca
 #SBATCH --mail-type=ALL
-#SBATCH --output=/home/jepa/projects/def-wailung/jepa/update_dbem_runs/scripts/run_dbem/slurm_out/con_slurm_%j.out # Specify the full path with the desired file name prefix
+#SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/scripts/run_dbem/slurm_out/con_slurm_%j.out # Specify the full path with the desired file name prefix
 
 
 # ---------------------------------------------------------------------
