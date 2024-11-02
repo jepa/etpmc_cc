@@ -21,12 +21,10 @@ year_end <- 2100
 scenario <- "c6gfdl26F1ri"
 
 # Include here the path of your DBEM raw outputs BEFORE the scenario
-taxon_list <- list.files(paste0("~/scratch/Results/",scenario,"/",full.names = F))
-print(taxon_list)
+taxon_list <- list.files("~/scratch/Results/c6gfdl26F1ri/",full.names = F)
 
 # path to save R data
 r_path <- "~/scratch/Results/R/"#output_path
-print(r_path)
 
 # Load required functions
 source("~/projects/def-wailung/jepa/dbem/support_fx/txt_to_rdata_fx.R")
