@@ -18,10 +18,10 @@ year_one <- 1851
 year_end <- 2100
 
 # Scenario to call (Note this will determine the results directory)
-scenario <- "c6gfdlF1sq"
+scenario <- "c6gfdl26F1ri"
 
 # Include here the path of your DBEM raw outputs BEFORE the scenario
-taxon_list <- list.files("~/scratch/Results/c6gfdlF1sq/",full.names = F)
+taxon_list <- list.files(paste0("~/scratch/Results/",scenario,"/",full.names = F))
 
 # path to save R data
 r_path <- "~/scratch/Results/R/"#output_path
