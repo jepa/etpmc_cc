@@ -57,6 +57,7 @@ scenario_pallet <- c("#02401B", # S1
 data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
 
 
+results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios/results/figures"
 ```
 
 
