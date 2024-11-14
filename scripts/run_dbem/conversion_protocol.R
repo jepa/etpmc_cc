@@ -8,7 +8,7 @@ library(tidyverse)
 library(doParallel)
 
 # Variables to be converted (Abundace or Catch)
-category <- c("Abd")
+category <- c("Catch")
 
 # Partial fix for not working species
 # spplist <- dplyr::filter(spplist, V1 %in% c("603310","604708"))
@@ -18,10 +18,10 @@ year_one <- 1851
 year_end <- 2100
 
 # Scenario to call (Note this will determine the results directory)
-scenario <- "c6gfdl26F1nr"
+scenario <- "c6gfdl26F1sqb"
 
 # Include here the path of your DBEM raw outputs BEFORE the scenario
-taxon_list <- list.files("~/scratch/Results/c6gfdl26F1nr/",full.names = F)
+taxon_list <- list.files("~/scratch/Results/c6gfdl26F1sqb/",full.names = F)
 
 # path to save R data
 r_path <- "~/scratch/Results/R/"#output_path
