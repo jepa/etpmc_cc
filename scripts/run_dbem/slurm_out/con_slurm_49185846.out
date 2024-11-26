@@ -1,0 +1,105 @@
+Current working directory: /home/jepa/projects/def-wailung/jepa/etpmc_cc/scripts/run_dbem
+Starting run at: Tue 26 Nov 2024 08:44:09 AM PST
+here() starts at /project/6006523/jepa/etpmc_cc
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+Loading required package: foreach
+
+Attaching package: ‘foreach’
+
+The following objects are masked from ‘package:purrr’:
+
+    accumulate, when
+
+Loading required package: iterators
+Loading required package: parallel
+[1] "1"
+[1] "1"
+[1] "c6gfdl26F0sq"
+[1] "600006"
+[1] "Abd"
+File not found for year 1874 
+File not found for year 1875 
+File not found for year 1876 
+File not found for year 1877 
+File not found for year 1878 
+File not found for year 1879 
+File not found for year 1880 
+File not found for year 1881 
+File not found for year 1882 
+File not found for year 1883 
+File not found for year 1884 
+File not found for year 1885 
+File not found for year 1886 
+File not found for year 1887 
+File not found for year 1888 
+File not found for year 1889 
+File not found for year 1890 
+File not found for year 1891 
+File not found for year 1892 
+File not found for year 1893 
+File not found for year 1894 
+File not found for year 1895 
+File not found for year 1896 
+File not found for year 1897 
+File not found for year 1898 
+File not found for year 1899 
+File not found for year 1900 
+File not found for year 1901 
+File not found for year 1902 
+File not found for year 1903 
+File not found for year 1904 
+File not found for year 1905 
+File not found for year 1906 
+File not found for year 1907 
+File not found for year 1908 
+File not found for year 1909 
+File not found for year 1910 
+File not found for year 1911 
+File not found for year 1912 
+File not found for year 1913 
+File not found for year 1914 
+File not found for year 1915 
+File not found for year 1916 
+File not found for year 1917 
+File not found for year 1918 
+File not found for year 1919 
+File not found for year 1920 
+File not found for year 1921 
+File not found for year 1922 
+File not found for year 1923 
+File not found for year 1924 
+File not found for year 1925 
+File not found for year 1926 
+File not found for year 1927 
+File not found for year 1928 
+File not found for year 1929 
+File not found for year 1930 
+File not found for year 1931 
+File not found for year 1932 
+File not found for year 1933 
+File not found for year 1934 
+File not found for year 1935 
+File not found for year 1936 
+File not found for year 1937 
+File not found for year 1938 
+File not found for year 1939 
+File not found for year 1940 
+File not found for year 1941 
+File not found for year 1942 
+File not found for year 1943 
+File not found for year 1944 
+File not found for year 1945 
+File not found for year 1946 
+File not found for year 1947 
+File not found for year 1948 
+File not found for year 1949 
+File not found for year 1950 
