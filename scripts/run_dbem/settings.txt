@@ -1,10 +1,10 @@
  SppNo           40
- CCSc C6GFDL26                                
- SSP SSP126                                  
+ CCSc C6GFDL85                                
+ SSP SSP585                                  
  rsfile EtpSppList          
- rpath c6gfdl26F1nr                  
+ rpath c6gfdl85F1nr                  
  tpath TaxonDataC0                   
  ifile 11                  
  FHS    1.00
  FEEZ    1.00
- MPApath mpa_nr                                  
+ MPApath mpa_sq                                  

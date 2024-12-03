@@ -1,0 +1,4 @@
+Current working directory is /project/6006523/jepa/etpmc_cc/scripts/run_dbem
+Starting run at:Tue Nov 19 06:15:58 AM PST 2024
+“Starting task: 10”
+slurmstepd: error: *** JOB 48718668 ON cdr127 CANCELLED AT 2024-11-19T06:17:12 ***
