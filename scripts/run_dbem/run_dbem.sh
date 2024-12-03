@@ -4,8 +4,8 @@
 #SBATCH -N 1 	#Nodes
 #SBATCH -N 1	#CPU count
 #SBATCH --mem-per-cpu=700M
-#SBATCH -t 01-10:00:00
-#SBATCH --mail-user=your_email@email.com
+#SBATCH -t 02-50:00:00
+#SBATCH --mail-user=jepa88@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --array=10-36
 #SBATCH --output=Array-%A-%a.out
