@@ -1,0 +1,30 @@
+extracting data
+SST complete
+bot_temp complete
+AdvectionU complete
+AdvectionV complete
+htotal_btm complete
+htotal_surf complete
+O2_btm complete
+O2_surf complete
+Salinity_btm complete
+Salinity_surf complete
+totalphy2 complete
+IceExt complete
+Current working directory is /project/6006523/jepa/etpmc_cc/protocols/run_dbem
+Starting run at:Thu 12 Dec 2024 01:41:41 PM PST
+“Starting task: 10”
+ Read filenumber:    10
+ Species list:    10
+ EtpSppList10.txt    
+ Initializing, loading files...
+          40
+ 600006    
+ Results/c6gfdl26F0sq/600006                                                    
+  
+ Read Parameters...
+ Running Taxon C_hippurus          
+ ~/projects/def-wailung/Data/Species/Distributions/S600006.csv                  
+                                          
+  2.012645689380454E-007
+ Thread           0  starting...

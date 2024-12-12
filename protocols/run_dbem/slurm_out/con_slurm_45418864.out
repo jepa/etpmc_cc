@@ -1,0 +1,399 @@
+Current working directory: /home/jepa/projects/def-wailung/jepa/etpmc_cc/scripts/run_dbem
+Starting run at: Wed 02 Oct 2024 02:57:42 AM PDT
+here() starts at /project/6006523/jepa/etpmc_cc
+── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+Loading required package: foreach
+
+Attaching package: ‘foreach’
+
+The following objects are masked from ‘package:purrr’:
+
+    accumulate, when
+
+Loading required package: iterators
+Loading required package: parallel
+[1] "1"
+[1] "1"
+[1] "c6gfdlF1sq"
+[1] "600006"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600077"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600089"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600098"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600107"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600114"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600117"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600136"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600143"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600146"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600216"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600217"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600218"
+[1] "Abd"
+File not found for year 1851 
+File not found for year 1852 
+File not found for year 1853 
+File not found for year 1854 
+File not found for year 1855 
+File not found for year 1856 
+File not found for year 1857 
+File not found for year 1858 
+File not found for year 1859 
+File not found for year 1860 
+File not found for year 1861 
+File not found for year 1862 
+File not found for year 1863 
+File not found for year 1864 
+File not found for year 1865 
+File not found for year 1866 
+File not found for year 1867 
+File not found for year 1868 
+File not found for year 1869 
+File not found for year 1870 
+File not found for year 1871 
+File not found for year 1872 
+File not found for year 1873 
+File not found for year 1874 
+File not found for year 1875 
+File not found for year 1876 
+File not found for year 1877 
+File not found for year 1878 
+File not found for year 1879 
+File not found for year 1880 
+File not found for year 1881 
+File not found for year 1882 
+File not found for year 1883 
+File not found for year 1884 
+File not found for year 1885 
+File not found for year 1886 
+File not found for year 1887 
+File not found for year 1888 
+File not found for year 1889 
+File not found for year 1890 
+File not found for year 1891 
+File not found for year 1892 
+File not found for year 1893 
+File not found for year 1894 
+File not found for year 1895 
+File not found for year 1896 
+File not found for year 1897 
+File not found for year 1898 
+File not found for year 1899 
+File not found for year 1900 
+File not found for year 1901 
+File not found for year 1902 
+File not found for year 1903 
+File not found for year 1904 
+File not found for year 1905 
+File not found for year 1906 
+File not found for year 1907 
+File not found for year 1908 
+File not found for year 1909 
+File not found for year 1910 
+File not found for year 1911 
+File not found for year 1912 
+File not found for year 1913 
+File not found for year 1914 
+File not found for year 1915 
+File not found for year 1916 
+File not found for year 1917 
+File not found for year 1918 
+File not found for year 1919 
+File not found for year 1920 
+File not found for year 1921 
+File not found for year 1922 
+File not found for year 1923 
+File not found for year 1924 
+File not found for year 1925 
+File not found for year 1926 
+File not found for year 1927 
+File not found for year 1928 
+File not found for year 1929 
+File not found for year 1930 
+File not found for year 1931 
+File not found for year 1932 
+File not found for year 1933 
+File not found for year 1934 
+File not found for year 1935 
+File not found for year 1936 
+File not found for year 1937 
+File not found for year 1938 
+File not found for year 1939 
+File not found for year 1940 
+File not found for year 1941 
+File not found for year 1942 
+File not found for year 1943 
+File not found for year 1944 
+File not found for year 1945 
+File not found for year 1946 
+File not found for year 1947 
+File not found for year 1948 
+File not found for year 1949 
+File not found for year 1950 
+File not found for year 1951 
+File not found for year 1952 
+File not found for year 1953 
+File not found for year 1954 
+File not found for year 1955 
+File not found for year 1956 
+File not found for year 1957 
+File not found for year 1958 
+File not found for year 1959 
+File not found for year 1960 
+File not found for year 1961 
+File not found for year 1962 
+File not found for year 1963 
+File not found for year 1964 
+File not found for year 1965 
+File not found for year 1966 
+File not found for year 1967 
+File not found for year 1968 
+File not found for year 1969 
+File not found for year 1970 
+File not found for year 1971 
+File not found for year 1972 
+File not found for year 1973 
+File not found for year 1974 
+File not found for year 1975 
+File not found for year 1976 
+File not found for year 1977 
+File not found for year 1978 
+File not found for year 1979 
+File not found for year 1980 
+File not found for year 1981 
+File not found for year 1982 
+File not found for year 1983 
+File not found for year 1984 
+File not found for year 1985 
+File not found for year 1986 
+File not found for year 1987 
+File not found for year 1988 
+File not found for year 1989 
+File not found for year 1990 
+File not found for year 1991 
+File not found for year 1992 
+File not found for year 1993 
+File not found for year 1994 
+File not found for year 1995 
+File not found for year 1996 
+File not found for year 1997 
+File not found for year 1998 
+File not found for year 1999 
+File not found for year 2000 
+File not found for year 2001 
+File not found for year 2002 
+File not found for year 2003 
+File not found for year 2004 
+File not found for year 2005 
+File not found for year 2006 
+File not found for year 2007 
+File not found for year 2008 
+File not found for year 2009 
+File not found for year 2010 
+File not found for year 2011 
+File not found for year 2012 
+File not found for year 2013 
+File not found for year 2014 
+File not found for year 2015 
+File not found for year 2016 
+File not found for year 2017 
+File not found for year 2018 
+File not found for year 2019 
+File not found for year 2020 
+File not found for year 2021 
+File not found for year 2022 
+File not found for year 2023 
+File not found for year 2024 
+File not found for year 2025 
+File not found for year 2026 
+File not found for year 2027 
+File not found for year 2028 
+File not found for year 2029 
+File not found for year 2030 
+File not found for year 2031 
+File not found for year 2032 
+File not found for year 2033 
+File not found for year 2034 
+File not found for year 2035 
+File not found for year 2036 
+File not found for year 2037 
+File not found for year 2038 
+File not found for year 2039 
+File not found for year 2040 
+File not found for year 2041 
+File not found for year 2042 
+File not found for year 2043 
+File not found for year 2044 
+File not found for year 2045 
+File not found for year 2046 
+File not found for year 2047 
+File not found for year 2048 
+File not found for year 2049 
+File not found for year 2050 
+File not found for year 2051 
+File not found for year 2052 
+File not found for year 2053 
+File not found for year 2054 
+File not found for year 2055 
+File not found for year 2056 
+File not found for year 2057 
+File not found for year 2058 
+File not found for year 2059 
+File not found for year 2060 
+File not found for year 2061 
+File not found for year 2062 
+File not found for year 2063 
+File not found for year 2064 
+File not found for year 2065 
+File not found for year 2066 
+File not found for year 2067 
+File not found for year 2068 
+File not found for year 2069 
+File not found for year 2070 
+File not found for year 2071 
+File not found for year 2072 
+File not found for year 2073 
+File not found for year 2074 
+File not found for year 2075 
+File not found for year 2076 
+File not found for year 2077 
+File not found for year 2078 
+File not found for year 2079 
+File not found for year 2080 
+File not found for year 2081 
+File not found for year 2082 
+File not found for year 2083 
+File not found for year 2084 
+File not found for year 2085 
+File not found for year 2086 
+File not found for year 2087 
+File not found for year 2088 
+File not found for year 2089 
+File not found for year 2090 
+File not found for year 2091 
+File not found for year 2092 
+File not found for year 2093 
+File not found for year 2094 
+File not found for year 2095 
+File not found for year 2096 
+File not found for year 2097 
+File not found for year 2098 
+File not found for year 2099 
+File not found for year 2100 
+[1] "c6gfdlF1sq"
+[1] "600223"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600226"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600348"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600382"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600412"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600752"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600753"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600785"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600868"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600874"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600875"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600886"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600898"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600912"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "600917"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "601408"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "601732"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "601906"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "601917"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "602532"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "602534"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "602535"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "603334"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "603539"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "603915"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "605548"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "690032"
+[1] "Abd"
+[1] "c6gfdlF1sq"
+[1] "690206"
+[1] "Abd"
+NULL

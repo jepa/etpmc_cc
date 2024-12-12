@@ -1,0 +1,10 @@
+Current working directory is /project/6006523/jepa/etpmc_cc/scripts/run_dbem
+Starting run at:Sat 30 Nov 2024 05:19:16 AM PST
+“Starting task: 10”
+ Species list:    10
+ EtpSppList10.txt    
+ Initializing, loading files...
+          40
+slurmstepd: error: *** JOB 49515335 ON cdr55 CANCELLED AT 2024-12-02T13:31:33 ***
+slurmstepd: error: *** JOB 49515335 STEPD TERMINATED ON cdr55 AT 2024-12-02T13:41:33 DUE TO JOB NOT ENDING WITH SIGNALS ***
+slurmstepd: error: Container 886712 in cgroup plugin has 2 processes, giving up after 607 sec
