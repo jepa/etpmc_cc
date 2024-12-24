@@ -1,0 +1,3765 @@
+extracting data
+SST complete
+bot_temp complete
+AdvectionU complete
+AdvectionV complete
+htotal_btm complete
+htotal_surf complete
+O2_btm complete
+O2_surf complete
+Salinity_btm complete
+Salinity_surf complete
+totalphy2 complete
+IceExt complete
+Current working directory is /project/6006523/jepa/etpmc_cc/protocols/run_dbem
+Starting run at:Tue 24 Dec 2024 05:12:26 AM PST
+“Starting task: 10”
+ Read filenumber:    10
+ Species list:    10
+ EtpSppList10.txt    
+ Initializing, loading files...
+          43
+ 600006    
+ Results/c6ipsl26F1rpp/600006                                                   
+  
+ Read Parameters...
+ Running Taxon C_hippurus          
+ ~/projects/def-wailung/Data/Species/Distributions/S600006.csv                  
+                                          
+  1.877433065761466E-007
+ Thread           0  starting...
+ 600077    
+ Results/c6ipsl26F1rpp/600077                                                   
+  
+ Read Parameters...
+ Running Taxon I_platypterus       
+ ~/projects/def-wailung/Data/Species/Distributions/S600077.csv                  
+                                          
+  1.761483472420864E-007
+ Thread           0  starting...
+ 600089    
+ Results/c6ipsl26F1rpp/600089                                                   
+  
+ Read Parameters...
+ Running Taxon A_solandri          
+ ~/projects/def-wailung/Data/Species/Distributions/S600089.csv                  
+                                          
+  1.787614631081840E-007
+ Thread           0  starting...
+ 600098    
+ Results/c6ipsl26F1rpp/600098                                                   
+  
+ Read Parameters...
+ Running Taxon E_lineatus          
+ ~/projects/def-wailung/Data/Species/Distributions/S600098.csv                  
+                                          
+  5.473441791311843E-007
+ Thread           0  starting...
+ 600107    
+ Results/c6ipsl26F1rpp/600107                                                   
+  
+ Read Parameters...
+ Running Taxon K_pelamis           
+ ~/projects/def-wailung/Data/Species/Distributions/S600107.csv                  
+                                          
+  1.875404184574531E-007
+ Thread           0  starting...
+ 600114    
+ Results/c6ipsl26F1rpp/600114                                                   
+  
+ Read Parameters...
+ Running Taxon S_orientalis        
+ ~/projects/def-wailung/Data/Species/Distributions/S600114.csv                  
+                                          
+  3.695745350848181E-007
+ Thread           0  starting...
+ 600117    
+ Results/c6ipsl26F1rpp/600117                                                   
+  
+ Read Parameters...
+ Running Taxon S_japonicus         
+ ~/projects/def-wailung/Data/Species/Distributions/S600117.csv                  
+                                          
+  4.872063049362238E-007
+ Thread           0  starting...
+ 600136    
+ Results/c6ipsl26F1rpp/600136                                                   
+  
+ Read Parameters...
+ Running Taxon S_sierra            
+ ~/projects/def-wailung/Data/Species/Distributions/S600136.csv                  
+                                          
+  6.250641593378662E-007
+ Thread           0  starting...
+ 600143    
+ Results/c6ipsl26F1rpp/600143                                                   
+  
+ Read Parameters...
+ Running Taxon T_albacares         
+ ~/projects/def-wailung/Data/Species/Distributions/S600143.csv                  
+                                          
+  1.876750812381441E-007
+ Thread           0  starting...
+ 600146    
+ Results/c6ipsl26F1rpp/600146                                                   
+  
+ Read Parameters...
+ Running Taxon T_obesus            
+ ~/projects/def-wailung/Data/Species/Distributions/S600146.csv                  
+                                          
+  1.864978305547330E-007
+ Thread           0  starting...
+ 600216    
+ Results/c6ipsl26F1rpp/600216                                                   
+  
+ Read Parameters...
+ Running Taxon M_nigricans         
+ ~/projects/def-wailung/Data/Species/Distributions/S600216.csv                  
+                                          
+  2.150245310504000E-007
+ Thread           0  starting...
+ 600217    
+ Results/c6ipsl26F1rpp/600217                                                   
+  
+ Read Parameters...
+ Running Taxon M_indica            
+ ~/projects/def-wailung/Data/Species/Distributions/S600217.csv                  
+                                          
+  1.744643964971599E-007
+ Thread           0  starting...
+ 600223    
+ Results/c6ipsl26F1rpp/600223                                                   
+  
+ Read Parameters...
+ Running Taxon T_audax             
+ ~/projects/def-wailung/Data/Species/Distributions/S600223.csv                  
+                                          
+  1.705494392157454E-007
+ Thread           0  starting...
+ 600226    
+ Results/c6ipsl26F1rpp/600226                                                   
+  
+ Read Parameters...
+ Running Taxon X_gladius           
+ ~/projects/def-wailung/Data/Species/Distributions/S600226.csv                  
+                                          
+  1.879615838989219E-007
+ Thread           0  starting...
+ 600348    
+ Results/c6ipsl26F1rpp/600348                                                   
+  
+ Read Parameters...
+ Running Taxon E_analogus          
+ ~/projects/def-wailung/Data/Species/Distributions/S600348.csv                  
+                                          
+  5.597613482741545E-007
+ Thread           0  starting...
+ 600382    
+ Results/c6ipsl26F1rpp/600382                                                   
+  
+ Read Parameters...
+ Running Taxon S_lalandi           
+ ~/projects/def-wailung/Data/Species/Distributions/S600382.csv                  
+                                          
+  1.737761041514796E-007
+ Thread           0  starting...
+ 600412    
+ Results/c6ipsl26F1rpp/600412                                                   
+  
+ Read Parameters...
+ Running Taxon E_bipinnulata       
+ ~/projects/def-wailung/Data/Species/Distributions/S600412.csv                  
+                                          
+  4.123915141221764E-007
+ Thread           0  starting...
+ 600752    
+ Results/c6ipsl26F1rpp/600752                                                   
+  
+ Read Parameters...
+ Running Taxon I_oxyrinchus        
+ ~/projects/def-wailung/Data/Species/Distributions/S600752.csv                  
+                                          
+  1.944335243803879E-007
+ Thread           0  starting...
+ 600753    
+ Results/c6ipsl26F1rpp/600753                                                   
+  
+ Read Parameters...
+ Running Taxon I_paucus            
+ ~/projects/def-wailung/Data/Species/Distributions/S600753.csv                  
+                                          
+  1.746527853744048E-007
+ Thread           0  starting...
+ 600785    
+ Results/c6ipsl26F1rpp/600785                                                   
+  
+ Read Parameters...
+ Running Taxon M_cephalus          
+ ~/projects/def-wailung/Data/Species/Distributions/S600785.csv                  
+                                          
+  3.096343040045948E-007
+ Thread           0  starting...
+ 600868    
+ Results/c6ipsl26F1rpp/600868                                                   
+  
+ Read Parameters...
+ Running Taxon C_falciformis       
+ ~/projects/def-wailung/Data/Species/Distributions/S600868.csv                  
+                                          
+  2.857377087422953E-007
+ Thread           0  starting...
+ 600874    
+ Results/c6ipsl26F1rpp/600874                                                   
+  
+ Read Parameters...
+ Running Taxon C_limbatus          
+ ~/projects/def-wailung/Data/Species/Distributions/S600874.csv                  
+                                          
+  3.769949621226478E-007
+ Thread           0  starting...
+ 600875    
+ Results/c6ipsl26F1rpp/600875                                                   
+  
+ Read Parameters...
+ Running Taxon C_longimanus        
+ ~/projects/def-wailung/Data/Species/Distributions/S600875.csv                  
+                                          
+  1.793209907947901E-007
+ Thread           0  starting...
+ 600886    
+ Results/c6ipsl26F1rpp/600886                                                   
+  
+ Read Parameters...
+ Running Taxon G_cuvier            
+ ~/projects/def-wailung/Data/Species/Distributions/S600886.csv                  
+                                          
+  4.246112242723346E-007
+ Thread           0  starting...
+ 600898    
+ Results/c6ipsl26F1rpp/600898                                                   
+  
+ Read Parameters...
+ Running Taxon P_glauca            
+ ~/projects/def-wailung/Data/Species/Distributions/S600898.csv                  
+                                          
+  1.893709521462835E-007
+ Thread           0  starting...
+ 600912    
+ Results/c6ipsl26F1rpp/600912                                                   
+  
+ Read Parameters...
+ Running Taxon S_lewini            
+ ~/projects/def-wailung/Data/Species/Distributions/S600912.csv                  
+                                          
+  1.936157156679558E-007
+ Thread           0  starting...
+ 600917    
+ Results/c6ipsl26F1rpp/600917                                                   
+  
+ Read Parameters...
+ Running Taxon S_zygaena           
+ ~/projects/def-wailung/Data/Species/Distributions/S600917.csv                  
+                                          
+  1.894921757220906E-007
+ Thread           0  starting...
+ 601408    
+ Results/c6ipsl26F1rpp/601408                                                   
+  
+ Read Parameters...
+ Running Taxon L_argentiventris    
+ ~/projects/def-wailung/Data/Species/Distributions/S601408.csv                  
+                                          
+  4.822583419399218E-007
+ Thread           0  starting...
+ 601732    
+ Results/c6ipsl26F1rpp/601732                                                   
+  
+ Read Parameters...
+ Running Taxon M_mola              
+ ~/projects/def-wailung/Data/Species/Distributions/S601732.csv                  
+                                          
+  1.969831050177562E-007
+ Thread           0  starting...
+ 601906    
+ Results/c6ipsl26F1rpp/601906                                                   
+  
+ Read Parameters...
+ Running Taxon C_melampygus        
+ ~/projects/def-wailung/Data/Species/Distributions/S601906.csv                  
+                                          
+  3.474020270864842E-007
+ Thread           0  starting...
+ 601917    
+ Results/c6ipsl26F1rpp/601917                                                   
+  
+ Read Parameters...
+ Running Taxon C_sexfasciatus      
+ ~/projects/def-wailung/Data/Species/Distributions/S601917.csv                  
+                                          
+  1.954600001417994E-007
+ Thread           0  starting...
+ 602532    
+ Results/c6ipsl26F1rpp/602532                                                   
+  
+ Read Parameters...
+ Running Taxon G_cirratum          
+ ~/projects/def-wailung/Data/Species/Distributions/S602532.csv                  
+                                          
+  4.224775784875741E-007
+ Thread           0  starting...
+ 602534    
+ Results/c6ipsl26F1rpp/602534                                                   
+  
+ Read Parameters...
+ Running Taxon A_superciliosus     
+ ~/projects/def-wailung/Data/Species/Distributions/S602534.csv                  
+                                          
+  1.845885835536916E-007
+ Thread           0  starting...
+ 602535    
+ Results/c6ipsl26F1rpp/602535                                                   
+  
+ Read Parameters...
+ Running Taxon A_vulpinus          
+ ~/projects/def-wailung/Data/Species/Distributions/S602535.csv                  
+                                          
+  1.890140790011818E-007
+ Thread           0  starting...
+ 603334    
+ Results/c6ipsl26F1rpp/603334                                                   
+  
+ Read Parameters...
+ Running Taxon M_xenarcha          
+ ~/projects/def-wailung/Data/Species/Distributions/S603334.csv                  
+                                          
+  5.597613482741545E-007
+ Thread           0  starting...
+ 603539    
+ Results/c6ipsl26F1rpp/603539                                                   
+  
+ Read Parameters...
+ Running Taxon C_princeps          
+ ~/projects/def-wailung/Data/Species/Distributions/S603539.csv                  
+                                          
+  4.973465561380282E-007
+ Thread           0  starting...
+ 603915    
+ Results/c6ipsl26F1rpp/603915                                                   
+  
+ Read Parameters...
+ Running Taxon T_angustirostris    
+ ~/projects/def-wailung/Data/Species/Distributions/S603915.csv                  
+                                          
+  1.706030881619414E-007
+ Thread           0  starting...
+ 605548    
+ Results/c6ipsl26F1rpp/605548                                                   
+  
+ Read Parameters...
+ Running Taxon S_ghobban           
+ ~/projects/def-wailung/Data/Species/Distributions/S605548.csv                  
+                                          
+  3.799652867566808E-007
+ Thread           0  starting...
+ 690032    
+ Results/c6ipsl26F1rpp/690032                                                   
+  
+ Read Parameters...
+ Running Taxon X_kroyeri           
+ ~/projects/def-wailung/Data/Species/Distributions/S690032.csv                  
+                                          
+  5.264224234351960E-007
+ Thread           0  starting...
+ 690206    
+ Results/c6ipsl26F1rpp/690206                                                   
+  
+ Read Parameters...
+ Running Taxon D_gigas             
+ ~/projects/def-wailung/Data/Species/Distributions/S690206.csv                  
+                                          
+  4.133231366401339E-007
+ Thread           0  starting...
+ 690433    
+ Results/c6ipsl26F1rpp/690433                                                   
+  
+ Read Parameters...
+ Running Taxon P_occidentalis      
+ ~/projects/def-wailung/Data/Species/Distributions/S690433.csv                  
+                                          
+  7.202104405648304E-007
+ Thread           0  starting...
+ 690619    
+ Results/c6ipsl26F1rpp/690619                                                   
+  
+ Read Parameters...
+ Running Taxon P_gracilis          
+ ~/projects/def-wailung/Data/Species/Distributions/S690619.csv                  
+                                          
+  4.538398271436429E-007
+ Thread           0  starting...
+ Time step =         1951
+ Catch=   868210.147853734     
+ Abd=   635983.7    
+ Catch=   815274.212135166     
+ Abd=  1.1574552E+07
+ Catch=   182804.237855917     
+ Abd=   514544.1    
+ Catch=   38892.6335595620     
+ Abd=   114793.6    
+ Catch=   34289463.6845214     
+ Abd=  6.0564276E+07
+ Catch=   12237732.1387441     
+ Abd=  4.0315936E+07
+ Catch=   41614095.3293199     
+ Abd=  1.5754269E+08
+ Catch=   176624.903063255     
+ Abd=   552833.3    
+ Catch=   24731985.6766334     
+ Abd=  6.4209608E+07
+ Catch=   13995801.3531827     
+ Abd=  1.9739147E+08
+ Catch=   175997.974509834     
+ Abd=   622884.1    
+ Catch=   193450.793597768     
+ Abd=   455114.8    
+ Catch=   713773.167195863     
+ Abd=   3828111.    
+ Catch=   3178945.72077788     
+ Abd=  3.1948520E+07
+ Catch=   2241050.15166244     
+ Abd=  2.7149926E+07
+ Catch=   18188.9597409212     
+ Abd=   106526.0    
+ Catch=   244133.810484423     
+ Abd=   335258.7    
+ Catch=   26453.9650930037     
+ Abd=   102058.6    
+ Catch=   10951.4254051281     
+ Abd=   74994.87    
+ Catch=   1721445.36930116     
+ Abd=   4948474.    
+ Catch=   535340.087173621     
+ Abd=   7433809.    
+ Catch=   8419472.87213943     
+ Abd=  3.3512562E+07
+ Catch=   2148411.93866474     
+ Abd=  1.4481284E+07
+ Catch=   198719.113980669     
+ Abd=   1576741.    
+ Catch=   156456.469206922     
+ Abd=   947113.9    
+ Catch=   2757773.17575857     
+ Abd=  2.1354768E+07
+ Catch=   1221917.73359344     
+ Abd=   8205978.    
+ Catch=   117199.397933266     
+ Abd=   843116.1    
+ Catch=   709798.656556637     
+ Abd=   1654206.    
+ Catch=   819269.620581236     
+ Abd=   2959698.    
+ Catch=   7248378.49263193     
+ Abd=  2.0695204E+07
+ Catch=   12969.0852506402     
+ Abd=   137021.6    
+ Catch=   1358132.56649729     
+ Abd=   9874794.    
+ Catch=   3410602.69323748     
+ Abd=  2.4969886E+07
+ Catch=   22941.5892958051     
+ Abd=   275371.6    
+ Catch=   20661.0331069310     
+ Abd=   235774.6    
+ Catch=   2080340.56333494     
+ Abd=   5333716.    
+ Catch=   1018387.84780427     
+ Abd=   1998454.    
+ Catch=   369969.688152954     
+ Abd=   364716.0    
+ Catch=   7174053.58339269     
+ Abd=   3346325.    
+ Catch=   17954.6922147560     
+ Abd=   6716.351    
+ Catch=   7647658.60234824     
+ Abd=   9214154.    
+ Time step =         1952
+ Catch=   477112.794330679     
+ Abd=   501477.3    
+ Catch=   624192.572348375     
+ Abd=   9474432.    
+ Catch=   113221.556797117     
+ Abd=   383294.8    
+ Catch=   18090.5451812316     
+ Abd=   74897.95    
+ Catch=   19586924.9711351     
+ Abd=  4.4814260E+07
+ Catch=   6376890.96563630     
+ Abd=  2.7046428E+07
+ Catch=   18889493.9875872     
+ Abd=  9.8036464E+07
+ Catch=   87380.5048006021     
+ Abd=   361884.1    
+ Catch=   14681081.2854318     
+ Abd=  4.7332960E+07
+ Catch=   10574892.1086256     
+ Abd=  1.5950955E+08
+ Catch=   105905.069498977     
+ Abd=   458881.9    
+ Catch=   115753.541296906     
+ Abd=   338699.8    
+ Catch=   476311.480037449     
+ Abd=   2906843.    
+ Catch=   2297866.55446911     
+ Abd=  2.5248616E+07
+ Catch=   1349457.45695860     
+ Abd=  1.9042152E+07
+ Catch=   5116.38676639482     
+ Abd=   59663.48    
+ Catch=   115355.269131421     
+ Abd=   228989.1    
+ Catch=   7793.35476040422     
+ Abd=   57424.41    
+ Catch=   3313.90533764204     
+ Abd=   42117.71    
+ Catch=   884113.952094214     
+ Abd=   3356335.    
+ Catch=   394955.882375552     
+ Abd=   5911580.    
+ Catch=   4521943.30410790     
+ Abd=  2.2686226E+07
+ Catch=   642953.112839916     
+ Abd=   8221733.    
+ Catch=   126151.520169495     
+ Abd=   1147834.    
+ Catch=   49515.2795813392     
+ Abd=   554724.2    
+ Catch=   974526.771505624     
+ Abd=  1.2779986E+07
+ Catch=   368035.672590071     
+ Abd=   4760792.    
+ Catch=   68921.1008842593     
+ Abd=   589437.9    
+ Catch=   416332.380872376     
+ Abd=   1216143.    
+ Catch=   460649.976463505     
+ Abd=   2052059.    
+ Catch=   3517110.05682761     
+ Abd=  1.3582370E+07
+ Catch=   7105.20718866675     
+ Abd=   93272.47    
+ Catch=   444765.561727798     
+ Abd=   5761183.    
+ Catch=   1130833.70102498     
+ Abd=  1.4745484E+07
+ Catch=   13637.3397526291     
+ Abd=   191978.8    
+ Catch=   11615.5227881938     
+ Abd=   159522.7    
+ Catch=   1250052.28154033     
+ Abd=   3956053.    
+ Catch=   485956.030935431     
+ Abd=   1356111.    
+ Catch=   182578.932287536     
+ Abd=   273017.8    
+ Catch=   4275086.13199708     
+ Abd=   2949289.    
+ Catch=   10867.0622500419     
+ Abd=   6077.340    
+ Catch=   3675587.87469443     
+ Abd=   6799776.    
+ Time step =         1953
+ Catch=   411956.227699617     
+ Abd=   461238.3    
+ Catch=   526771.329606911     
+ Abd=   8201810.    
+ Catch=   90219.6094961449     
+ Abd=   322607.8    
+ Catch=   13024.4200717010     
+ Abd=   58552.16    
+ Catch=   15721907.8761095     
+ Abd=  3.8344072E+07
+ Catch=   4670786.68870669     
+ Abd=  2.1328660E+07
+ Catch=   12995844.8035331     
+ Abd=  7.3471584E+07
+ Catch=   62848.5911872045     
+ Abd=   282097.0    
+ Catch=   11642914.4790253     
+ Abd=  3.9806640E+07
+ Catch=   8828240.16324770     
+ Abd=  1.3687536E+08
+ Catch=   83609.7691988684     
+ Abd=   383053.1    
+ Catch=   92583.8638502113     
+ Abd=   286806.9    
+ Catch=   381362.541137368     
+ Abd=   2432060.    
+ Catch=   1888759.26885619     
+ Abd=  2.1445264E+07
+ Catch=   1009547.80907752     
+ Abd=  1.5047006E+07
+ Catch=   3248.26311997390     
+ Abd=   42022.09    
+ Catch=   87690.9706529969     
+ Abd=   189291.2    
+ Catch=   4959.04401679566     
+ Abd=   40475.92    
+ Catch=   2099.46346717228     
+ Abd=   29509.09    
+ Catch=   655263.821532152     
+ Abd=   2677155.    
+ Catch=   325308.305119773     
+ Abd=   5016424.    
+ Catch=   3321328.10576664     
+ Abd=  1.7846540E+07
+ Catch=   412130.911877346     
+ Abd=   5829960.    
+ Catch=   97099.7101145855     
+ Abd=   926227.5    
+ Catch=   32569.5806985892     
+ Abd=   401336.4    
+ Catch=   649958.062786756     
+ Abd=   9321788.    
+ Catch=   240723.151649938     
+ Abd=   3436618.    
+ Catch=   51499.6550931800     
+ Abd=   465833.2    
+ Catch=   330183.903197789     
+ Abd=   1024830.    
+ Catch=   345313.234627631     
+ Abd=   1642562.    
+ Catch=   2540849.67059292     
+ Abd=  1.0628702E+07
+ Catch=   5188.32554216142     
+ Abd=   72206.24    
+ Catch=   290788.155126659     
+ Abd=   4139903.    
+ Catch=   748578.338778219     
+ Abd=  1.0725108E+07
+ Catch=   10175.6108856499     
+ Abd=   151788.6    
+ Catch=   8446.59276393628     
+ Abd=   123399.5    
+ Catch=   996945.548062533     
+ Abd=   3343926.    
+ Catch=   364930.315209859     
+ Abd=   1104433.    
+ Catch=   150422.085440037     
+ Abd=   241406.8    
+ Catch=   4021447.78044064     
+ Abd=   2879718.    
+ Catch=   10400.5352692861     
+ Abd=   5991.255    
+ Catch=   2989713.71384560     
+ Abd=   5941397.    
+ Time step =         1954
+ Catch=   389931.869391530     
+ Abd=   445798.5    
+ Catch=   463528.988547049     
+ Abd=   7322714.    
+ Catch=   78379.0000449500     
+ Abd=   287973.9    
+ Catch=   10661.9236410693     
+ Abd=   49878.54    
+ Catch=   13932668.0019531     
+ Abd=  3.4986228E+07
+ Catch=   3841743.37621106     
+ Abd=  1.8199516E+07
+ Catch=   10218247.6427607     
+ Abd=  6.0296788E+07
+ Catch=   51298.5300776638     
+ Abd=   239663.3    
+ Catch=   10123964.4184323     
+ Abd=  3.5612080E+07
+ Catch=   7711020.93060437     
+ Abd=  1.2145986E+08
+ Catch=   72053.6501723511     
+ Abd=   339264.3    
+ Catch=   80925.6013293705     
+ Abd=   257453.2    
+ Catch=   327707.478829789     
+ Abd=   2139533.    
+ Catch=   1637616.84828325     
+ Abd=  1.8936516E+07
+ Catch=   823892.731908505     
+ Abd=  1.2638142E+07
+ Catch=   2412.07366792815     
+ Abd=   32708.12    
+ Catch=   75721.0167282724     
+ Abd=   169449.0    
+ Catch=   3683.55787748085     
+ Abd=   31497.75    
+ Catch=   1548.75763506887     
+ Abd=   22794.84    
+ Catch=   544809.210204292     
+ Abd=   2307265.    
+ Catch=   281404.494726428     
+ Abd=   4414744.    
+ Catch=   2718016.25462933     
+ Abd=  1.5121286E+07
+ Catch=   307769.786149678     
+ Abd=   4559308.    
+ Catch=   80655.6769154856     
+ Abd=   789585.2    
+ Catch=   24748.9017491391     
+ Abd=   318474.0    
+ Catch=   496888.910869857     
+ Abd=   7430249.    
+ Catch=   182767.362748094     
+ Abd=   2728362.    
+ Catch=   42079.6976790730     
+ Abd=   392220.0    
+ Catch=   287923.521423147     
+ Abd=   919925.0    
+ Catch=   287166.689476494     
+ Abd=   1412427.    
+ Catch=   2079186.06134334     
+ Abd=   9042781.    
+ Catch=   4153.05372434550     
+ Abd=   59553.23    
+ Catch=   219457.043045267     
+ Abd=   3263770.    
+ Catch=   571808.622811636     
+ Abd=   8555792.    
+ Catch=   8325.71671675885     
+ Abd=   128038.3    
+ Catch=   6775.45641113183     
+ Abd=   102266.3    
+ Catch=   870975.870448883     
+ Abd=   3004436.    
+ Catch=   310397.842554808     
+ Abd=   974286.1    
+ Catch=   137785.252253907     
+ Abd=   227317.9    
+ Catch=   3973199.66451948     
+ Abd=   2865326.    
+ Catch=   10333.8543639199     
+ Abd=   5978.212    
+ Catch=   2706866.99468719     
+ Abd=   5532893.    
+ Time step =         1955
+ Catch=   380935.949214882     
+ Abd=   438974.2    
+ Catch=   418234.055783683     
+ Abd=   6671305.    
+ Catch=   71244.0598614880     
+ Abd=   265960.1    
+ Catch=   9315.50247348261     
+ Abd=   44557.45    
+ Catch=   12952250.3361060     
+ Abd=  3.3045330E+07
+ Catch=   3357918.34195030     
+ Abd=  1.6250266E+07
+ Catch=   8625426.88467465     
+ Abd=  5.2210448E+07
+ Catch=   44717.5951275076     
+ Abd=   213696.3    
+ Catch=   9229607.36375047     
+ Abd=  3.3006064E+07
+ Catch=   6921413.75173106     
+ Abd=  1.1017246E+08
+ Catch=   64993.7795181642     
+ Abd=   311000.3    
+ Catch=   73900.4355073995     
+ Abd=   238604.5    
+ Catch=   293036.137484653     
+ Abd=   1941515.    
+ Catch=   1464988.08066411     
+ Abd=  1.7142584E+07
+ Catch=   705744.020369985     
+ Abd=  1.1022468E+07
+ Catch=   1934.04283779959     
+ Abd=   26951.05    
+ Catch=   69318.3762851094     
+ Abd=   158095.6    
+ Catch=   2950.81983123007     
+ Abd=   25916.92    
+ Catch=   1231.62250136787     
+ Abd=   18618.49    
+ Catch=   480663.375114086     
+ Abd=   2078079.    
+ Catch=   250755.841530223     
+ Abd=   3979178.    
+ Catch=   2356739.71061815     
+ Abd=  1.3385568E+07
+ Catch=   247829.232042217     
+ Abd=   3771154.    
+ Catch=   70017.4820320266     
+ Abd=   696946.4    
+ Catch=   20190.3698435726     
+ Abd=   266446.5    
+ Catch=   406855.591270756     
+ Abd=   6235698.    
+ Catch=   149268.115005160     
+ Abd=   2286574.    
+ Catch=   36169.9574714170     
+ Abd=   343558.7    
+ Catch=   263410.150910811     
+ Abd=   855608.5    
+ Catch=   252496.193422905     
+ Abd=   1266803.    
+ Catch=   1814325.08658762     
+ Abd=   8070024.    
+ Catch=   3495.67662916444     
+ Abd=   51078.36    
+ Catch=   177899.357981204     
+ Abd=   2714210.    
+ Catch=   468989.538062837     
+ Abd=   7197407.    
+ Catch=   7169.87777758627     
+ Abd=   112353.6    
+ Catch=   5740.98359003821     
+ Abd=   88439.16    
+ Catch=   797183.357387368     
+ Abd=   2794647.    
+ Catch=   280189.476293848     
+ Abd=   897058.0    
+ Catch=   131857.559670254     
+ Abd=   220368.7    
+ Catch=   3963205.46599041     
+ Abd=   2862439.    
+ Catch=   10323.6612244496     
+ Abd=   5976.199    
+ Catch=   2563619.90808635     
+ Abd=   5312958.    
+ Time step =         1956
+ Catch=   376724.002142481     
+ Abd=   435531.6    
+ Catch=   383899.419777625     
+ Abd=   6166562.    
+ Catch=   66555.6147419568     
+ Abd=   250997.9    
+ Catch=   8451.34021318985     
+ Abd=   40986.51    
+ Catch=   12368491.6903547     
+ Abd=  3.1854960E+07
+ Catch=   3043918.75195458     
+ Abd=  1.4932264E+07
+ Catch=   7604925.52487033     
+ Abd=  4.6798048E+07
+ Catch=   40507.4240615589     
+ Abd=   196336.2    
+ Catch=   8655993.76145134     
+ Abd=  3.1281192E+07
+ Catch=   6329323.00508595     
+ Abd=  1.0150980E+08
+ Catch=   60280.5180767738     
+ Abd=   291496.5    
+ Catch=   69214.2420545790     
+ Abd=   225585.1    
+ Catch=   268853.917754346     
+ Abd=   1799290.    
+ Catch=   1338298.43848849     
+ Abd=  1.5792398E+07
+ Catch=   623732.967210505     
+ Abd=   9861727.    
+ Catch=   1624.33780893849     
+ Abd=   23041.18    
+ Catch=   65513.3335335913     
+ Abd=   151082.4    
+ Catch=   2474.84202759103     
+ Abd=   22126.43    
+ Catch=   1025.15592533710     
+ Abd=   15775.93    
+ Catch=   439299.101965122     
+ Abd=   1924291.    
+ Catch=   228020.951076739     
+ Abd=   3648314.    
+ Catch=   2117437.74481251     
+ Abd=  1.2189682E+07
+ Catch=   208895.961730918     
+ Abd=   3235200.    
+ Catch=   62580.0309051448     
+ Abd=   630178.0    
+ Catch=   17196.8463056210     
+ Abd=   230731.0    
+ Catch=   347492.576855075     
+ Abd=   5413610.    
+ Catch=   127396.356541479     
+ Abd=   1984745.    
+ Catch=   32124.7511132808     
+ Abd=   309065.3    
+ Catch=   247876.806024652     
+ Abd=   813501.1    
+ Catch=   229715.428646351     
+ Abd=   1167428.    
+ Catch=   1645074.80325452     
+ Abd=   7422386.    
+ Catch=   3040.46850260207     
+ Abd=   45013.68    
+ Catch=   150646.890396236     
+ Abd=   2337565.    
+ Catch=   401676.570705144     
+ Abd=   6267885.    
+ Catch=   6377.79674598572     
+ Abd=   101196.2    
+ Catch=   5039.66496493258     
+ Abd=   78718.44    
+ Catch=   750114.154217765     
+ Abd=   2656561.    
+ Catch=   261537.836439783     
+ Abd=   847457.6    
+ Catch=   128862.420344527     
+ Abd=   216773.2    
+ Catch=   3961348.00836049     
+ Abd=   2862036.    
+ Catch=   10322.0869068180     
+ Abd=   5975.890    
+ Catch=   2484020.84187894     
+ Abd=   5186862.    
+ Time step =         1957
+ Catch=   374450.744613518     
+ Abd=   433500.1    
+ Catch=   356870.182544196     
+ Abd=   5763038.    
+ Catch=   63293.6286386829     
+ Abd=   240341.5    
+ Catch=   7854.72977702826     
+ Abd=   38452.01    
+ Catch=   12004070.2674137     
+ Abd=  3.1098748E+07
+ Catch=   2825732.31253686     
+ Abd=  1.3991338E+07
+ Catch=   6901216.06542408     
+ Abd=  4.2952256E+07
+ Catch=   37611.2327572995     
+ Abd=   184050.8    
+ Catch=   8268555.03705800     
+ Abd=  3.0092676E+07
+ Catch=   5867119.31604544     
+ Abd=  9.4635656E+07
+ Catch=   56956.0634849975     
+ Abd=   277438.2    
+ Catch=   65901.1516949699     
+ Abd=   216145.1    
+ Catch=   251127.228245307     
+ Abd=   1692920.    
+ Catch=   1241196.17175259     
+ Abd=  1.4739005E+07
+ Catch=   563344.490267464     
+ Abd=   8985711.    
+ Catch=   1407.38802310732     
+ Abd=   20217.70    
+ Catch=   63102.2681626392     
+ Abd=   146523.4    
+ Catch=   2141.42535474678     
+ Abd=   19387.01    
+ Catch=   880.429298718122     
+ Abd=   13723.72    
+ Catch=   410803.071462735     
+ Abd=   1815532.    
+ Catch=   210451.611126194     
+ Abd=   3388288.    
+ Catch=   1948042.42744911     
+ Abd=  1.1320006E+07
+ Catch=   181596.932041656     
+ Abd=   2847786.    
+ Catch=   57101.5385785566     
+ Abd=   579913.4    
+ Catch=   15079.4749777609     
+ Abd=   204707.5    
+ Catch=   305438.516158131     
+ Abd=   4814162.    
+ Catch=   111991.797938949     
+ Abd=   1765615.    
+ Catch=   29185.7893030375     
+ Abd=   283380.8    
+ Catch=   237497.603982927     
+ Abd=   784792.0    
+ Catch=   213766.745420997     
+ Abd=   1096061.    
+ Catch=   1529305.16815827     
+ Abd=   6967288.    
+ Catch=   2707.05282307104     
+ Abd=   40468.16    
+ Catch=   131407.386264698     
+ Abd=   2063708.    
+ Catch=   354224.232149396     
+ Abd=   5592878.    
+ Catch=   5799.16095338852     
+ Abd=   92824.33    
+ Catch=   4533.38791153344     
+ Abd=   71509.56    
+ Catch=   718497.934598506     
+ Abd=   2561898.    
+ Catch=   249256.438831551     
+ Abd=   813971.8    
+ Catch=   127293.664440740     
+ Abd=   214866.8    
+ Catch=   3961245.12841614     
+ Abd=   2862155.    
+ Catch=   10321.8426552046     
+ Abd=   5975.841    
+ Catch=   2437580.61504426     
+ Abd=   5112006.    
+ Time step =         1958
+ Catch=   373018.323366756     
+ Abd=   432141.2    
+ Catch=   335003.104763095     
+ Abd=   5432730.    
+ Catch=   60929.1660259182     
+ Abd=   232472.1    
+ Catch=   7422.93630345591     
+ Abd=   36581.54    
+ Catch=   11769930.9756624     
+ Abd=  3.0607392E+07
+ Catch=   2667000.56651629     
+ Abd=  1.3293898E+07
+ Catch=   6390396.31453156     
+ Abd=  4.0100112E+07
+ Catch=   35520.5071522136     
+ Abd=   175003.5    
+ Catch=   7997954.56625461     
+ Abd=  2.9251014E+07
+ Catch=   5495830.46734600     
+ Abd=  8.9045824E+07
+ Catch=   54522.7746685684     
+ Abd=   266989.6    
+ Catch=   63449.1690277762     
+ Abd=   208997.1    
+ Catch=   237672.364295718     
+ Abd=   1610999.    
+ Catch=   1164419.06796778     
+ Abd=  1.3894876E+07
+ Catch=   516913.799695220     
+ Abd=   8299515.    
+ Catch=   1247.31695515330     
+ Abd=   18089.18    
+ Catch=   61509.7388556134     
+ Abd=   143460.5    
+ Catch=   1894.29828225442     
+ Abd=   17306.32    
+ Catch=   773.672215388455     
+ Abd=   12176.66    
+ Catch=   390279.783653585     
+ Abd=   1735757.    
+ Catch=   196464.288029671     
+ Abd=   3178587.    
+ Catch=   1822442.51179936     
+ Abd=  1.0662600E+07
+ Catch=   161430.822846354     
+ Abd=   2555294.    
+ Catch=   52908.9933914356     
+ Abd=   540811.4    
+ Catch=   13502.9717622087     
+ Abd=   184911.8    
+ Catch=   274125.896380371     
+ Abd=   4358363.    
+ Catch=   100560.511479282     
+ Abd=   1599393.    
+ Catch=   26956.9768410148     
+ Abd=   263540.1    
+ Catch=   230321.986447066     
+ Abd=   764660.5    
+ Catch=   202104.758619024     
+ Abd=   1042931.    
+ Catch=   1446413.07976017     
+ Abd=   6635286.    
+ Catch=   2452.87036997826     
+ Abd=   36943.00    
+ Catch=   117117.626557975     
+ Abd=   1855910.    
+ Catch=   319015.974804934     
+ Abd=   5081118.    
+ Catch=   5356.26877666378     
+ Abd=   86287.64    
+ Catch=   4150.26616225576     
+ Abd=   65941.22    
+ Catch=   696524.852334977     
+ Abd=   2495224.    
+ Catch=   240824.969862549     
+ Abd=   790596.5    
+ Catch=   126456.548217099     
+ Abd=   213843.0    
+ Catch=   3961502.05289123     
+ Abd=   2862360.    
+ Catch=   10321.8037519709     
+ Abd=   5975.832    
+ Catch=   2409727.35750742     
+ Abd=   5066650.    
+ Time step =         1959
+ Catch=   372034.086134759     
+ Abd=   431184.3    
+ Catch=   316936.203166760     
+ Abd=   5157372.    
+ Catch=   59158.8028385577     
+ Abd=   226496.0    
+ Catch=   7099.75415417212     
+ Abd=   35162.02    
+ Catch=   11616616.2993940     
+ Abd=  3.0283102E+07
+ Catch=   2547738.48963297     
+ Abd=  1.2762752E+07
+ Catch=   6005450.77402540     
+ Abd=  3.7916088E+07
+ Catch=   33958.7115645816     
+ Abd=   168149.4    
+ Catch=   7804361.86516305     
+ Abd=  2.8642956E+07
+ Catch=   5190914.97508905     
+ Abd=  8.4410096E+07
+ Catch=   52692.8797776606     
+ Abd=   259037.6    
+ Catch=   61550.0764093819     
+ Abd=   203336.5    
+ Catch=   227195.813056039     
+ Abd=   1546504.    
+ Catch=   1102254.35900649     
+ Abd=  1.3204406E+07
+ Catch=   480015.166092269     
+ Abd=   7746352.    
+ Catch=   1124.60615768949     
+ Abd=   16429.62    
+ Catch=   60424.5141753658     
+ Abd=   141342.9    
+ Catch=   1703.55655680265     
+ Abd=   15675.38    
+ Catch=   691.901682034695     
+ Abd=   10972.37    
+ Catch=   375022.900129032     
+ Abd=   1675658.    
+ Catch=   185069.085322800     
+ Abd=   3006021.    
+ Catch=   1726107.63332197     
+ Abd=  1.0151007E+07
+ Catch=   145949.471105717     
+ Abd=   2326940.    
+ Catch=   49605.5753430964     
+ Abd=   509603.4    
+ Catch=   12284.0809596150     
+ Abd=   169356.6    
+ Catch=   249928.941427395     
+ Abd=   4000370.    
+ Catch=   91742.3733505011     
+ Abd=   1468966.    
+ Catch=   25210.4385988327     
+ Abd=   247770.6    
+ Catch=   225239.164077853     
+ Abd=   750257.5    
+ Catch=   193306.701234589     
+ Abd=   1002313.    
+ Catch=   1385113.17672517     
+ Abd=   6386391.    
+ Catch=   2253.08401266315     
+ Abd=   34134.65    
+ Catch=   106096.097539584     
+ Abd=   1692990.    
+ Catch=   291877.952889874     
+ Abd=   4680034.    
+ Catch=   5005.14409595706     
+ Abd=   81025.95    
+ Catch=   3849.74076280733     
+ Abd=   61505.56    
+ Catch=   680900.660628965     
+ Abd=   2447351.    
+ Catch=   234868.772015957     
+ Abd=   773881.0    
+ Catch=   126005.416151051     
+ Abd=   213289.3    
+ Catch=   3961722.52105358     
+ Abd=   2862468.    
+ Catch=   10321.7984517970     
+ Abd=   5975.832    
+ Catch=   2392747.64126440     
+ Abd=   5038829.    
+ Time step =         1960
+ Catch=   371316.241980148     
+ Abd=   430448.2    
+ Catch=   301761.322300897     
+ Abd=   4924303.    
+ Catch=   57796.9455786785     
+ Abd=   221842.3    
+ Catch=   6851.90951526075     
+ Abd=   34061.93    
+ Catch=   11515050.8879295     
+ Abd=  3.0067476E+07
+ Catch=   2455961.86402599     
+ Abd=  1.2349716E+07
+ Catch=   5707055.31451149     
+ Abd=  3.6202384E+07
+ Catch=   32762.5732049525     
+ Abd=   162842.4    
+ Catch=   7663603.83837683     
+ Abd=  2.8198000E+07
+ Catch=   4936072.04863312     
+ Abd=  8.0506304E+07
+ Catch=   51287.6416122847     
+ Abd=   252877.8    
+ Catch=   60023.7838409109     
+ Abd=   198715.9    
+ Catch=   218876.888406726     
+ Abd=   1494861.    
+ Catch=   1050981.56682424     
+ Abd=  1.2630315E+07
+ Catch=   449931.857129147     
+ Abd=   7290244.    
+ Catch=   1027.61672523684     
+ Abd=   15099.35    
+ Catch=   59666.1503478619     
+ Abd=   139845.5    
+ Catch=   1552.38417117149     
+ Abd=   14367.73    
+ Catch=   627.355554692367     
+ Abd=   10007.97    
+ Catch=   363415.335617367     
+ Abd=   1629480.    
+ Catch=   175614.285044597     
+ Abd=   2861672.    
+ Catch=   1650302.92750217     
+ Abd=   9743946.    
+ Catch=   133701.368892267     
+ Abd=   2143850.    
+ Catch=   46941.5770660920     
+ Abd=   484176.1    
+ Catch=   11313.9818603803     
+ Abd=   156818.7    
+ Catch=   230678.141492712     
+ Abd=   3711856.    
+ Catch=   84729.9957212642     
+ Abd=   1363855.    
+ Catch=   23806.7701566716     
+ Abd=   234953.5    
+ Catch=   221575.579513818     
+ Abd=   739796.4    
+ Catch=   186512.069500283     
+ Abd=   970622.9    
+ Catch=   1338682.25053321     
+ Abd=   6195914.    
+ Catch=   2092.18008252088     
+ Abd=   31848.06    
+ Catch=   97343.6987918156     
+ Abd=   1561955.    
+ Catch=   270328.623294714     
+ Abd=   4357355.    
+ Catch=   4719.19002056962     
+ Abd=   76692.91    
+ Catch=   3607.39981124900     
+ Abd=   57885.24    
+ Catch=   669605.010878544     
+ Abd=   2412498.    
+ Catch=   230572.368285084     
+ Abd=   761716.0    
+ Catch=   125760.946316778     
+ Abd=   212988.7    
+ Catch=   3961809.41781477     
+ Abd=   2862498.    
+ Catch=   10321.8001227372     
+ Abd=   5975.833    
+ Catch=   2382291.61236136     
+ Abd=   5021630.    
+ Time step =         1961
+ Catch=   370734.723279268     
+ Abd=   429820.4    
+ Catch=   288843.316096084     
+ Abd=   4724753.    
+ Catch=   56729.5355192316     
+ Abd=   218172.9    
+ Catch=   6658.30385318183     
+ Abd=   33195.88    
+ Catch=   11447175.4106032     
+ Abd=  2.9922616E+07
+ Catch=   2384010.92578326     
+ Abd=  1.2023261E+07
+ Catch=   5470695.62795668     
+ Abd=  3.4832048E+07
+ Catch=   31828.8681502239     
+ Abd=   158665.6    
+ Catch=   7560110.43111476     
+ Abd=  2.7869202E+07
+ Catch=   4720031.96491199     
+ Abd=  7.7174496E+07
+ Catch=   50192.1454264807     
+ Abd=   248044.2    
+ Catch=   58766.1734143063     
+ Abd=   194888.2    
+ Catch=   212170.248898778     
+ Abd=   1452938.    
+ Catch=   1008061.32752720     
+ Abd=  1.2146432E+07
+ Catch=   424897.573360036     
+ Abd=   6907223.    
+ Catch=   949.002357772638     
+ Abd=   14008.96    
+ Catch=   59125.9448187018     
+ Abd=   138771.7    
+ Catch=   1429.81894705758     
+ Abd=   13293.85    
+ Catch=   575.050256391095     
+ Abd=   9216.422    
+ Catch=   354426.301250441     
+ Abd=   1593438.    
+ Catch=   167650.652014242     
+ Abd=   2739239.    
+ Catch=   1589453.05293657     
+ Abd=   9414292.    
+ Catch=   123776.605325820     
+ Abd=   1993921.    
+ Catch=   44752.6669690572     
+ Abd=   463103.9    
+ Catch=   10523.9309683275     
+ Abd=   146501.5    
+ Catch=   215002.311672222     
+ Abd=   3474484.    
+ Catch=   79017.7955060634     
+ Abd=   1277316.    
+ Catch=   22655.5919767560     
+ Abd=   224349.0    
+ Catch=   218898.419338058     
+ Abd=   732098.4    
+ Catch=   181168.449129192     
+ Abd=   945500.8    
+ Catch=   1302871.08864218     
+ Abd=   6047853.    
+ Catch=   1960.00477986264     
+ Abd=   29952.62    
+ Catch=   90231.6650707091     
+ Abd=   1454367.    
+ Catch=   252807.179929436     
+ Abd=   4092171.    
+ Catch=   4481.42741378842     
+ Abd=   73054.81    
+ Catch=   3407.62253844203     
+ Abd=   54871.69    
+ Catch=   661340.990927252     
+ Abd=   2386886.    
+ Catch=   227424.699238657     
+ Abd=   752740.0    
+ Catch=   125628.066624218     
+ Abd=   212825.1    
+ Catch=   3961832.85033945     
+ Abd=   2862506.    
+ Catch=   10321.7998710410     
+ Abd=   5975.833    
+ Catch=   2375812.11130303     
+ Abd=   5010946.    
+ Time step =         1962
+ Catch=   370222.682322198     
+ Abd=   429267.7    
+ Catch=   277720.433554463     
+ Abd=   4552006.    
+ Catch=   55881.2339511378     
+ Abd=   215228.2    
+ Catch=   6504.97312858118     
+ Abd=   32505.86    
+ Catch=   11401599.5923239     
+ Abd=  2.9825396E+07
+ Catch=   2326778.45026139     
+ Abd=  1.1761908E+07
+ Catch=   5280239.53722364     
+ Abd=  3.3719304E+07
+ Catch=   31089.3398089610     
+ Abd=   155337.2    
+ Catch=   7483285.28636228     
+ Abd=  2.7624214E+07
+ Catch=   4534677.41397162     
+ Abd=  7.4301536E+07
+ Catch=   49327.4303174966     
+ Abd=   244204.2    
+ Catch=   57719.3463105092     
+ Abd=   191677.6    
+ Catch=   206695.300232654     
+ Abd=   1418519.    
+ Catch=   971683.803461975     
+ Abd=  1.1733944E+07
+ Catch=   403717.833965983     
+ Abd=   6580770.    
+ Catch=   883.948229056768     
+ Abd=   13098.23    
+ Catch=   58735.5610195500     
+ Abd=   137989.6    
+ Catch=   1327.74892375309     
+ Abd=   12385.60    
+ Catch=   531.630154557212     
+ Abd=   8552.644    
+ Catch=   347366.320714148     
+ Abd=   1564954.    
+ Catch=   160855.496041000     
+ Abd=   2634138.    
+ Catch=   1539818.95032052     
+ Abd=   9143460.    
+ Catch=   115578.745609983     
+ Abd=   1868994.    
+ Catch=   42925.4282229836     
+ Abd=   445385.2    
+ Catch=   9868.18270464304     
+ Abd=   137862.4    
+ Catch=   201995.883356131     
+ Abd=   3275861.    
+ Catch=   74274.3209355094     
+ Abd=   1204829.    
+ Catch=   21696.1692529338     
+ Abd=   215446.6    
+ Catch=   216916.568379247     
+ Abd=   726366.8    
+ Catch=   176905.579958356     
+ Abd=   925334.1    
+ Catch=   1274856.81893279     
+ Abd=   5931286.    
+ Catch=   1849.55626407269     
+ Abd=   28355.67    
+ Catch=   84343.0054093963     
+ Abd=   1364536.    
+ Catch=   238280.139516707     
+ Abd=   3870358.    
+ Catch=   4280.25753474832     
+ Abd=   69953.91    
+ Catch=   3239.99312321500     
+ Abd=   52322.80    
+ Catch=   655240.134071810     
+ Abd=   2367890.    
+ Catch=   225089.866158547     
+ Abd=   746049.3    
+ Catch=   125555.746549531     
+ Abd=   212736.1    
+ Catch=   3961839.72953157     
+ Abd=   2862508.    
+ Catch=   10321.7991343139     
+ Abd=   5975.832    
+ Catch=   2371780.70132450     
+ Abd=   5004288.    
+ Time step =         1963
+ Catch=   369780.581761027     
+ Abd=   428786.8    
+ Catch=   268052.082596442     
+ Abd=   4401200.    
+ Catch=   55196.0821001636     
+ Abd=   212837.3    
+ Catch=   6382.21513545952     
+ Abd=   31950.73    
+ Catch=   11370826.3205450     
+ Abd=  2.9759464E+07
+ Catch=   2280716.56802698     
+ Abd=  1.1550461E+07
+ Catch=   5124621.79463997     
+ Abd=  3.2804492E+07
+ Catch=   30497.0231757717     
+ Abd=   152657.4    
+ Catch=   7425937.29957429     
+ Abd=  2.7440790E+07
+ Catch=   4374136.48488702     
+ Abd=  7.1801736E+07
+ Catch=   48637.2797347834     
+ Abd=   241127.2    
+ Catch=   56831.8834707240     
+ Abd=   188923.8    
+ Catch=   202181.018308389     
+ Abd=   1390015.    
+ Catch=   940524.846177774     
+ Abd=  1.1379082E+07
+ Catch=   385550.165355394     
+ Abd=   6298924.    
+ Catch=   829.231898128929     
+ Abd=   12326.93    
+ Catch=   58450.1071658556     
+ Abd=   137414.0    
+ Catch=   1240.65473730600     
+ Abd=   11608.03    
+ Catch=   494.873339705314     
+ Abd=   7984.726    
+ Catch=   341758.807329326     
+ Abd=   1542212.    
+ Catch=   154992.795108134     
+ Abd=   2543004.    
+ Catch=   1498802.25991994     
+ Abd=   8918320.    
+ Catch=   108697.523008233     
+ Abd=   1763357.    
+ Catch=   41379.6155353376     
+ Abd=   430302.7    
+ Catch=   9315.18880715585     
+ Abd=   130527.6    
+ Catch=   191035.078760988     
+ Abd=   3107278.    
+ Catch=   70270.5254626287     
+ Abd=   1143166.    
+ Catch=   20885.8045036790     
+ Abd=   207879.4    
+ Catch=   215434.284097332     
+ Abd=   722058.9    
+ Catch=   173465.318081098     
+ Abd=   908971.8    
+ Catch=   1252692.27124696     
+ Abd=   5838596.    
+ Catch=   1755.79796289763     
+ Abd=   26989.97    
+ Catch=   79391.4677719626     
+ Abd=   1288473.    
+ Catch=   226039.415066489     
+ Abd=   3682064.    
+ Catch=   4107.66700834340     
+ Abd=   67276.10    
+ Catch=   3097.25279257199     
+ Abd=   50138.52    
+ Catch=   650708.404993144     
+ Abd=   2353748.    
+ Catch=   223342.249668083     
+ Abd=   741017.7    
+ Catch=   125516.376908548     
+ Abd=   212687.6    
+ Catch=   3961841.07235550     
+ Abd=   2862509.    
+ Catch=   10321.7983007725     
+ Abd=   5975.831    
+ Catch=   2369265.58756184     
+ Abd=   5000128.    
+ Time step =         1964
+ Catch=   369387.696663046     
+ Abd=   428360.6    
+ Catch=   259577.376694428     
+ Abd=   4268514.    
+ Catch=   54636.2528713365     
+ Abd=   210868.2    
+ Catch=   6283.05653659892     
+ Abd=   31500.49    
+ Catch=   11350102.2601460     
+ Abd=  2.9715046E+07
+ Catch=   2243289.11592351     
+ Abd=  1.1377886E+07
+ Catch=   4996018.91221670     
+ Abd=  3.2044498E+07
+ Catch=   30018.0649312843     
+ Abd=   150481.0    
+ Catch=   7382883.25598420     
+ Abd=  2.7302656E+07
+ Catch=   4233877.65356005     
+ Abd=  6.9608456E+07
+ Catch=   48082.1112687976     
+ Abd=   238639.2    
+ Catch=   56065.0230494905     
+ Abd=   186529.6    
+ Catch=   198427.045306533     
+ Abd=   1366217.    
+ Catch=   913624.061920616     
+ Abd=  1.1071473E+07
+ Catch=   369777.920547270     
+ Abd=   6052908.    
+ Catch=   782.553592708737     
+ Abd=   11664.11    
+ Catch=   58237.8000567541     
+ Abd=   136982.0    
+ Catch=   1165.77063118384     
+ Abd=   10933.58    
+ Catch=   463.231928580127     
+ Abd=   7493.338    
+ Catch=   337263.981473334     
+ Abd=   1523906.    
+ Catch=   149886.916699500     
+ Abd=   2463280.    
+ Catch=   1464530.46834619     
+ Abd=   8729248.    
+ Catch=   102841.834563851     
+ Abd=   1672882.    
+ Catch=   40057.0064117316     
+ Abd=   417334.1    
+ Catch=   8842.87383120304     
+ Abd=   124224.3    
+ Catch=   181674.909538874     
+ Abd=   2962431.    
+ Catch=   66842.3220973639     
+ Abd=   1090025.    
+ Catch=   20193.4779633826     
+ Abd=   201382.3    
+ Catch=   214315.177741008     
+ Abd=   718789.5    
+ Catch=   170662.132968032     
+ Abd=   895580.6    
+ Catch=   1234997.32010397     
+ Abd=   5764292.    
+ Catch=   1675.22866839608     
+ Abd=   25811.02    
+ Catch=   75173.5676532143     
+ Abd=   1223274.    
+ Catch=   215581.316835553     
+ Abd=   3520149.    
+ Catch=   3957.82078238133     
+ Abd=   64938.25    
+ Catch=   2974.21917051407     
+ Abd=   48244.90    
+ Catch=   647325.428586774     
+ Abd=   2343162.    
+ Catch=   222022.586005241     
+ Abd=   737203.5    
+ Catch=   125494.877817182     
+ Abd=   212661.0    
+ Catch=   3961841.60855082     
+ Abd=   2862508.    
+ Catch=   10321.7961958945     
+ Abd=   5975.830    
+ Catch=   2367693.05148306     
+ Abd=   4997526.    
+ Time step =         1965
+ Catch=   369047.013687573     
+ Abd=   427989.0    
+ Catch=   252099.657380231     
+ Abd=   4151089.    
+ Catch=   54172.8359875402     
+ Abd=   209229.1    
+ Catch=   6202.37011390369     
+ Abd=   31132.94    
+ Catch=   11335946.6848340     
+ Abd=  2.9684676E+07
+ Catch=   2212630.10723021     
+ Abd=  1.1235995E+07
+ Catch=   4888717.09630728     
+ Abd=  3.1407628E+07
+ Catch=   29627.6822433617     
+ Abd=   148700.8    
+ Catch=   7350405.09917544     
+ Abd=  2.7198404E+07
+ Catch=   4110403.22051783     
+ Abd=  6.7671648E+07
+ Catch=   47630.6093338981     
+ Abd=   236606.2    
+ Catch=   55393.7561593975     
+ Abd=   184417.1    
+ Catch=   195283.989180612     
+ Abd=   1346237.    
+ Catch=   890219.056059322     
+ Abd=  1.0803058E+07
+ Catch=   355947.060527819     
+ Abd=   5836181.    
+ Catch=   742.247388952918     
+ Abd=   11088.76    
+ Catch=   58078.8258160907     
+ Abd=   136659.2    
+ Catch=   1100.32787810610     
+ Abd=   10340.89    
+ Catch=   435.745633638917     
+ Abd=   7065.286    
+ Catch=   333631.394270665     
+ Abd=   1509058.    
+ Catch=   145402.670080532     
+ Abd=   2392993.    
+ Catch=   1435630.66287215     
+ Abd=   8569150.    
+ Catch=   97799.5387770692     
+ Abd=   1594555.    
+ Catch=   38914.7869893001     
+ Abd=   406083.0    
+ Catch=   8434.78343239150     
+ Abd=   118749.7    
+ Catch=   173590.170642013     
+ Abd=   2836658.    
+ Catch=   63871.1717521103     
+ Abd=   1043715.    
+ Catch=   19596.4379624556     
+ Abd=   195754.7    
+ Catch=   213460.134128122     
+ Abd=   716275.5    
+ Catch=   168359.653729589     
+ Abd=   884541.8    
+ Catch=   1220762.36720168     
+ Abd=   5704306.    
+ Catch=   1605.34752467567     
+ Abd=   24783.38    
+ Catch=   71539.2588462810     
+ Abd=   1166812.    
+ Catch=   206537.800031320     
+ Abd=   3379336.    
+ Catch=   3826.47026042094     
+ Abd=   62881.69    
+ Catch=   2867.03721784088     
+ Abd=   46585.23    
+ Catch=   644789.682318475     
+ Abd=   2335232.    
+ Catch=   221019.250231955     
+ Abd=   734291.1    
+ Catch=   125483.150687669     
+ Abd=   212646.6    
+ Catch=   3961841.50991624     
+ Abd=   2862509.    
+ Catch=   10321.7966258191     
+ Abd=   5975.831    
+ Catch=   2366707.76980074     
+ Abd=   4995894.    
+ Time step =         1966
+ Catch=   368741.791602537     
+ Abd=   427653.5    
+ Catch=   245460.443330870     
+ Abd=   4046510.    
+ Catch=   53783.5866179571     
+ Abd=   207839.1    
+ Catch=   6136.32881085258     
+ Abd=   30831.29    
+ Catch=   11326473.7808048     
+ Abd=  2.9664626E+07
+ Catch=   2187344.39946765     
+ Abd=  1.1118620E+07
+ Catch=   4798461.50629670     
+ Abd=  3.0869940E+07
+ Catch=   29307.4114598397     
+ Abd=   147235.9    
+ Catch=   7325888.77663087     
+ Abd=  2.7119828E+07
+ Catch=   4001002.01356236     
+ Abd=  6.5949960E+07
+ Catch=   47260.8234230251     
+ Abd=   234935.8    
+ Catch=   54797.7788276758     
+ Abd=   182534.4    
+ Catch=   192637.623877260     
+ Abd=   1329363.    
+ Catch=   869736.272343616     
+ Abd=  1.0567287E+07
+ Catch=   343714.667149116     
+ Abd=   5643756.    
+ Catch=   707.116573850101     
+ Abd=   10585.85    
+ Catch=   57959.1581155266     
+ Abd=   136413.8    
+ Catch=   1042.61127936176     
+ Abd=   9816.801    
+ Catch=   411.739134004330     
+ Abd=   6689.730    
+ Catch=   330676.219485504     
+ Abd=   1496940.    
+ Catch=   141436.239020294     
+ Abd=   2330617.    
+ Catch=   1411067.98745756     
+ Abd=   8432581.    
+ Catch=   93413.6730962110     
+ Abd=   1526098.    
+ Catch=   37919.9184542049     
+ Abd=   396244.8    
+ Catch=   8078.75439341252     
+ Abd=   113951.5    
+ Catch=   166538.863243115     
+ Abd=   2726480.    
+ Catch=   61269.9928006335     
+ Abd=   1002985.    
+ Catch=   19077.3460494136     
+ Abd=   190844.2    
+ Catch=   212798.854081232     
+ Abd=   714308.3    
+ Catch=   166455.532868497     
+ Abd=   875382.6    
+ Catch=   1209238.79101803     
+ Abd=   5655618.    
+ Catch=   1544.11674089380     
+ Abd=   23877.81    
+ Catch=   68377.6609135955     
+ Abd=   1117466.    
+ Catch=   198633.710162870     
+ Abd=   3255656.    
+ Catch=   3710.50877489900     
+ Abd=   61059.48    
+ Catch=   2772.69823216105     
+ Abd=   45120.15    
+ Catch=   642886.009082007     
+ Abd=   2329264.    
+ Catch=   220251.115207399     
+ Abd=   732058.9    
+ Catch=   125476.794835438     
+ Abd=   212638.8    
+ Catch=   3961841.23648868     
+ Abd=   2862509.    
+ Catch=   10321.7977658824     
+ Abd=   5975.832    
+ Catch=   2366091.71166305     
+ Abd=   4994875.    
+ Time step =         1967
+ Catch=   368474.553780490     
+ Abd=   427368.3    
+ Catch=   239533.900260651     
+ Abd=   3952909.    
+ Catch=   53451.0298633355     
+ Abd=   206643.9    
+ Catch=   6082.00515654482     
+ Abd=   30582.60    
+ Catch=   11320044.5259170     
+ Abd=  2.9650090E+07
+ Catch=   2166369.28792628     
+ Abd=  1.1020962E+07
+ Catch=   4722021.07815076     
+ Abd=  3.0413048E+07
+ Catch=   29043.2260529523     
+ Abd=   146024.5    
+ Catch=   7307388.16405027     
+ Abd=  2.7060004E+07
+ Catch=   3903528.79264099     
+ Abd=  6.4412296E+07
+ Catch=   46956.2762761677     
+ Abd=   233555.9    
+ Catch=   54266.1380891490     
+ Abd=   180851.9    
+ Catch=   190396.588411784     
+ Abd=   1315040.    
+ Catch=   851702.094363806     
+ Abd=  1.0359300E+07
+ Catch=   332816.759624374     
+ Abd=   5471738.    
+ Catch=   676.279132599716     
+ Abd=   10141.96    
+ Catch=   57866.5801225078     
+ Abd=   136219.6    
+ Catch=   991.734369183471     
+ Abd=   9356.491    
+ Catch=   390.525056619843     
+ Abd=   6355.664    
+ Catch=   328258.016278903     
+ Abd=   1486995.    
+ Catch=   137906.006848210     
+ Abd=   2274939.    
+ Catch=   1390048.30030697     
+ Abd=   8315319.    
+ Catch=   89564.2349146793     
+ Abd=   1465773.    
+ Catch=   37047.2505093734     
+ Abd=   387588.8    
+ Catch=   7765.40842961233     
+ Abd=   109710.0    
+ Catch=   160336.967717674     
+ Abd=   2629176.    
+ Catch=   58972.5709067936     
+ Abd=   966852.9    
+ Catch=   18622.9198163206     
+ Abd=   186530.4    
+ Catch=   212279.076534091     
+ Abd=   712774.7    
+ Catch=   164871.233048954     
+ Abd=   867740.8    
+ Catch=   1199861.01736565     
+ Abd=   5615882.    
+ Catch=   1489.91123134843     
+ Abd=   23072.80    
+ Catch=   65603.5241164413     
+ Abd=   1073996.    
+ Catch=   191660.415820951     
+ Abd=   3146045.    
+ Catch=   3607.42478911614     
+ Abd=   59434.25    
+ Catch=   2689.12256742816     
+ Abd=   43817.52    
+ Catch=   641448.924089900     
+ Abd=   2324730.    
+ Catch=   219660.653470416     
+ Abd=   730336.4    
+ Catch=   125473.310902944     
+ Abd=   212634.5    
+ Catch=   3961842.74983924     
+ Abd=   2862509.    
+ Catch=   10321.7973824496     
+ Abd=   5975.831    
+ Catch=   2365704.93306979     
+ Abd=   4994232.    
+ Time step =         1968
+ Catch=   368240.677655478     
+ Abd=   427108.5    
+ Catch=   234217.837868762     
+ Abd=   3868798.    
+ Catch=   53164.3208593120     
+ Abd=   205610.2    
+ Catch=   6037.13228374722     
+ Abd=   30376.79    
+ Catch=   11315232.4543739     
+ Abd=  2.9639812E+07
+ Catch=   2148878.88496126     
+ Abd=  1.0939354E+07
+ Catch=   4656885.70544028     
+ Abd=  3.0022660E+07
+ Catch=   28824.2752195392     
+ Abd=   145018.2    
+ Catch=   7293212.06898922     
+ Abd=  2.7014240E+07
+ Catch=   3816289.90169394     
+ Abd=  6.3033248E+07
+ Catch=   46702.9275179529     
+ Abd=   232400.0    
+ Catch=   53791.3140520395     
+ Abd=   179352.8    
+ Catch=   188490.562608766     
+ Abd=   1302836.    
+ Catch=   835754.031766895     
+ Abd=  1.0174905E+07
+ Catch=   323045.386132636     
+ Abd=   5317041.    
+ Catch=   648.927731954792     
+ Abd=   9746.261    
+ Catch=   57793.3749942040     
+ Abd=   136068.0    
+ Catch=   946.876189227067     
+ Abd=   8947.336    
+ Catch=   371.614535690990     
+ Abd=   6057.795    
+ Catch=   326268.940204004     
+ Abd=   1478791.    
+ Catch=   134746.722048150     
+ Abd=   2224992.    
+ Catch=   1371949.24243639     
+ Abd=   8214058.    
+ Catch=   86160.3352309310     
+ Abd=   1412236.    
+ Catch=   36277.2244366183     
+ Abd=   379929.6    
+ Catch=   7487.38094895894     
+ Abd=   105934.1    
+ Catch=   154840.694548829     
+ Abd=   2542650.    
+ Catch=   56926.6836460605     
+ Abd=   934557.0    
+ Catch=   18222.5648385768     
+ Abd=   182719.8    
+ Catch=   211869.521695994     
+ Abd=   711530.4    
+ Catch=   163546.346895795     
+ Abd=   861332.8    
+ Catch=   1192191.40168170     
+ Abd=   5583319.    
+ Catch=   1441.58092899345     
+ Abd=   22352.93    
+ Catch=   63151.2703607508     
+ Abd=   1035441.    
+ Catch=   185456.445966792     
+ Abd=   3048158.    
+ Catch=   3515.20179259517     
+ Abd=   57974.72    
+ Catch=   2614.56833725906     
+ Abd=   42650.63    
+ Catch=   640361.942143576     
+ Abd=   2321338.    
+ Catch=   219204.290958858     
+ Abd=   729002.8    
+ Catch=   125471.387838609     
+ Abd=   212632.1    
+ Catch=   3961842.91143407     
+ Abd=   2862511.    
+ Catch=   10321.7972868787     
+ Abd=   5975.831    
+ Catch=   2365461.97404830     
+ Abd=   4993832.    
+ Time step =         1969
+ Catch=   368033.561968107     
+ Abd=   426890.2    
+ Catch=   229430.534184883     
+ Abd=   3792882.    
+ Catch=   52914.7149246500     
+ Abd=   204702.1    
+ Catch=   5999.94308244330     
+ Abd=   30205.95    
+ Catch=   11312152.8642539     
+ Abd=  2.9633264E+07
+ Catch=   2134230.20525158     
+ Abd=  1.0870839E+07
+ Catch=   4601091.99898452     
+ Abd=  2.9687400E+07
+ Catch=   28642.0290318717     
+ Abd=   144179.0    
+ Catch=   7282426.04582619     
+ Abd=  2.6979676E+07
+ Catch=   3737863.91364292     
+ Abd=  6.1790548E+07
+ Catch=   46490.4664058119     
+ Abd=   231430.8    
+ Catch=   53366.8542258112     
+ Abd=   178003.8    
+ Catch=   186864.944534330     
+ Abd=   1292407.    
+ Catch=   821584.322906686     
+ Abd=  1.0010763E+07
+ Catch=   314235.036195012     
+ Abd=   5177197.    
+ Catch=   624.467590846502     
+ Abd=   9391.455    
+ Catch=   57736.0696767800     
+ Abd=   135948.0    
+ Catch=   906.642784937387     
+ Abd=   8578.513    
+ Catch=   354.720276400391     
+ Abd=   5790.777    
+ Catch=   324624.122564020     
+ Abd=   1471995.    
+ Catch=   131906.395075600     
+ Abd=   2179979.    
+ Catch=   1356284.98799419     
+ Abd=   8126218.    
+ Catch=   83129.4626928036     
+ Abd=   1364412.    
+ Catch=   35594.1953237363     
+ Abd=   373118.1    
+ Catch=   7239.23472018520     
+ Abd=   102554.4    
+ Catch=   149937.988344126     
+ Abd=   2465229.    
+ Catch=   55091.7611443700     
+ Abd=   905491.0    
+ Catch=   17868.0390109879     
+ Abd=   179336.3    
+ Catch=   211536.226219155     
+ Abd=   710522.8    
+ Catch=   162432.984098119     
+ Abd=   855937.4    
+ Catch=   1185894.07072358     
+ Abd=   5556516.    
+ Catch=   1398.20359179652     
+ Abd=   21704.32    
+ Catch=   60969.4429479536     
+ Abd=   1001024.    
+ Catch=   179896.624072526     
+ Abd=   2960124.    
+ Catch=   3432.14569881345     
+ Abd=   56657.46    
+ Catch=   2547.58406918746     
+ Abd=   41597.99    
+ Catch=   639547.292077289     
+ Abd=   2318750.    
+ Catch=   218849.740894081     
+ Abd=   727963.7    
+ Catch=   125470.361078197     
+ Abd=   212630.9    
+ Catch=   3961842.11696630     
+ Abd=   2862509.    
+ Catch=   10321.7972532108     
+ Abd=   5975.832    
+ Catch=   2365310.38948137     
+ Abd=   4993581.    
+ Time step =         1970
+ Catch=   367860.893622162     
+ Abd=   426704.1    
+ Catch=   225103.129636871     
+ Abd=   3724138.    
+ Catch=   52693.2550740675     
+ Abd=   203891.7    
+ Catch=   5969.02799855766     
+ Abd=   30063.75    
+ Catch=   11309896.1711584     
+ Abd=  2.9627956E+07
+ Catch=   2121909.48149665     
+ Abd=  1.0813113E+07
+ Catch=   4553081.25326883     
+ Abd=  2.9398348E+07
+ Catch=   28489.7882637427     
+ Abd=   143476.8    
+ Catch=   7274384.04493061     
+ Abd=  2.6954158E+07
+ Catch=   3667064.38454757     
+ Abd=  6.0666432E+07
+ Catch=   46312.1977038836     
+ Abd=   230615.1    
+ Catch=   52985.5156308715     
+ Abd=   176798.1    
+ Catch=   185473.297796639     
+ Abd=   1283463.    
+ Catch=   808952.767337351     
+ Abd=   9864152.    
+ Catch=   306251.212846312     
+ Abd=   5050163.    
+ Catch=   602.440530532450     
+ Abd=   9070.411    
+ Catch=   57690.5255859343     
+ Abd=   135852.2    
+ Catch=   870.368518117001     
+ Abd=   8245.444    
+ Catch=   339.543281062588     
+ Abd=   5550.044    
+ Catch=   323258.723224928     
+ Abd=   1466341.    
+ Catch=   129341.526709051     
+ Abd=   2139255.    
+ Catch=   1342660.82135768     
+ Abd=   8049627.    
+ Catch=   80413.9099278992     
+ Abd=   1321430.    
+ Catch=   34985.2788664629     
+ Abd=   367031.7    
+ Catch=   7016.45721237302     
+ Abd=   99511.39    
+ Catch=   145540.033279263     
+ Abd=   2395601.    
+ Catch=   53435.9322557447     
+ Abd=   879196.2    
+ Catch=   17552.5524910582     
+ Abd=   176318.4    
+ Catch=   211266.476757833     
+ Abd=   709703.2    
+ Catch=   161493.632629538     
+ Abd=   851376.9    
+ Catch=   1180701.22290300     
+ Abd=   5534382.    
+ Catch=   1358.99851194991     
+ Abd=   21116.50    
+ Catch=   59016.3967309436     
+ Abd=   970129.9    
+ Catch=   174880.575938053     
+ Abd=   2880441.    
+ Catch=   3357.00517573481     
+ Abd=   55462.91    
+ Catch=   2487.00358084657     
+ Abd=   40645.45    
+ Catch=   638927.772055761     
+ Abd=   2316818.    
+ Catch=   218573.081097757     
+ Abd=   727151.2    
+ Catch=   125469.821323812     
+ Abd=   212630.2    
+ Catch=   3961842.48273966     
+ Abd=   2862510.    
+ Catch=   10321.7979479099     
+ Abd=   5975.832    
+ Catch=   2365214.69003784     
+ Abd=   4993419.    
+ Time step =         1951
+ Catch=   367709.606324339     
+ Abd=   426541.4    
+ Catch=   221177.767443620     
+ Abd=   3661689.    
+ Catch=   52496.4035566832     
+ Abd=   203174.9    
+ Catch=   5943.26739328734     
+ Abd=   29945.10    
+ Catch=   11308114.0717231     
+ Abd=  2.9624328E+07
+ Catch=   2111514.16130358     
+ Abd=  1.0764322E+07
+ Catch=   4511597.94003909     
+ Abd=  2.9148040E+07
+ Catch=   28362.2065919792     
+ Abd=   142887.3    
+ Catch=   7268334.70489863     
+ Abd=  2.6934572E+07
+ Catch=   3602937.14794752     
+ Abd=  5.9647532E+07
+ Catch=   46161.1128805007     
+ Abd=   229920.1    
+ Catch=   52643.3169030014     
+ Abd=   175710.0    
+ Catch=   184277.012926550     
+ Abd=   1275764.    
+ Catch=   797654.628806304     
+ Abd=   9732822.    
+ Catch=   298982.556992871     
+ Abd=   4934254.    
+ Catch=   582.433239849350     
+ Abd=   8777.536    
+ Catch=   57654.2643996757     
+ Abd=   135776.3    
+ Catch=   837.392634472248     
+ Abd=   7939.067    
+ Catch=   325.797601579334     
+ Abd=   5330.913    
+ Catch=   322120.122004648     
+ Abd=   1461618.    
+ Catch=   127016.204693221     
+ Abd=   2102262.    
+ Catch=   1330759.51481512     
+ Abd=   7982588.    
+ Catch=   77966.6317279064     
+ Abd=   1282591.    
+ Catch=   34440.1638872998     
+ Abd=   361571.9    
+ Catch=   6815.39452566878     
+ Abd=   96758.16    
+ Catch=   141575.081502871     
+ Abd=   2332678.    
+ Catch=   51934.4176988261     
+ Abd=   855289.4    
+ Catch=   17270.6056647810     
+ Abd=   173617.1    
+ Catch=   211036.464541101     
+ Abd=   708980.5    
+ Catch=   160698.445907302     
+ Abd=   847508.9    
+ Catch=   1176409.35711458     
+ Abd=   5516080.    
+ Catch=   1323.43359840148     
+ Abd=   20582.87    
+ Catch=   57258.7964662223     
+ Abd=   942260.6    
+ Catch=   170327.971734850     
+ Abd=   2807928.    
+ Catch=   3288.71863917661     
+ Abd=   54374.03    
+ Catch=   2432.06074986127     
+ Abd=   39779.59    
+ Catch=   638459.587631141     
+ Abd=   2315327.    
+ Catch=   218356.255140715     
+ Abd=   726512.8    
+ Catch=   125469.466212322     
+ Abd=   212629.7    
+ Catch=   3961841.38177855     
+ Abd=   2862510.    
+ Catch=   10321.7974471910     
+ Abd=   5975.832    
+ Catch=   2365153.30912252     
+ Abd=   4993317.    
+ Time step =         1952
+ Catch=   367581.870645324     
+ Abd=   426403.2    
+ Catch=   217605.755898836     
+ Abd=   3604766.    
+ Catch=   52321.9119265710     
+ Abd=   202534.3    
+ Catch=   5921.75055172182     
+ Abd=   29845.91    
+ Catch=   11307103.7630163     
+ Abd=  2.9622440E+07
+ Catch=   2102712.64205139     
+ Abd=  1.0722958E+07
+ Catch=   4475615.93968175     
+ Abd=  2.8930576E+07
+ Catch=   28254.9516242812     
+ Abd=   142391.1    
+ Catch=   7263668.89211513     
+ Abd=  2.6918992E+07
+ Catch=   3544709.20720054     
+ Abd=  5.8720424E+07
+ Catch=   46032.4939341488     
+ Abd=   229328.7    
+ Catch=   52334.4346592061     
+ Abd=   174725.9    
+ Catch=   183246.045950634     
+ Abd=   1269114.    
+ Catch=   787522.427233752     
+ Abd=   9614951.    
+ Catch=   292337.657588745     
+ Abd=   4828085.    
+ Catch=   564.087116038391     
+ Abd=   8507.801    
+ Catch=   57625.3624505375     
+ Abd=   135715.4    
+ Catch=   806.839053979040     
+ Abd=   7656.226    
+ Catch=   313.194595066880     
+ Abd=   5128.833    
+ Catch=   321167.954001573     
+ Abd=   1457660.    
+ Catch=   124901.314433288     
+ Abd=   2068568.    
+ Catch=   1320322.41125940     
+ Abd=   7923686.    
+ Catch=   75750.1363050322     
+ Abd=   1247330.    
+ Catch=   33950.3205211322     
+ Abd=   356657.3    
+ Catch=   6632.99066252049     
+ Abd=   94253.58    
+ Catch=   137984.278672784     
+ Abd=   2275571.    
+ Catch=   50565.8138946250     
+ Abd=   833448.3    
+ Catch=   17017.7866925486     
+ Abd=   171190.5    
+ Catch=   210841.572960236     
+ Abd=   708383.0    
+ Catch=   160022.489816159     
+ Abd=   844215.5    
+ Catch=   1172855.05563900     
+ Abd=   5500889.    
+ Catch=   1291.09216975178     
+ Abd=   20096.32    
+ Catch=   55669.6876617712     
+ Abd=   917007.7    
+ Catch=   166174.097620694     
+ Abd=   2741596.    
+ Catch=   3226.35168972262     
+ Abd=   53378.55    
+ Catch=   2382.01415166678     
+ Abd=   38989.29    
+ Catch=   638102.518815318     
+ Abd=   2314224.    
+ Catch=   218185.586167155     
+ Abd=   726008.9    
+ Catch=   125469.213026328     
+ Abd=   212629.4    
+ Catch=   3961843.11995278     
+ Abd=   2862510.    
+ Catch=   10321.7998677515     
+ Abd=   5975.833    
+ Catch=   2365114.57005760     
+ Abd=   4993254.    
+ Time step =         1953
+ Catch=   367466.437948268     
+ Abd=   426276.0    
+ Catch=   214347.982204630     
+ Abd=   3552806.    
+ Catch=   52164.8964245513     
+ Abd=   201957.5    
+ Catch=   5903.74828769155     
+ Abd=   29762.85    
+ Catch=   11306594.6804365     
+ Abd=  2.9621608E+07
+ Catch=   2095240.00823134     
+ Abd=  1.0687784E+07
+ Catch=   4444302.04756502     
+ Abd=  2.8740982E+07
+ Catch=   28164.5581647068     
+ Abd=   141972.3    
+ Catch=   7259921.41981085     
+ Abd=  2.6907240E+07
+ Catch=   3491659.52575957     
+ Abd=  5.7874596E+07
+ Catch=   45922.6326233595     
+ Abd=   228821.5    
+ Catch=   52053.8438943767     
+ Abd=   173829.5    
+ Catch=   182356.114647505     
+ Abd=   1263375.    
+ Catch=   778406.744056624     
+ Abd=   9508708.    
+ Catch=   286240.196820302     
+ Abd=   4730489.    
+ Catch=   547.162427815678     
+ Abd=   8258.726    
+ Catch=   57601.8149487571     
+ Abd=   135664.4    
+ Catch=   778.738944057496     
+ Abd=   7395.967    
+ Catch=   301.527760084670     
+ Abd=   4940.987    
+ Catch=   320368.198955621     
+ Abd=   1454330.    
+ Catch=   122971.952427560     
+ Abd=   2037783.    
+ Catch=   1311137.76892066     
+ Abd=   7871766.    
+ Catch=   73733.2978279825     
+ Abd=   1215170.    
+ Catch=   33508.5808704410     
+ Abd=   352216.9    
+ Catch=   6466.65245411247     
+ Abd=   91964.11    
+ Catch=   134719.070021027     
+ Abd=   2223536.    
+ Catch=   49313.1010994798     
+ Abd=   813422.1    
+ Catch=   16790.3224440186     
+ Abd=   169003.8    
+ Catch=   210678.656302473     
+ Abd=   707884.7    
+ Catch=   159446.509559786     
+ Abd=   841405.5    
+ Catch=   1169898.24575122     
+ Abd=   5488222.    
+ Catch=   1261.53205513813     
+ Abd=   19651.17    
+ Catch=   54226.7101655718     
+ Abd=   894024.1    
+ Catch=   162365.853136273     
+ Abd=   2680646.    
+ Catch=   3169.24034295449     
+ Abd=   52465.45    
+ Catch=   2336.25296683573     
+ Abd=   38265.36    
+ Catch=   637833.033640356     
+ Abd=   2313334.    
+ Catch=   218050.399364423     
+ Abd=   725607.9    
+ Catch=   125469.157549344     
+ Abd=   212629.3    
+ Catch=   3961842.91063200     
+ Abd=   2862510.    
+ Catch=   10321.7987176183     
+ Abd=   5975.832    
+ Catch=   2365091.33177309     
+ Abd=   4993215.    
+ Time step =         1954
+ Catch=   367365.297792069     
+ Abd=   426165.7    
+ Catch=   211369.335490633     
+ Abd=   3505234.    
+ Catch=   52023.7615517635     
+ Abd=   201439.8    
+ Catch=   5888.65970610753     
+ Abd=   29693.16    
+ Catch=   11306426.2769408     
+ Abd=  2.9621320E+07
+ Catch=   2088875.59472923     
+ Abd=  1.0657787E+07
+ Catch=   4416971.68027862     
+ Abd=  2.8575320E+07
+ Catch=   28088.2062636714     
+ Abd=   141618.2    
+ Catch=   7257237.70598633     
+ Abd=  2.6898340E+07
+ Catch=   3443193.55636917     
+ Abd=  5.7100816E+07
+ Catch=   45827.7591898499     
+ Abd=   228379.6    
+ Catch=   51796.8217962488     
+ Abd=   173003.1    
+ Catch=   181584.328154342     
+ Abd=   1258379.    
+ Catch=   770186.421611179     
+ Abd=   9412769.    
+ Catch=   280626.084056448     
+ Abd=   4640489.    
+ Catch=   531.522352181176     
+ Abd=   8028.152    
+ Catch=   57581.6529603632     
+ Abd=   135621.2    
+ Catch=   753.122605416356     
+ Abd=   7160.862    
+ Catch=   290.684136219190     
+ Abd=   4766.933    
+ Catch=   319695.390764070     
+ Abd=   1451528.    
+ Catch=   121206.625654561     
+ Abd=   2009579.    
+ Catch=   1303028.59261135     
+ Abd=   7825859.    
+ Catch=   71889.7129531154     
+ Abd=   1185713.    
+ Catch=   33108.8604268411     
+ Abd=   348193.9    
+ Catch=   6314.29338806086     
+ Abd=   89862.54    
+ Catch=   131738.951762320     
+ Abd=   2175965.    
+ Catch=   48162.3967045373     
+ Abd=   794986.4    
+ Catch=   16585.0398380129     
+ Abd=   167027.5    
+ Catch=   210540.455646417     
+ Abd=   707442.5    
+ Catch=   158954.435379318     
+ Abd=   839000.0    
+ Catch=   1167433.63240843     
+ Abd=   5477666.    
+ Catch=   1234.44388488429     
+ Abd=   19241.89    
+ Catch=   52910.9937133005     
+ Abd=   873028.6    
+ Catch=   158859.804954442     
+ Abd=   2624420.    
+ Catch=   3116.77455972426     
+ Abd=   51625.30    
+ Catch=   2294.26646097577     
+ Abd=   37599.05    
+ Catch=   637619.375698930     
+ Abd=   2312691.    
+ Catch=   217942.672148354     
+ Abd=   725287.4    
+ Catch=   125469.132306195     
+ Abd=   212629.3    
+ Catch=   3961842.40675767     
+ Abd=   2862509.    
+ Catch=   10321.7970632297     
+ Abd=   5975.832    
+ Catch=   2365076.50032314     
+ Abd=   4993192.    
+ Time step =         1955
+ Catch=   367270.174379727     
+ Abd=   426058.0    
+ Catch=   208639.200375982     
+ Abd=   3461576.    
+ Catch=   51897.1039063526     
+ Abd=   200973.1    
+ Catch=   5875.99048499564     
+ Abd=   29634.61    
+ Catch=   11306310.3736555     
+ Abd=  2.9620988E+07
+ Catch=   2083443.87849141     
+ Abd=  1.0632148E+07
+ Catch=   4393054.75521567     
+ Abd=  2.8430134E+07
+ Catch=   28023.5521386378     
+ Abd=   141318.1    
+ Catch=   7254978.20727939     
+ Abd=  2.6890728E+07
+ Catch=   3398821.94480436     
+ Abd=  5.6391416E+07
+ Catch=   45744.9807437345     
+ Abd=   227994.1    
+ Catch=   51559.6767337415     
+ Abd=   172241.0    
+ Catch=   180912.999861277     
+ Abd=   1254043.    
+ Catch=   762753.371263240     
+ Abd=   9325990.    
+ Catch=   275441.506470371     
+ Abd=   4557252.    
+ Catch=   517.031159643345     
+ Abd=   7814.461    
+ Catch=   57565.4947265059     
+ Abd=   135587.8    
+ Catch=   729.914725260652     
+ Abd=   6946.718    
+ Catch=   280.648936738787     
+ Abd=   4605.529    
+ Catch=   319128.336253039     
+ Abd=   1449160.    
+ Catch=   119587.612741078     
+ Abd=   1983679.    
+ Catch=   1295847.96743435     
+ Abd=   7785134.    
+ Catch=   70197.8829317756     
+ Abd=   1158629.    
+ Catch=   32746.1219133568     
+ Abd=   344536.3    
+ Catch=   6174.14392924221     
+ Abd=   87925.74    
+ Catch=   129009.937032730     
+ Abd=   2132333.    
+ Catch=   47100.9434695290     
+ Abd=   777947.9    
+ Catch=   16399.2765672304     
+ Abd=   165236.8    
+ Catch=   210414.864342096     
+ Abd=   707043.5    
+ Catch=   158532.428846632     
+ Abd=   836934.8    
+ Catch=   1165376.45590493     
+ Abd=   5468846.    
+ Catch=   1209.47214876491     
+ Abd=   18863.85    
+ Catch=   51706.9882969251     
+ Abd=   853782.6    
+ Catch=   155619.148229506     
+ Abd=   2572360.    
+ Catch=   3068.42881370792     
+ Abd=   50849.02    
+ Catch=   2255.56045960738     
+ Abd=   36983.79    
+ Catch=   637454.789804964     
+ Abd=   2312132.    
+ Catch=   217856.478369504     
+ Abd=   725030.8    
+ Catch=   125469.138264137     
+ Abd=   212629.3    
+ Catch=   3961843.32048618     
+ Abd=   2862511.    
+ Catch=   10321.7995663954     
+ Abd=   5975.832    
+ Catch=   2365066.99882017     
+ Abd=   4993174.    
+ Time step =         1956
+ Catch=   367187.349685729     
+ Abd=   425969.3    
+ Catch=   206130.254087136     
+ Abd=   3421408.    
+ Catch=   51782.2287040275     
+ Abd=   200548.2    
+ Catch=   5865.34172786700     
+ Abd=   29585.37    
+ Catch=   11306214.2442014     
+ Abd=  2.9620832E+07
+ Catch=   2078795.59811759     
+ Abd=  1.0610180E+07
+ Catch=   4372066.55140623     
+ Abd=  2.8302544E+07
+ Catch=   27968.6917060152     
+ Abd=   141063.0    
+ Catch=   7253168.86619702     
+ Abd=  2.6884718E+07
+ Catch=   3358080.61685947     
+ Abd=  5.5739688E+07
+ Catch=   45672.0603398316     
+ Abd=   227650.4    
+ Catch=   51340.7505758553     
+ Abd=   171534.7    
+ Catch=   180331.765697519     
+ Abd=   1250271.    
+ Catch=   756029.867552592     
+ Abd=   9247368.    
+ Catch=   270639.815051364     
+ Abd=   4480056.    
+ Catch=   503.552013665479     
+ Abd=   7614.984    
+ Catch=   57552.9246465045     
+ Abd=   135561.7    
+ Catch=   708.600118822563     
+ Abd=   6748.563    
+ Catch=   271.308133772180     
+ Abd=   4454.551    
+ Catch=   318648.203783524     
+ Abd=   1447156.    
+ Catch=   118099.345731969     
+ Abd=   1959847.    
+ Catch=   1289469.92306757     
+ Abd=   7748924.    
+ Catch=   68639.7978549457     
+ Abd=   1133644.    
+ Catch=   32415.9618528094     
+ Abd=   341203.9    
+ Catch=   6044.75602936986     
+ Abd=   86134.30    
+ Catch=   126503.380594740     
+ Abd=   2092202.    
+ Catch=   46118.4591368415     
+ Abd=   762156.2    
+ Catch=   16230.7382635803     
+ Abd=   163610.0    
+ Catch=   210298.494989856     
+ Abd=   706667.9    
+ Catch=   158169.785528244     
+ Abd=   835156.5    
+ Catch=   1163654.91298515     
+ Abd=   5461456.    
+ Catch=   1186.36312578334     
+ Abd=   18513.27    
+ Catch=   50601.5412768729     
+ Abd=   836083.5    
+ Catch=   152613.720346003     
+ Abd=   2523999.    
+ Catch=   3023.69994272857     
+ Abd=   50130.76    
+ Catch=   2219.77359181225     
+ Abd=   36415.08    
+ Catch=   637319.884396875     
+ Abd=   2311731.    
+ Catch=   217787.257237959     
+ Abd=   724824.5    
+ Catch=   125469.127811436     
+ Abd=   212629.3    
+ Catch=   3961842.25366041     
+ Abd=   2862509.    
+ Catch=   10321.7979163372     
+ Abd=   5975.831    
+ Catch=   2365060.22995074     
+ Abd=   4993162.    
+ Time step =         1957
+ Catch=   367109.189353013     
+ Abd=   425877.3    
+ Catch=   203821.004619447     
+ Abd=   3384413.    
+ Catch=   51677.5496268341     
+ Abd=   200159.1    
+ Catch=   5856.37988501119     
+ Abd=   29543.90    
+ Catch=   11306151.4270213     
+ Abd=  2.9620646E+07
+ Catch=   2074808.75078771     
+ Abd=  1.0591334E+07
+ Catch=   4353603.49304613     
+ Abd=  2.8190202E+07
+ Catch=   27922.0492000060     
+ Abd=   140846.0    
+ Catch=   7251733.01472338     
+ Abd=  2.6880124E+07
+ Catch=   3320648.32341868     
+ Abd=  5.5140716E+07
+ Catch=   45606.6977740102     
+ Abd=   227341.2    
+ Catch=   51137.7413506363     
+ Abd=   170882.4    
+ Catch=   179820.806257953     
+ Abd=   1246959.    
+ Catch=   749932.143185051     
+ Abd=   9176070.    
+ Catch=   266180.841321256     
+ Abd=   4408276.    
+ Catch=   490.978378622351     
+ Abd=   7429.069    
+ Catch=   57543.1190791280     
+ Abd=   135541.5    
+ Catch=   688.953524848002     
+ Abd=   6566.636    
+ Catch=   262.553139031159     
+ Abd=   4313.410    
+ Catch=   318241.325445158     
+ Abd=   1445448.    
+ Catch=   116728.040391463     
+ Abd=   1937862.    
+ Catch=   1283791.72249974     
+ Abd=   7716634.    
+ Catch=   67199.9166629181     
+ Abd=   1110512.    
+ Catch=   32114.8211713139     
+ Abd=   338160.0    
+ Catch=   5924.90612266452     
+ Abd=   84472.45    
+ Catch=   124194.857357518     
+ Abd=   2055189.    
+ Catch=   45206.5962681369     
+ Abd=   747475.4    
+ Catch=   16077.4709267603     
+ Abd=   162128.1    
+ Catch=   210194.070917769     
+ Abd=   706338.4    
+ Catch=   157857.084303294     
+ Abd=   833623.0    
+ Catch=   1162211.03851007     
+ Abd=   5455248.    
+ Catch=   1164.89014600083     
+ Abd=   18187.16    
+ Catch=   49583.3545121263     
+ Abd=   819759.9    
+ Catch=   149817.553474179     
+ Abd=   2478930.    
+ Catch=   2982.25651896036     
+ Abd=   49464.31    
+ Catch=   2186.64935045664     
+ Abd=   35887.91    
+ Catch=   637236.530551184     
+ Abd=   2311487.    
+ Catch=   217731.482202951     
+ Abd=   724657.9    
+ Catch=   125469.120699662     
+ Abd=   212629.3    
+ Catch=   3961842.89512639     
+ Abd=   2862510.    
+ Catch=   10321.7980677486     
+ Abd=   5975.832    
+ Catch=   2365056.47538005     
+ Abd=   4993158.    
+ Time step =         1958
+ Catch=   367031.791117813     
+ Abd=   425792.9    
+ Catch=   201691.959827807     
+ Abd=   3350280.    
+ Catch=   51580.6315027915     
+ Abd=   199796.3    
+ Catch=   5848.82961762803     
+ Abd=   29508.95    
+ Catch=   11306101.4249906     
+ Abd=  2.9620602E+07
+ Catch=   2071385.07747494     
+ Abd=  1.0575110E+07
+ Catch=   4337329.09911275     
+ Abd=  2.8091060E+07
+ Catch=   27882.3013250071     
+ Abd=   140660.9    
+ Catch=   7250658.57555104     
+ Abd=  2.6876660E+07
+ Catch=   3286172.38265245     
+ Abd=  5.4587940E+07
+ Catch=   45548.0117159699     
+ Abd=   227063.7    
+ Catch=   50949.6615762551     
+ Abd=   170272.4    
+ Catch=   179373.309710607     
+ Abd=   1244053.    
+ Catch=   744390.019396398     
+ Abd=   9111160.    
+ Catch=   262030.094304295     
+ Abd=   4341384.    
+ Catch=   479.257996921135     
+ Abd=   7255.555    
+ Catch=   57535.3988808257     
+ Abd=   135525.0    
+ Catch=   670.821742748898     
+ Abd=   6397.765    
+ Catch=   254.376417647657     
+ Abd=   4181.289    
+ Catch=   317894.052035324     
+ Abd=   1443993.    
+ Catch=   115462.698478268     
+ Abd=   1917568.    
+ Catch=   1278722.70662306     
+ Abd=   7687788.    
+ Catch=   65864.7792776446     
+ Abd=   1089029.    
+ Catch=   31839.3363476428     
+ Abd=   335372.1    
+ Catch=   5813.54513998247     
+ Abd=   82926.19    
+ Catch=   122063.425069106     
+ Abd=   2020985.    
+ Catch=   44357.8796199441     
+ Abd=   733800.8    
+ Catch=   15937.6990937672     
+ Abd=   160775.2    
+ Catch=   210099.393875107     
+ Abd=   706019.0    
+ Catch=   157587.317531755     
+ Abd=   832298.5    
+ Catch=   1160997.86068118     
+ Abd=   5450029.    
+ Catch=   1144.91935237362     
+ Abd=   17883.59    
+ Catch=   48643.2561898748     
+ Abd=   804672.8    
+ Catch=   147208.204629146     
+ Abd=   2436825.    
+ Catch=   2943.75425218471     
+ Abd=   48844.42    
+ Catch=   2155.89994240965     
+ Abd=   35397.96    
+ Catch=   637172.824882074     
+ Abd=   2311266.    
+ Catch=   217686.506933359     
+ Abd=   724524.0    
+ Catch=   125469.101679208     
+ Abd=   212629.2    
+ Catch=   3961842.47395471     
+ Abd=   2862508.    
+ Catch=   10321.7999855538     
+ Abd=   5975.833    
+ Catch=   2365054.36059950     
+ Abd=   4993153.    
+ Time step =         1959
+ Catch=   366963.866106462     
+ Abd=   425718.5    
+ Catch=   199725.237425496     
+ Abd=   3318700.    
+ Catch=   51490.2180617663     
+ Abd=   199457.5    
+ Catch=   5842.46164786404     
+ Abd=   29479.46    
+ Catch=   11306104.8336706     
+ Abd=  2.9620616E+07
+ Catch=   2068433.70754739     
+ Abd=  1.0561116E+07
+ Catch=   4322953.13639650     
+ Abd=  2.8003410E+07
+ Catch=   27848.3677260588     
+ Abd=   140502.6    
+ Catch=   7249804.76284949     
+ Abd=  2.6873724E+07
+ Catch=   3254372.60811745     
+ Abd=  5.4078000E+07
+ Catch=   45494.9473430252     
+ Abd=   226811.9    
+ Catch=   50774.5364470308     
+ Abd=   169709.3    
+ Catch=   178984.653432075     
+ Abd=   1241528.    
+ Catch=   739355.293642644     
+ Abd=   9052182.    
+ Catch=   258157.741118413     
+ Abd=   4278911.    
+ Catch=   468.312856593715     
+ Abd=   7093.994    
+ Catch=   57528.6638526762     
+ Abd=   135508.7    
+ Catch=   653.940108231607     
+ Abd=   6240.356    
+ Catch=   246.717837412772     
+ Abd=   4057.709    
+ Catch=   317597.194690334     
+ Abd=   1442743.    
+ Catch=   114293.075531421     
+ Abd=   1898782.    
+ Catch=   1274190.80137743     
+ Abd=   7661977.    
+ Catch=   64622.9214864172     
+ Abd=   1069014.    
+ Catch=   31586.6682367075     
+ Abd=   332810.2    
+ Catch=   5709.75210180935     
+ Abd=   81482.12    
+ Catch=   120091.583562649     
+ Abd=   1989299.    
+ Catch=   43566.4897339297     
+ Abd=   721036.0    
+ Catch=   15809.9823919166     
+ Abd=   159538.7    
+ Catch=   210003.464657121     
+ Abd=   705707.0    
+ Catch=   157353.832845794     
+ Abd=   831151.4    
+ Catch=   1159975.79520638     
+ Abd=   5445630.    
+ Catch=   1126.29887660517     
+ Abd=   17600.47    
+ Catch=   47773.6303703896     
+ Abd=   790704.0    
+ Catch=   144767.509160444     
+ Abd=   2397384.    
+ Catch=   2907.90407209058     
+ Abd=   48265.59    
+ Catch=   2127.30038011548     
+ Abd=   34941.85    
+ Catch=   637117.069468406     
+ Abd=   2311090.    
+ Catch=   217650.008134745     
+ Abd=   724413.6    
+ Catch=   125469.089292704     
+ Abd=   212629.2    
+ Catch=   3961841.02462181     
+ Abd=   2862509.    
+ Catch=   10321.8009435747     
+ Abd=   5975.833    
+ Catch=   2365051.87882687     
+ Abd=   4993149.    
+ Time step =         1960
+ Catch=   366901.388214312     
+ Abd=   425643.6    
+ Catch=   197905.935202659     
+ Abd=   3289485.    
+ Catch=   51405.2731809335     
+ Abd=   199137.9    
+ Catch=   5837.08748991319     
+ Abd=   29454.55    
+ Catch=   11306096.0298913     
+ Abd=  2.9620586E+07
+ Catch=   2065886.53088903     
+ Abd=  1.0549031E+07
+ Catch=   4310228.08925306     
+ Abd=  2.7925718E+07
+ Catch=   27819.3478564432     
+ Abd=   140367.3    
+ Catch=   7249091.64321659     
+ Abd=  2.6871476E+07
+ Catch=   3224996.01469492     
+ Abd=  5.3606416E+07
+ Catch=   45446.6809484703     
+ Abd=   226580.4    
+ Catch=   50612.0724663976     
+ Abd=   169186.3    
+ Catch=   178640.676636602     
+ Abd=   1239281.    
+ Catch=   734767.275397709     
+ Abd=   8998418.    
+ Catch=   254537.543562439     
+ Abd=   4220443.    
+ Catch=   458.136009947686     
+ Abd=   6943.234    
+ Catch=   57521.7198868548     
+ Abd=   135492.5    
+ Catch=   638.108270723568     
+ Abd=   6091.159    
+ Catch=   239.558408160555     
+ Abd=   3942.197    
+ Catch=   317342.863195359     
+ Abd=   1441680.    
+ Catch=   113209.384295935     
+ Abd=   1881363.    
+ Catch=   1270130.42410789     
+ Abd=   7638818.    
+ Catch=   63464.3503897157     
+ Abd=   1050320.    
+ Catch=   31354.4212021854     
+ Abd=   330456.0    
+ Catch=   5612.71896977006     
+ Abd=   80131.17    
+ Catch=   118262.912200777     
+ Abd=   1959888.    
+ Catch=   42827.5693244161     
+ Abd=   709113.4    
+ Catch=   15693.1481188596     
+ Abd=   158406.5    
+ Catch=   209917.612391012     
+ Abd=   705434.5    
+ Catch=   157151.495213667     
+ Abd=   830155.6    
+ Catch=   1159114.65892459     
+ Abd=   5441911.    
+ Catch=   1108.92744122431     
+ Abd=   17335.88    
+ Catch=   46967.8024511507     
+ Abd=   777741.5    
+ Catch=   142478.516667176     
+ Abd=   2360355.    
+ Catch=   2874.39492823441     
+ Abd=   47725.00    
+ Catch=   2100.64518308034     
+ Abd=   34516.23    
+ Catch=   637076.794437152     
+ Abd=   2310961.    
+ Catch=   217620.013088342     
+ Abd=   724323.6    
+ Catch=   125469.122161643     
+ Abd=   212629.4    
+ Catch=   3961841.41196181     
+ Abd=   2862510.    
+ Catch=   10321.7994751364     
+ Abd=   5975.832    
+ Catch=   2365050.57966494     
+ Abd=   4993146.    
+ Time step =         1961
+ Catch=   366840.219272685     
+ Abd=   425581.4    
+ Catch=   196220.288009319     
+ Abd=   3262413.    
+ Catch=   51326.2287983907     
+ Abd=   198842.7    
+ Catch=   5832.54672117696     
+ Abd=   29433.51    
+ Catch=   11306090.1599909     
+ Abd=  2.9620596E+07
+ Catch=   2063683.48085579     
+ Abd=  1.0538574E+07
+ Catch=   4298944.85072403     
+ Abd=  2.7856818E+07
+ Catch=   27794.4772271584     
+ Abd=   140251.0    
+ Catch=   7248562.59708539     
+ Abd=  2.6869804E+07
+ Catch=   3197825.96595446     
+ Abd=  5.3170304E+07
+ Catch=   45402.3532654801     
+ Abd=   226370.4    
+ Catch=   50460.7539914161     
+ Abd=   168691.2    
+ Catch=   178337.079092581     
+ Abd=   1237314.    
+ Catch=   730579.039818000     
+ Abd=   8949282.    
+ Catch=   251146.193476394     
+ Abd=   4165625.    
+ Catch=   448.591073382093     
+ Abd=   6801.388    
+ Catch=   57514.8747291284     
+ Abd=   135477.4    
+ Catch=   622.971194399131     
+ Abd=   5947.908    
+ Catch=   232.875249322739     
+ Abd=   3834.304    
+ Catch=   317125.874526182     
+ Abd=   1440766.    
+ Catch=   112204.275007797     
+ Abd=   1865202.    
+ Catch=   1266483.85878949     
+ Abd=   7618004.    
+ Catch=   62380.7750743162     
+ Abd=   1032808.    
+ Catch=   31140.8534827504     
+ Abd=   328289.3    
+ Catch=   5521.95220924707     
+ Abd=   78867.55    
+ Catch=   116564.216561878     
+ Abd=   1932546.    
+ Catch=   42136.2061145597     
+ Abd=   697937.2    
+ Catch=   15586.0968355950     
+ Abd=   157368.4    
+ Catch=   209838.561223199     
+ Abd=   705177.4    
+ Catch=   156975.491677188     
+ Abd=   829285.1    
+ Catch=   1158387.06836413     
+ Abd=   5438778.    
+ Catch=   1092.67192863406     
+ Abd=   17088.26    
+ Catch=   46218.4919939091     
+ Abd=   765662.6    
+ Catch=   140327.307357319     
+ Abd=   2325522.    
+ Catch=   2843.07057887483     
+ Abd=   47219.14    
+ Catch=   2075.74652861781     
+ Abd=   34118.31    
+ Catch=   637043.239357074     
+ Abd=   2310858.    
+ Catch=   217595.605727004     
+ Abd=   724250.6    
+ Catch=   125469.131633777     
+ Abd=   212629.3    
+ Catch=   3961841.67045214     
+ Abd=   2862509.    
+ Catch=   10321.7970549177     
+ Abd=   5975.832    
+ Catch=   2365050.46736622     
+ Abd=   4993147.    
+ Time step =         1962
+ Catch=   366791.388464927     
+ Abd=   425528.3    
+ Catch=   194658.987036115     
+ Abd=   3237300.    
+ Catch=   51252.4039183838     
+ Abd=   198568.2    
+ Catch=   5828.71165274106     
+ Abd=   29415.73    
+ Catch=   11306093.7605810     
+ Abd=  2.9620600E+07
+ Catch=   2061774.95037133     
+ Abd=  1.0529486E+07
+ Catch=   4288926.04499497     
+ Abd=  2.7795544E+07
+ Catch=   27773.1059643777     
+ Abd=   140151.1    
+ Catch=   7248194.00132977     
+ Abd=  2.6868720E+07
+ Catch=   3172677.97837986     
+ Abd=  5.2766356E+07
+ Catch=   45361.7802479378     
+ Abd=   226173.9    
+ Catch=   50315.5197875112     
+ Abd=   168215.5    
+ Catch=   178071.785327484     
+ Abd=   1235572.    
+ Catch=   726757.804854848     
+ Abd=   8904440.    
+ Catch=   247964.057063233     
+ Abd=   4114143.    
+ Catch=   439.583192072924     
+ Abd=   6667.139    
+ Catch=   57509.1004893464     
+ Abd=   135464.7    
+ Catch=   608.483393577992     
+ Abd=   5810.959    
+ Catch=   226.616302220575     
+ Abd=   3733.277    
+ Catch=   316939.237872479     
+ Abd=   1439978.    
+ Catch=   111270.933662469     
+ Abd=   1850185.    
+ Catch=   1263202.98501052     
+ Abd=   7599243.    
+ Catch=   61364.3980533678     
+ Abd=   1016366.    
+ Catch=   30944.0228320060     
+ Abd=   326289.6    
+ Catch=   5437.04866032523     
+ Abd=   77685.74    
+ Catch=   114983.813480110     
+ Abd=   1907089.    
+ Catch=   41487.3352576618     
+ Abd=   687434.6    
+ Catch=   15487.8421789839     
+ Abd=   156413.7    
+ Catch=   209764.302011550     
+ Abd=   704931.2    
+ Catch=   156821.936645648     
+ Abd=   828528.4    
+ Catch=   1157772.25947075     
+ Abd=   5436122.    
+ Catch=   1077.43610211995     
+ Abd=   16855.42    
+ Catch=   45519.4447710940     
+ Abd=   754386.5    
+ Catch=   138302.553591917     
+ Abd=   2292718.    
+ Catch=   2813.73091149507     
+ Abd=   46744.94    
+ Catch=   2052.45130562828     
+ Abd=   33745.78    
+ Catch=   637019.693865939     
+ Abd=   2310775.    
+ Catch=   217575.588949524     
+ Abd=   724190.0    
+ Catch=   125469.097952072     
+ Abd=   212629.2    
+ Catch=   3961840.91878338     
+ Abd=   2862509.    
+ Catch=   10321.7955768281     
+ Abd=   5975.831    
+ Catch=   2365050.07241537     
+ Abd=   4993145.    
+ Time step =         1963
+ Catch=   366745.050618713     
+ Abd=   425472.9    
+ Catch=   193208.233555269     
+ Abd=   3213959.    
+ Catch=   51183.4491381709     
+ Abd=   198304.5    
+ Catch=   5825.46660442493     
+ Abd=   29400.67    
+ Catch=   11306095.7278914     
+ Abd=  2.9620608E+07
+ Catch=   2060117.21566478     
+ Abd=  1.0521608E+07
+ Catch=   4280009.69949969     
+ Abd=  2.7740986E+07
+ Catch=   27754.7482790228     
+ Abd=   140065.2    
+ Catch=   7247934.68888121     
+ Abd=  2.6867796E+07
+ Catch=   3149352.29284714     
+ Abd=  5.2390780E+07
+ Catch=   45323.7217944682     
+ Abd=   225990.2    
+ Catch=   50176.2792903738     
+ Abd=   167757.8    
+ Catch=   177837.704295335     
+ Abd=   1234052.    
+ Catch=   723262.637587044     
+ Abd=   8863361.    
+ Catch=   244972.961536544     
+ Abd=   4065712.    
+ Catch=   431.081768559440     
+ Abd=   6541.033    
+ Catch=   57503.8273013998     
+ Abd=   135452.5    
+ Catch=   594.619498241804     
+ Abd=   5680.234    
+ Catch=   220.756918906737     
+ Abd=   3638.497    
+ Catch=   316777.822632165     
+ Abd=   1439301.    
+ Catch=   110403.348841408     
+ Abd=   1836216.    
+ Catch=   1260244.85600259     
+ Abd=   7582332.    
+ Catch=   60409.0629974327     
+ Abd=   1000890.    
+ Catch=   30762.3111335674     
+ Abd=   324442.8    
+ Catch=   5357.56655792723     
+ Abd=   76578.37    
+ Catch=   113511.267962911     
+ Abd=   1883353.    
+ Catch=   40877.0788706425     
+ Abd=   677549.0    
+ Catch=   15397.4294765112     
+ Abd=   155535.5    
+ Catch=   209693.689155500     
+ Abd=   704704.0    
+ Catch=   156687.825526248     
+ Abd=   827866.1    
+ Catch=   1157252.08182227     
+ Abd=   5433878.    
+ Catch=   1063.05199480364     
+ Abd=   16634.94    
+ Catch=   44866.0870539931     
+ Abd=   743836.6    
+ Catch=   136393.516837570     
+ Abd=   2261744.    
+ Catch=   2786.21077747665     
+ Abd=   46299.85    
+ Catch=   2030.62362109552     
+ Abd=   33396.37    
+ Catch=   636995.975291180     
+ Abd=   2310699.    
+ Catch=   217559.121547331     
+ Abd=   724140.8    
+ Catch=   125469.073301263     
+ Abd=   212629.2    
+ Catch=   3961841.36879109     
+ Abd=   2862510.    
+ Catch=   10321.7969397502     
+ Abd=   5975.831    
+ Catch=   2365049.35934248     
+ Abd=   4993145.    
+ Time step =         1964
+ Catch=   366697.146118834     
+ Abd=   425415.3    
+ Catch=   191859.255934418     
+ Abd=   3192212.    
+ Catch=   51117.0740413870     
+ Abd=   198055.7    
+ Catch=   5822.72263899217     
+ Abd=   29387.96    
+ Catch=   11306093.9051157     
+ Abd=  2.9620600E+07
+ Catch=   2058679.89011898     
+ Abd=  1.0514754E+07
+ Catch=   4272069.63895198     
+ Abd=  2.7692388E+07
+ Catch=   27738.9293739386     
+ Abd=   139991.1    
+ Catch=   7247761.95756849     
+ Abd=  2.6867392E+07
+ Catch=   3127666.81394341     
+ Abd=  5.2042268E+07
+ Catch=   45288.2837058312     
+ Abd=   225821.3    
+ Catch=   50043.6074667899     
+ Abd=   167327.5    
+ Catch=   177628.070354355     
+ Abd=   1232668.    
+ Catch=   720065.226736937     
+ Abd=   8825849.    
+ Catch=   242156.940734840     
+ Abd=   4020080.    
+ Catch=   423.091745022052     
+ Abd=   6422.156    
+ Catch=   57498.9985725292     
+ Abd=   135442.1    
+ Catch=   581.494208368315     
+ Abd=   5557.002    
+ Catch=   215.234392778631     
+ Abd=   3548.608    
+ Catch=   316640.259265916     
+ Abd=   1438711.    
+ Catch=   109595.258465771     
+ Abd=   1823191.    
+ Catch=   1257574.90965388     
+ Abd=   7567051.    
+ Catch=   59508.8148517485     
+ Abd=   986289.9    
+ Catch=   30594.3506315954     
+ Abd=   322734.8    
+ Catch=   5283.09934442577     
+ Abd=   75540.62    
+ Catch=   112137.493387230     
+ Abd=   1861196.    
+ Catch=   40302.1213922444     
+ Abd=   668222.1    
+ Catch=   15314.2140655772     
+ Abd=   154726.7    
+ Catch=   209627.594681983     
+ Abd=   704485.6    
+ Catch=   156570.575459684     
+ Abd=   827287.4    
+ Catch=   1156807.99817305     
+ Abd=   5431941.    
+ Catch=   1049.45493334771     
+ Abd=   16427.20    
+ Catch=   44254.4565275327     
+ Abd=   733953.6    
+ Catch=   134589.217570383     
+ Abd=   2232450.    
+ Catch=   2760.35882013756     
+ Abd=   45881.39    
+ Catch=   2010.14061625151     
+ Abd=   33068.32    
+ Catch=   636979.641692279     
+ Abd=   2310642.    
+ Catch=   217545.559032238     
+ Abd=   724099.0    
+ Catch=   125469.060358943     
+ Abd=   212629.3    
+ Catch=   3961843.10286731     
+ Abd=   2862510.    
+ Catch=   10321.7972639953     
+ Abd=   5975.832    
+ Catch=   2365049.85418668     
+ Abd=   4993145.    
+ Time step =         1965
+ Catch=   366646.818743080     
+ Abd=   425358.2    
+ Catch=   190603.249137750     
+ Abd=   3172022.    
+ Catch=   51054.4621579172     
+ Abd=   197818.3    
+ Catch=   5820.40297299395     
+ Abd=   29377.18    
+ Catch=   11306091.1896874     
+ Abd=  2.9620590E+07
+ Catch=   2057425.93528259     
+ Abd=  1.0508794E+07
+ Catch=   4264992.17250155     
+ Abd=  2.7649028E+07
+ Catch=   27725.2714285216     
+ Abd=   139927.1    
+ Catch=   7247668.27609893     
+ Abd=  2.6867120E+07
+ Catch=   3107530.95848917     
+ Abd=  5.1718136E+07
+ Catch=   45255.2931651948     
+ Abd=   225661.3    
+ Catch=   49917.9069825991     
+ Abd=   166917.6    
+ Catch=   177436.188302063     
+ Abd=   1231410.    
+ Catch=   717153.112963960     
+ Abd=   8791610.    
+ Catch=   239501.730329771     
+ Abd=   3977024.    
+ Catch=   415.559525091685     
+ Abd=   6310.365    
+ Catch=   57494.6619237194     
+ Abd=   135431.4    
+ Catch=   569.016168856730     
+ Abd=   5439.712    
+ Catch=   209.984250316446     
+ Abd=   3463.335    
+ Catch=   316518.857710880     
+ Abd=   1438204.    
+ Catch=   108841.741778101     
+ Abd=   1811043.    
+ Catch=   1255160.15723965     
+ Abd=   7553218.    
+ Catch=   58658.7392180639     
+ Abd=   972491.2    
+ Catch=   30438.8745931120     
+ Abd=   321152.7    
+ Catch=   5213.22954161042     
+ Abd=   74565.61    
+ Catch=   110854.366734486     
+ Abd=   1840489.    
+ Catch=   39759.5873122516     
+ Abd=   659425.1    
+ Catch=   15237.5138714721     
+ Abd=   153980.8    
+ Catch=   209565.321294522     
+ Abd=   704284.6    
+ Catch=   156468.097462787     
+ Abd=   826780.2    
+ Catch=   1156428.36736307     
+ Abd=   5430296.    
+ Catch=   1036.66643445786     
+ Abd=   16231.79    
+ Catch=   43680.8526441083     
+ Abd=   724671.1    
+ Catch=   132881.946429425     
+ Abd=   2204714.    
+ Catch=   2736.03904085910     
+ Abd=   45487.52    
+ Catch=   1990.89327562002     
+ Abd=   32759.81    
+ Catch=   636960.954454113     
+ Abd=   2310582.    
+ Catch=   217533.991367986     
+ Abd=   724063.9    
+ Catch=   125469.079914512     
+ Abd=   212629.2    
+ Catch=   3961841.88841989     
+ Abd=   2862509.    
+ Catch=   10321.7992286024     
+ Abd=   5975.833    
+ Catch=   2365049.51075987     
+ Abd=   4993146.    
+ Time step =         1966
+ Catch=   366599.217819147     
+ Abd=   425305.4    
+ Catch=   189433.652136712     
+ Abd=   3153152.    
+ Catch=   50995.3567069103     
+ Abd=   197596.3    
+ Catch=   5818.43412391239     
+ Abd=   29368.04    
+ Catch=   11306089.4688811     
+ Abd=  2.9620592E+07
+ Catch=   2056337.06260863     
+ Abd=  1.0503589E+07
+ Catch=   4258664.06570071     
+ Abd=  2.7610196E+07
+ Catch=   27713.4550947573     
+ Abd=   139871.6    
+ Catch=   7247595.15225009     
+ Abd=  2.6866840E+07
+ Catch=   3088778.72483320     
+ Abd=  5.1415732E+07
+ Catch=   45224.3720682894     
+ Abd=   225510.5    
+ Catch=   49799.7792655108     
+ Abd=   166535.5    
+ Catch=   177270.920612236     
+ Abd=   1230348.    
+ Catch=   714475.957010256     
+ Abd=   8760084.    
+ Catch=   236994.934101548     
+ Abd=   3936350.    
+ Catch=   408.482147371828     
+ Abd=   6205.140    
+ Catch=   57489.6681185218     
+ Abd=   135418.5    
+ Catch=   557.241640070879     
+ Abd=   5329.238    
+ Catch=   205.032740492191     
+ Abd=   3383.436    
+ Catch=   316413.919756513     
+ Abd=   1437760.    
+ Catch=   108138.629841617     
+ Abd=   1799703.    
+ Catch=   1252973.46244300     
+ Abd=   7540684.    
+ Catch=   57854.4182709449     
+ Abd=   959420.9    
+ Catch=   30294.7752913621     
+ Abd=   319684.6    
+ Catch=   5147.54341104972     
+ Abd=   73648.83    
+ Catch=   109654.319885519     
+ Abd=   1821108.    
+ Catch=   39247.6853639743     
+ Abd=   651120.4    
+ Catch=   15166.7437783741     
+ Abd=   153292.2    
+ Catch=   209504.577966204     
+ Abd=   704075.7    
+ Catch=   156378.164372903     
+ Abd=   826333.9    
+ Catch=   1156106.42261521     
+ Abd=   5428912.    
+ Catch=   1024.60291499189     
+ Abd=   16046.90    
+ Catch=   43141.7327616994     
+ Abd=   715941.2    
+ Catch=   131264.044213900     
+ Abd=   2178406.    
+ Catch=   2713.13630491424     
+ Abd=   45116.40    
+ Catch=   1972.78359482902     
+ Abd=   32469.38    
+ Catch=   636952.424276155     
+ Abd=   2310570.    
+ Catch=   217524.474197269     
+ Abd=   724035.1    
+ Catch=   125469.109179394     
+ Abd=   212629.3    
+ Catch=   3961841.17879235     
+ Abd=   2862509.    
+ Catch=   10321.7973177049     
+ Abd=   5975.831    
+ Catch=   2365050.12502795     
+ Abd=   4993147.    
+ Time step =         1967
+ Catch=   366552.737935167     
+ Abd=   425252.3    
+ Catch=   188342.878526436     
+ Abd=   3135571.    
+ Catch=   50939.4242569450     
+ Abd=   197384.8    
+ Catch=   5816.76221030638     
+ Abd=   29360.28    
+ Catch=   11306087.9000731     
+ Abd=  2.9620576E+07
+ Catch=   2055382.41278299     
+ Abd=  1.0499040E+07
+ Catch=   4253004.65339068     
+ Abd=  2.7575488E+07
+ Catch=   27703.1932300605     
+ Abd=   139823.4    
+ Catch=   7247516.92327997     
+ Abd=  2.6866512E+07
+ Catch=   3071319.99552821     
+ Abd=  5.1135312E+07
+ Catch=   45194.9395392369     
+ Abd=   225369.8    
+ Catch=   49688.1531527361     
+ Abd=   166166.9    
+ Catch=   177124.127678047     
+ Abd=   1229352.    
+ Catch=   712011.233366632     
+ Abd=   8731139.    
+ Catch=   234625.278002357     
+ Abd=   3897874.    
+ Catch=   401.806032691119     
+ Abd=   6105.534    
+ Catch=   57483.7935634423     
+ Abd=   135404.6    
+ Catch=   546.166206175695     
+ Abd=   5225.508    
+ Catch=   200.404983062075     
+ Abd=   3308.388    
+ Catch=   316323.063271444     
+ Abd=   1437379.    
+ Catch=   107482.301519256     
+ Abd=   1789120.    
+ Catch=   1250991.38467497     
+ Abd=   7529315.    
+ Catch=   57091.9783650809     
+ Abd=   947023.1    
+ Catch=   30160.8560827552     
+ Abd=   318317.8    
+ Catch=   5085.72285502168     
+ Abd=   72784.47    
+ Catch=   108530.642163157     
+ Abd=   1802953.    
+ Catch=   38764.0424875987     
+ Abd=   643269.5    
+ Catch=   15101.3643000540     
+ Abd=   152655.6    
+ Catch=   209442.373036733     
+ Abd=   703873.6    
+ Catch=   156298.703798169     
+ Abd=   825939.2    
+ Catch=   1155831.74308932     
+ Abd=   5427736.    
+ Catch=   1013.17859181075     
+ Abd=   15871.91    
+ Catch=   42634.0720444931     
+ Abd=   707710.2    
+ Catch=   129728.833615215     
+ Abd=   2153432.    
+ Catch=   2691.54239202009     
+ Abd=   44766.24    
+ Catch=   1955.72467486372     
+ Abd=   32195.61    
+ Catch=   636949.555050913     
+ Abd=   2310563.    
+ Catch=   217516.405217094     
+ Abd=   724010.2    
+ Catch=   125469.124184098     
+ Abd=   212629.3    
+ Catch=   3961841.60556700     
+ Abd=   2862509.    
+ Catch=   10321.7991241872     
+ Abd=   5975.831    
+ Catch=   2365050.73308616     
+ Abd=   4993147.    
+ Time step =         1968
+ Catch=   366512.773892986     
+ Abd=   425209.8    
+ Catch=   187325.931782280     
+ Abd=   3119178.    
+ Catch=   50886.2932876572     
+ Abd=   197184.3    
+ Catch=   5815.34701791422     
+ Abd=   29353.71    
+ Catch=   11306083.0512029     
+ Abd=  2.9620572E+07
+ Catch=   2054549.75894436     
+ Abd=  1.0495056E+07
+ Catch=   4247935.96999241     
+ Abd=  2.7544352E+07
+ Catch=   27694.2874850832     
+ Abd=   139781.5    
+ Catch=   7247441.13434838     
+ Abd=  2.6866368E+07
+ Catch=   3055105.81832370     
+ Abd=  5.0873688E+07
+ Catch=   45167.4118645928     
+ Abd=   225233.8    
+ Catch=   49579.1353470707     
+ Abd=   165808.3    
+ Catch=   176984.733966201     
+ Abd=   1228436.    
+ Catch=   709756.258231953     
+ Abd=   8704538.    
+ Catch=   232382.207145676     
+ Abd=   3861433.    
+ Catch=   395.461264732550     
+ Abd=   6010.821    
+ Catch=   57478.6879140876     
+ Abd=   135394.6    
+ Catch=   535.696773488695     
+ Abd=   5127.024    
+ Catch=   196.001119286657     
+ Abd=   3236.412    
+ Catch=   316244.292243960     
+ Abd=   1437036.    
+ Catch=   106868.669400799     
+ Abd=   1779208.    
+ Catch=   1249191.81733055     
+ Abd=   7518988.    
+ Catch=   56368.1117980024     
+ Abd=   935243.0    
+ Catch=   30036.1597921587     
+ Abd=   317045.7    
+ Catch=   5027.30611421241     
+ Abd=   71966.47    
+ Catch=   107477.448132019     
+ Abd=   1785925.    
+ Catch=   38306.3688794401     
+ Abd=   635832.4    
+ Catch=   15040.8877582753     
+ Abd=   152066.3    
+ Catch=   209384.253404785     
+ Abd=   703684.8    
+ Catch=   156228.565237205     
+ Abd=   825591.5    
+ Catch=   1155601.12326867     
+ Abd=   5426732.    
+ Catch=   1002.35910697432     
+ Abd=   15705.90    
+ Catch=   42154.8546313362     
+ Abd=   699932.6    
+ Catch=   128270.047567773     
+ Abd=   2129688.    
+ Catch=   2671.15746577693     
+ Abd=   44435.52    
+ Catch=   1939.63320262349     
+ Abd=   31937.20    
+ Catch=   636948.224998730     
+ Abd=   2310558.    
+ Catch=   217509.464275183     
+ Abd=   723989.1    
+ Catch=   125469.127889773     
+ Abd=   212629.3    
+ Catch=   3961841.22994959     
+ Abd=   2862509.    
+ Catch=   10321.7974287889     
+ Abd=   5975.830    
+ Catch=   2365050.37854175     
+ Abd=   4993147.    
+ Time step =         1969
+ Catch=   366474.706218484     
+ Abd=   425165.3    
+ Catch=   186376.774236659     
+ Abd=   3103872.    
+ Catch=   50835.9180899965     
+ Abd=   196993.5    
+ Catch=   5814.14355227929     
+ Abd=   29348.12    
+ Catch=   11306081.0001242     
+ Abd=  2.9620564E+07
+ Catch=   2053818.75329693     
+ Abd=  1.0491562E+07
+ Catch=   4243388.08115738     
+ Abd=  2.7516420E+07
+ Catch=   27686.5532713004     
+ Abd=   139745.0    
+ Catch=   7247417.83654069     
+ Abd=  2.6866302E+07
+ Catch=   3039949.61677314     
+ Abd=  5.0629356E+07
+ Catch=   45140.4645258201     
+ Abd=   225101.8    
+ Catch=   49474.2289183744     
+ Abd=   165464.6    
+ Catch=   176859.904267192     
+ Abd=   1227605.    
+ Catch=   707674.727477954     
+ Abd=   8680174.    
+ Catch=   230256.448849002     
+ Abd=   3826874.    
+ Catch=   389.430281430454     
+ Abd=   5920.625    
+ Catch=   57475.0498393202     
+ Abd=   135387.1    
+ Catch=   525.822257233075     
+ Abd=   5034.825    
+ Catch=   191.800933847630     
+ Abd=   3168.068    
+ Catch=   316173.664768489     
+ Abd=   1436740.    
+ Catch=   106294.455535109     
+ Abd=   1769937.    
+ Catch=   1247554.97000143     
+ Abd=   7509581.    
+ Catch=   55679.6688288224     
+ Abd=   924027.0    
+ Catch=   29919.9387982248     
+ Abd=   315857.9    
+ Catch=   4972.03975887817     
+ Abd=   71192.60    
+ Catch=   106489.428931307     
+ Abd=   1769948.    
+ Catch=   37872.4984231790     
+ Abd=   628777.6    
+ Catch=   14984.8857388796     
+ Abd=   151519.4    
+ Catch=   209330.408522164     
+ Abd=   703515.4    
+ Catch=   156166.964503589     
+ Abd=   825286.1    
+ Catch=   1155403.13504847     
+ Abd=   5425860.    
+ Catch=   992.079011620607     
+ Abd=   15547.86    
+ Catch=   41701.9616915885     
+ Abd=   692582.2    
+ Catch=   126883.201144098     
+ Abd=   2107110.    
+ Catch=   2651.89282678428     
+ Abd=   44122.81    
+ Catch=   1924.43130322122     
+ Abd=   31692.87    
+ Catch=   636947.057903626     
+ Abd=   2310551.    
+ Catch=   217503.707406897     
+ Abd=   723972.3    
+ Catch=   125469.093497915     
+ Abd=   212629.3    
+ Catch=   3961841.04707023     
+ Abd=   2862509.    
+ Catch=   10321.7977329722     
+ Abd=   5975.832    
+ Catch=   2365050.26092350     
+ Abd=   4993146.    
+ Time step =         1970
+ Catch=   366437.355833689     
+ Abd=   425120.7    
+ Catch=   185488.914628281     
+ Abd=   3089540.    
+ Catch=   50788.7392801000     
+ Abd=   196818.7    
+ Catch=   5813.12131905330     
+ Abd=   29343.38    
+ Catch=   11306079.4327730     
+ Abd=  2.9620558E+07
+ Catch=   2053176.77028813     
+ Abd=  1.0488491E+07
+ Catch=   4239304.57821777     
+ Abd=  2.7491324E+07
+ Catch=   27679.7906861360     
+ Abd=   139713.2    
+ Catch=   7247410.44990346     
+ Abd=  2.6866300E+07
+ Catch=   3025813.61218467     
+ Abd=  5.0401324E+07
+ Catch=   45114.7977410938     
+ Abd=   224978.3    
+ Catch=   49374.2329644660     
+ Abd=   165136.0    
+ Catch=   176747.948316374     
+ Abd=   1226876.    
+ Catch=   705788.234957765     
+ Abd=   8657921.    
+ Catch=   228239.547592410     
+ Abd=   3794068.    
+ Catch=   383.680060779645     
+ Abd=   5834.609    
+ Catch=   57472.2878207117     
+ Abd=   135381.8    
+ Catch=   516.617741077299     
+ Abd=   4949.216    
+ Catch=   187.788401984538     
+ Abd=   3102.296    
+ Catch=   316113.471740639     
+ Abd=   1436485.    
+ Catch=   105756.879489850     
+ Abd=   1761253.    
+ Catch=   1246064.59916511     
+ Abd=   7501021.    
+ Catch=   55023.8375044186     
+ Abd=   913335.1    
+ Catch=   29811.3401118094     
+ Abd=   314748.2    
+ Catch=   4919.71181208662     
+ Abd=   70459.54    
