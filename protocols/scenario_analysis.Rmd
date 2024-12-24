@@ -1,0 +1,347 @@
+---
+title: "pred_dbem"
+author: "Juliano Palacios Abrantes"
+date: "2023-10-24"
+output: html_document
+---
+
+```{r setup, include = F}
+
+# source(here::here('./functions/function_list.R')) #I took these from mpa_c_toe
+# source(here::here('./functions/figures_fx.R')) #Functions for creating figures
+
+library(MyFunctions)
+
+my_lib(c(
+  # For grid estimation and species selection
+  "spatialEco","tidyverse", "geosphere","raster","units","matrixStats","sf","rmapshaper", "igraph",
+  # For collaborative ease
+  "here",
+  "readr",
+  "janitor",
+  # For nitce figures
+  "hrbrthemes",
+  "viridis"
+))
+
+# For grid e
+# Fix new updates of sf package
+sf::sf_use_s2(use_s2 = FALSE)
+
+select <- dplyr::select
+
+
+
+# Global color pallets standardization
+
+# Status pallet
+status_pallet <- c("#00A08A", # Open
+                   "#046C9A", # Protected
+                   "#F98400" # Surrounding
+) 
+
+# SSP pallet
+ssp_pallet <- c("#5BBCD6", #126
+                "#FF0000" #585x
+)
+
+# Scenario pallet
+scenario_pallet <- c("#02401B", # S1
+                     "#FD6467", # S2
+                     "#B6854D" # S3
+)
+
+
+# Change paths to your computer
+
+data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
+
+
+results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios/results/figures"
+```
+
+
+
+## Determine grid
+
+```{r}
+# Load Grid data
+grid_path <- paste0(data_path,"spatial/gridded/all_mpa_grid_fe.csv")
+mpas_grid <- read_csv(grid_path) %>% 
+  rename(mpa_abrev = mpa) %>% 
+  distinct()
+
+cmar_grid <- my_data("dbem_coords") %>% 
+  filter(lat < 10 & lat > -10 & lon > -100 & lon < -70) %>% 
+  left_join(mpas_grid) %>% 
+  mutate(status = ifelse(is.na(status),"non_protected",status)) 
+# ggplot() +
+# geom_tile(
+#   aes(
+#     x = lon,
+#     y = lat,
+#     fill = status
+# )
+# ) +
+# my_land_map()+
+# coord_sf(
+#   xlim = c(-95,-77),
+#   ylim = c(-4,9)
+# )
+
+
+
+
+```
+
+
+
+## Aggregate spp data
+
+```{r}
+
+agg_fx <- function(scenario){
+  
+  file_to_read <- list.files(my_path("R",scenario),full.names = T)
+  
+  for(i in 1:length(file_to_read)){
+    # print(i)
+    load(file_to_read[i])
+    
+    # Transform it to df
+    spp_data <- as.data.frame(data) %>% 
+      rowid_to_column("index") %>% 
+      filter(index %in% cmar_grid$index)
+    colnames(spp_data) <- c("index",(seq(1851,2100,1)))
+    rm(data) # remove data for computing power
+    
+    
+    partial_data <- spp_data %>% 
+      gather("year","value",`1851`:`2100`)
+    
+    # Join data for all three models
+    if(i == 1){
+      complete_output <- partial_data
+    }else{
+      
+      complete_output <- left_join(complete_output,partial_data,
+                                   by = c("index","year")
+      ) %>% 
+        mutate_at(
+          .vars = c("value.x","value.y"),
+          .funs = replace_na,0
+        ) %>% 
+        mutate(sum_value = value.x + value.y) %>% 
+        select(index,year,value = sum_value)
+      
+    }
+    
+  } # close for loop in i for species
+  
+  final_df <- complete_output %>% 
+    mutate(
+      esm = str_sub(scenario,3,6),
+      rcp = str_sub(scenario,7,8)
+      
+    )
+  
+  
+  return(final_df)
+  
+}
+
+
+
+```
+
+# Estimate percentage change
+
+```{r}
+
+
+sqb_scen_df <- agg_fx("c6gfdl26F1rpc")
+
+cmar_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
+
+# Estimate historical MCP data for all species
+early_data <- sqb_scen_df %>% 
+  mutate(period = ifelse(year < 2014 & year > 1995,"present",NA)) %>% 
+  filter(!is.na(period)) %>% 
+  # left_join(cmar_grid,
+  #           by = "index") %>%
+  # filter(!is.na(eez_id)) %>%
+  # group_by(index,year,period) %>%
+  # Sum total catch per eez per year
+  # summarise(eez_catch = sum(value, na.rm = T),.groups = "drop") %>% 
+  group_by(index,period) %>% 
+  # Average yearly data
+  summarise(mean_temp_value = mean(value,na.rm = T),.groups = "drop") %>% 
+  select(-period)
+
+# Estimate percentage change in future data for all species
+future_data <-  sqb_scen_df %>% 
+  mutate(period = ifelse(year < 2059 & year > 2040,"mid",
+                         ifelse(year < 2040 & year > 2029,"ear",NA)
+                         
+  )
+  ) %>% 
+  filter(!is.na(period)) %>% 
+  # left_join(regional_grid,
+  #           by = "index") %>%
+  # filter(!is.na(eez_id)) %>%
+  group_by(index,period) %>%
+  # Sum total catch per eez per year
+  summarise(mean_temp_value_fut = mean(value, na.rm = T),.groups = "drop") %>%
+  left_join(early_data,
+            by = "index") %>%
+  # spread(period,mean_catch) %>% 
+  mutate(
+    per_change = ifelse(mean_temp_value == 0 & mean_temp_value_fut > 0,100, 
+                        round((mean_temp_value_fut-mean_temp_value)/mean_temp_value*100)
+    ),
+    per_change_scale = ifelse(per_change > 50,50,per_change)
+  ) %>% 
+  filter(!is.na(per_change))
+
+# Join data for all three models
+#   if(m == 1){
+#     models_output <- future_data
+#   }else{
+#     models_output <- bind_rows(models_output,future_data)
+#   }
+# } # close for loop in m for models
+
+
+# # Average results per ESM
+# final_output <- models_output %>% 
+#   group_by(eez_name,year,ssp) %>% 
+#   summarise(mean_per_change = mean(per_change, na.rm =T),
+#             sd_per_change = sd(per_change, na.rm =T)) %>% 
+#   group_by(eez_name,ssp) %>% 
+#   mutate(
+#     per_change_rm = round(zoo::rollmean(
+#       mean_per_change,
+#       k = 10, 
+#       fill = NA, 
+#       align = "right")
+#     )
+#   ) %>% 
+#   filter(!is.na(per_change_rm))
+
+# Save data
+# write_csv(final_output,
+# my_path("R",name = "aggregated_data.csv"))
+
+# }
+# }
+
+
+```
+
+## Map
+
+```{r}
+
+
+map <- future_data %>% 
+  left_join(cmar_grid) %>% 
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = per_change_scale
+    )
+  ) +
+  # geom_sf_label(data = cmar_sf, aes(label = mpa_abrev)) +
+  my_land_map()+ 
+  scale_fill_gradient2() +
+  geom_sf(data = cmar_sf, aes(), color = "black", fill = "transparent") +
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-4,9)
+  ) +
+  facet_wrap(~period) +
+  theme(legend.position = "bottom")
+
+
+ggsave(
+  paste0(results_path,"scenario_map_rpc.jpg"),
+  map,
+  width = 14)
+
+```
+
+
+## Boxplot
+
+```{r}
+
+
+future_data %>% 
+  left_join(cmar_grid) %>% 
+  # View()
+  ggplot() +
+  facet_wrap(~period) +
+  # geom_jitter(aes(
+  #   x = status,
+  #   y = per_change_scale
+  # ),
+  # color="grey30", size=0.4, alpha=0.9) +
+  geom_boxplot(
+    aes(
+      x = status,
+      y = per_change_scale,
+      fill = status
+    )
+  ) +
+  theme_ipsum() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+  theme(legend.position = "")
+
+
+ggsave(
+  paste0(results_path,"status_boxplot_rpc.jpg"),
+  last_plot()
+)
+
+```
+
+```{r}
+
+
+future_data %>% 
+  left_join(mpas_grid) %>% 
+  filter(!is.na(mpa_abrev)) %>% 
+  # View()
+  ggplot() +
+  geom_jitter(aes(
+    x = reorder(mpa_abrev, per_change_scale, FUN = median),
+    y = per_change_scale,
+    color = status
+  ),
+  size=0.4, alpha=0.5) +
+  geom_boxplot(
+    aes(
+      x = reorder(mpa_abrev, per_change_scale, FUN = median),
+      y = per_change_scale,
+      fill = mpa_abrev
+    )
+  ) +
+  theme_ipsum() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.3) +
+  # scale_color_viridis_d(direction = -1,option = "A") +
+  theme(
+    axis.text.x = element_text(angle = 45,hjust = 1)
+  )+
+  facet_wrap(~period)
+
+
+ggsave(
+  paste0(results_path,"mpa_boxplot_rpc.jpg"),
+  last_plot(),
+  width = 14)
+
+```
+
+
