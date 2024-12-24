@@ -8,11 +8,11 @@
 #SBATCH --mail-user=jepa88@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --array=10-10
-#SBATCH --output=Array-%A-%a.out
-#SBATCH --error=Array-%A-%a.err
+#SBATCH --output=./slurm_out/Array-%A-%a.out
+#SBATCH --error=./slurm_out/Array-%A-%a.err
 
 Model=GFDL
-SSP=26
+SSP=85
 # Extract necessary data into TempSlurm
 Root=~/projects/def-wailung/Data/Climate/C6${Model}${SSP}_annual
 

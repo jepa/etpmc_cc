@@ -5,10 +5,10 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1        # number of processes
 #SBATCH --mem=4G
-#SBATCH -t 00-08:00:00
+#SBATCH -t 00-04:00:00
 #SBATCH --mail-user=j.palacios@oceans.ubc.ca
 #SBATCH --mail-type=ALL
-#SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/scripts/run_dbem/slurm_out/con_slurm_%j.out # Specify the full path with the desired file name prefix
+#SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/con_slurm_%j.out # Specify the full path with the desired file name prefix
 
 
 # ---------------------------------------------------------------------
