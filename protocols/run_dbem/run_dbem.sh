@@ -12,7 +12,7 @@
 #SBATCH --error=./slurm_out/Array-%A-%a.err
 
 Model=IPSL
-SSP=26
+SSP=85
 # Extract necessary data into TempSlurm
 Root=~/projects/def-wailung/Data/Climate/C6${Model}${SSP}_annual
 

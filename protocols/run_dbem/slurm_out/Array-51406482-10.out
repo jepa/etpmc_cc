@@ -136,3 +136,30 @@ Starting run at:Tue 24 Dec 2024 07:48:55 AM PST
                                           
   1.705494392157454E-007
  Thread           0  starting...
+ 600226    
+ Results/c6ipsl26F1sq/600226                                                    
+  
+ Read Parameters...
+ Running Taxon X_gladius           
+ ~/projects/def-wailung/Data/Species/Distributions/S600226.csv                  
+                                          
+  1.879615838989219E-007
+ Thread           0  starting...
+ 600348    
+ Results/c6ipsl26F1sq/600348                                                    
+  
+ Read Parameters...
+ Running Taxon E_analogus          
+ ~/projects/def-wailung/Data/Species/Distributions/S600348.csv                  
+                                          
+  5.597613482741545E-007
+ Thread           0  starting...
+ 600382    
+ Results/c6ipsl26F1sq/600382                                                    
+  
+ Read Parameters...
+ Running Taxon S_lalandi           
+ ~/projects/def-wailung/Data/Species/Distributions/S600382.csv                  
+                                          
+  1.737761041514796E-007
+ Thread           0  starting...
