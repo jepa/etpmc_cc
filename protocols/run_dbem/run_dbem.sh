@@ -8,11 +8,11 @@
 #SBATCH --mail-user=jepa88@gmail.com
 #SBATCH --mail-type=ALL
 #SBATCH --array=10-10
-#SBATCH --output=./slurm_out/Array-%A-%a.out
-#SBATCH --error=./slurm_out/Array-%A-%a.err
+#SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.out
+#SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.err
 
-Model=IPSL
-SSP=85
+Model=GFDL
+SSP=26
 # Extract necessary data into TempSlurm
 Root=~/projects/def-wailung/Data/Climate/C6${Model}${SSP}_annual
 

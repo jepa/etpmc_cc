@@ -1,10 +1,10 @@
- SppNo           43
- CCSc C6IPSL85                                
- SSP SSP585                                  
+ SppNo           3
+ CCSc C6GFDL26                                
+ SSP SSP126                                  
  rsfile EtpSppList          
- rpath c6ipsl85F1sq                  
+ rpath c6gfdl26F1nr                  
  tpath TaxonDataC0                   
  ifile 11                  
  FHS    1.00
  FEEZ    1.00
- MPApath mpa_sq                                  
+ MPApath mpa_nr                                  
