@@ -100,9 +100,9 @@ cmar_grid <- my_data("dbem_coords") %>%
 
 ```{r}
 
-agg_fx <- function(scenario){
+agg_fx <- function(scenario, category){
   
-  file_to_read <- list.files(my_path("R",scenario),full.names = T)
+  file_to_read <- list.files(my_path("R",scenario),full.names = T,pattern = category)
   
   for(i in 1:length(file_to_read)){
     # print(i)
@@ -141,8 +141,8 @@ agg_fx <- function(scenario){
   final_df <- complete_output %>% 
     mutate(
       esm = str_sub(scenario,3,6),
-      rcp = str_sub(scenario,7,8)
-      
+      rcp = str_sub(scenario,7,8),
+      scenario = str_sub(scenario,10,12)
     )
   
   
@@ -159,7 +159,7 @@ agg_fx <- function(scenario){
 ```{r}
 
 
-sqb_scen_df <- agg_fx("c6gfdl26F1rpc")
+sqb_scen_df <- agg_fx("c6gfdl26F1nr", "Abd")
 
 cmar_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
 
@@ -266,7 +266,7 @@ map <- future_data %>%
 
 
 ggsave(
-  paste0(results_path,"scenario_map_rpc.jpg"),
+  paste0(results_path,"/scenario_map_nr.jpg"),
   map,
   width = 14)
 
@@ -301,7 +301,7 @@ future_data %>%
 
 
 ggsave(
-  paste0(results_path,"status_boxplot_rpc.jpg"),
+  paste0(results_path,"/status_boxplot_nr.jpg"),
   last_plot()
 )
 
@@ -338,10 +338,20 @@ future_data %>%
 
 
 ggsave(
-  paste0(results_path,"mpa_boxplot_rpc.jpg"),
+  paste0(results_path,"/mpa_boxplot_nr.jpg"),
   last_plot(),
   width = 14)
 
 ```
 
+## All scenarios
+
+```{r}
+
+scenarios <- list.files(my_path("R"))[-6]
+
+all_scen <- bind_rows(
+lapply(scenarios, agg_fx, category = "Abd")
+)
+```
 
