@@ -1,0 +1,117 @@
+---
+title: "Check DBEM runs"
+author: "Juliano Palacios-Abrantes"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include = F}
+
+# source(here::here('./functions/function_list.R')) #I took these from mpa_c_toe
+# source(here::here('./functions/figures_fx.R')) #Functions for creating figures
+
+library(MyFunctions)
+
+my_lib(c(
+  # For grid estimation and species selection
+  # "spatialEco",
+  "tidyverse",
+  # "geosphere","raster","units","matrixStats","sf","rmapshaper", "igraph",
+  # For collaborative ease
+  "here",
+  # "readr",
+  "janitor",
+  # For nitce figures
+  # "hrbrthemes",
+  "viridis"
+))
+
+# For grid e
+# Fix new updates of sf package
+sf::sf_use_s2(use_s2 = FALSE)
+
+select <- dplyr::select
+
+
+
+# Global color pallets standardization
+
+# Status pallet
+status_pallet <- c("#00A08A", # Open
+                   "#046C9A", # Protected
+                   "#F98400" # Surrounding
+) 
+
+# SSP pallet
+ssp_pallet <- c("#5BBCD6", #126
+                "#FF0000" #585x
+)
+
+# Scenario pallet
+scenario_pallet <- c("#02401B", # S1
+                     "#FD6467", # S2
+                     "#B6854D" # S3
+)
+
+
+# Change paths to your computer
+
+data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
+
+
+results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios/results/figures"
+```
+
+
+# Check if all species ran
+
+```{r}
+# Get original species list
+spp_list <- read.csv("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/original/data/species/EtpSppList10.txt",header = F) %>% 
+  mutate(
+    abd = paste0(V1,"Abd"),
+    catch = paste0(V1,"Catch")
+  )
+
+# Get scenarios
+scenarios <- list.files("~/Library/CloudStorage/OneDrive-UBC/Data/etpmc_cc/results/")
+
+# Get runs
+scenarios_path <- list.files("~/Library/CloudStorage/OneDrive-UBC/Data/etpmc_cc/results/",full.names = T)
+
+# get runs
+get_runs <- function(x){
+
+  runs <- data.frame(
+    abd = str_sub(list.files(x,pattern = "Abd"),1,9)
+    # catch = str_sub(list.files(x,pattern = "Catch"),1,11)
+    ) %>% 
+    mutate(
+      scenario = str_sub(x,72,83)
+    ) %>% 
+    right_join(spp_list) %>% 
+  # View()
+  filter(is.na(scenario)) %>%
+  mutate(
+    scenario = str_sub(x,72,83)
+  )
+  
+  return(runs)
+
+}
+
+all_runs <- bind_rows(
+  lapply(scenarios_path, get_runs)
+  ) 
+
+all_runs %>% 
+  group_by(scenario) %>% 
+  tally()
+
+# RUNS
+# c6gfdl85F1pc 11 
+# c6gfdl26F1nr 3
+
+```
+
+
