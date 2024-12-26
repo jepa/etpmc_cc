@@ -1,0 +1,31 @@
+extracting data
+SST complete
+bot_temp complete
+AdvectionU complete
+AdvectionV complete
+htotal_btm complete
+htotal_surf complete
+O2_btm complete
+O2_surf complete
+Salinity_btm complete
+Salinity_surf complete
+totalphy2 complete
+IceExt complete
+Current working directory is /project/6006523/jepa/etpmc_cc/protocols/run_dbem
+Starting run at:Thu 26 Dec 2024 07:55:51 AM PST
+“Starting task: 10”
+ Read filenumber:    12
+ Species list:    12
+ EtpSppList12.txt    
+ Initializing, loading files...
+forrtl: No such file or directory
+forrtl: severe (29): file not found, unit 1, file /home/jepa/projects/def-wailung/Data/Species/TaxonList/EtpSppList12.txt
+Image              PC                Routine            Line        Source             
+DBEM_v2_y          0000000000436FBB  Unknown               Unknown  Unknown
+DBEM_v2_y          0000000000421837  Unknown               Unknown  Unknown
+DBEM_v2_y          0000000000408FBA  Unknown               Unknown  Unknown
+DBEM_v2_y          000000000040432D  Unknown               Unknown  Unknown
+libc.so.6          00001508AF24E94A  Unknown               Unknown  Unknown
+libc.so.6          00001508AF24EA05  __libc_start_main     Unknown  Unknown
+DBEM_v2_y          0000000000404241  Unknown               Unknown  Unknown
+Program ADRDisp finished with exit code 29 at: Thu 26 Dec 2024 07:57:36 AM PST
