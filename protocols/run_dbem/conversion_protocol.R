@@ -39,7 +39,7 @@ for(c in 1:2){
     scenario <- scenarios[i]
     
     # Include here the path of your DBEM raw outputs BEFORE the scenario
-    taxon_list <- paste0(list.files("~/scratch/Results/",scenario,"/",full.names = F))
+    taxon_list <- list.files(paste0("~/scratch/Results/",scenario,"/",full.names = F))
     
     
     
