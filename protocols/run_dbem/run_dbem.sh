@@ -7,9 +7,9 @@
 #SBATCH -t 02-50:00:00
 #SBATCH --mail-user=jepa88@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH --array=10-36
-#SBATCH --output=Array-%A-%a.out
-#SBATCH --error=Array-%A-%a.err
+#SBATCH --array=10-10
+#SBATCH --output=./slurm_out/Array-%A-%a.out
+#SBATCH --error=./slurm_out/Array-%A-%a.err
 
 Model=IPSL
 SSP=85
@@ -55,5 +55,5 @@ echo “Starting task: $SLURM_ARRAY_TASK_ID”
 sleep ${SLURM_ARRAY_TASK_ID}5s
 
 export OMP_NUM_THREADS=1
-../../dbem_scripts/DBEM_v2_y $SLURM_TMPDIR
+~/projects/def-wailung/jepa/dbem/dbem_scripts/DBEM_v2_y $SLURM_TMPDIR
 echo "Program $SLURM_JOB_NAME finished with exit code $? at: $(date)"

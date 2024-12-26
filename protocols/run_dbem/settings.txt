@@ -1,8 +1,8 @@
- SppNo           40
- CCSc C6GFDL85                                
+ SppNo           43
+ CCSc C6IPSL85                                
  SSP SSP585                                  
  rsfile EtpSppList          
- rpath c6gfdl85F1nr                  
+ rpath c6ipsl85F1sq                  
  tpath TaxonDataC0                   
  ifile 11                  
  FHS    1.00
