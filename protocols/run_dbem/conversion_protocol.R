@@ -27,7 +27,7 @@ scenarios <- c(
 )
 
 # Variables to be converted (Abundace or Catch)
-  category <- c("Abd")
+  category <- c("Catch")
   
   for(i in 1:length(scenarios)){
     
