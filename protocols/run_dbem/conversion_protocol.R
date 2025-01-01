@@ -19,11 +19,11 @@ year_end <- 2100
 
 # Scenario to call (Note this will determine the results directory)
 scenarios <- c(
-  "c6ipsl85F1rpp",
-  "c6ipsl85F1sq",
-  "c6ipsl85F1rpc",
-  "c6ipsl85F1ri",
-  "c6ipsl85F1nr"
+  "c6ipsl26F1rpp",
+  "c6ipsl26F1sq",
+  "c6ipsl26F1rpc",
+  "c6ipsl26F1ri",
+  "c6ipsl26F1nr"
 )
 
 # Variables to be converted (Abundace or Catch)
