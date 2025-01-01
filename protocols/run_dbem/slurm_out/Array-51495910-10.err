@@ -12,7 +12,7 @@ Salinity_surf complete
 totalphy2 complete
 IceExt complete
 Current working directory is /project/6006523/jepa/etpmc_cc/protocols/run_dbem
-Starting run at:Thu 26 Dec 2024 08:22:07 AM PST
+Starting run at:Thu 26 Dec 2024 08:48:58 AM PST
 “Starting task: 10”
  Read filenumber:    11
  Species list:    11
@@ -26,4 +26,4 @@ Starting run at:Thu 26 Dec 2024 08:22:07 AM PST
  ~/projects/def-wailung/Data/Species/Distributions/S600218.csv                  
                                           
   2.068241845229950E-007
-slurmstepd: error: *** JOB 51495653 ON cdr684 CANCELLED AT 2024-12-26T11:02:06 ***
+slurmstepd: error: *** JOB 51495910 ON cdr684 CANCELLED AT 2024-12-26T11:02:12 ***
