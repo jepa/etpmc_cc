@@ -9,6 +9,7 @@
 #SBATCH --mail-user=j.palacios@oceans.ubc.ca
 #SBATCH --mail-type=ALL
 #SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/con_slurm_%j.out # Specify the full path with the desired file name prefix
+#SBATCH --error=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/con_slurm_%j.err      
 
 
 # ---------------------------------------------------------------------

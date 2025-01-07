@@ -18,16 +18,10 @@ year_one <- 1851
 year_end <- 2100
 
 # Scenario to call (Note this will determine the results directory)
-scenarios <- c(
-  "c6ipsl85F1rpp",
-  "c6ipsl85F1sq",
-  "c6ipsl85F1rpc",
-  "c6ipsl85F1ri",
-  "c6ipsl85F1nr"
-)
+scenarios <- c("c6gfdl26F0sq")
 
 # Variables to be converted (Abundace or Catch)
-  category <- c("Catch")
+  category <- c("Abd")
   
   for(i in 1:length(scenarios)){
     
