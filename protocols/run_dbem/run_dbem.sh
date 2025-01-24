@@ -9,10 +9,10 @@
 #SBATCH --mail-type=ALL
 #SBATCH --array=10-10
 #SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.out
-#SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.err
+#SBATCH --error=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.err
 
-Model=IPSL
-SSP=85
+Model=MPI
+SSP=26
 # Extract necessary data into TempSlurm
 Root=~/projects/def-wailung/Data/Climate/C6${Model}${SSP}_annual
 
