@@ -1,0 +1,136 @@
+---
+title: "data for renato"
+author: "Juliano Palacios-Abrantes"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+```{r setup, include = F}
+
+library(MyFunctions)
+
+my_lib(c(
+  # For grid estimation and species selection
+  "spatialEco","tidyverse", 
+  # For collaborative ease
+  "here",
+  "readr",
+  "janitor"
+))
+
+# Change paths to your computer
+
+data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
+results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios/results/figures"
+
+```
+
+
+# 
+
+```{r}
+
+# list of human
+dbem_data <- list.files(my_path("R","c6gfdl26F0sq"),full.names = T)
+
+# library(readxl)
+sau_combo <- read_excel("~/Library/CloudStorage/OneDrive-UBC/Data/Spatial/SAU/EEZ-FAO-Country-Combo.xlsx")
+View(sau_combo)
+
+# Get high seas
+cmar_grid <- my_data("dbem_coords") %>% 
+  filter(lat < 10 & lat > -10 & lon > -100 & lon < -70) %>% 
+  left_join(mpas_grid) %>% 
+  mutate(status = ifelse(is.na(status),"non_protected",status)) %>% 
+  left_join(my_data("sau_index")) %>% 
+  filter(eez_name %in% c("Colombia (Pacific)",
+                         "Panama (Pacific)",
+                          "Costa Rica (Pacific)",
+                          "Galapagos Isl. (Ecuador)",
+                          "Ecuador",
+                         "High seas"))
+
+ggplot(cmar_grid) +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = eez_name
+    )
+  )
+```
+
+
+
+```{r}
+
+# taxon_data <- dbem_data[1]
+
+prop_fx <- function(taxon_key){
+  
+  load(taxon_key)
+  
+  taxon <- str_sub(taxon_key,85,90)
+  
+  spp_data <- as.data.frame(data) %>% 
+    rowid_to_column("index")
+  rm(data)
+  colnames(spp_data) <- c("index",(seq(1851,2100,1)))
+  
+  
+  partial <- spp_data %>% 
+    select(`1995`:`2014`,`2020`:`2039`,`2040`:`2059`) %>% 
+    rowid_to_column("index") %>% 
+    filter(index %in% cmar_grid$index) %>% 
+    gather(year,"abd",`1995`:`2059`) %>% 
+    left_join(cmar_grid) %>% 
+    mutate(period = ifelse(year < 2014 & year > 1995,"present_1995_2014",
+                           ifelse(year < 2039 & year > 2020,"ear_2020_2039",
+                                  "mid_2040_2059"))
+    ) %>% 
+    filter(!is.na(eez_id)) %>% 
+    # Aggregate abd by EEZ
+    group_by(year,eez_id,eez_name,period) %>% 
+    summarise(eez_abd = sum(abd, na.rm = T)) %>% 
+    # Mean abd by period
+    group_by(eez_id,eez_name,period) %>% 
+    summarise(mean_eez_abd = mean(eez_abd, na.rm = T))
+  
+  
+  totals <- partial %>% 
+    group_by(period) %>% 
+    summarise(tot_abd = sum(mean_eez_abd,na.rm = T))
+  
+  final_df <- partial %>% 
+    left_join(totals,
+              by = "period") %>% 
+    mutate(eez_proportion = mean_eez_abd/tot_abd,
+           taxon_key = taxon)
+  
+  
+  df_name <- paste0(taxon,"_prop.csv")
+  
+  
+  write_csv(final_df,
+            my_path("R","socio_ecol",df_name))
+  
+}
+
+suppressMessages(
+lapply(dbem_data, prop_fx)
+)
+
+suppressMessages(
+# taxon_data <- dbem_data
+mclapply(dbem_data, prop_fx,mc.cores = getOption("mc.cores", 10L))
+)
+```
+
+```{r}
+final_df %>% 
+  spread(eez_name,eez_proportion)
+
+```
+
+
