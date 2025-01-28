@@ -80,14 +80,16 @@ prop_fx <- function(taxon_key){
   
   
   partial <- spp_data %>% 
-    select(`1995`:`2014`,`2020`:`2039`,`2040`:`2059`) %>% 
+    select(`1995`:`2014`,`2020`:`2039`,`2040`:`2059`,`2081`:`2100`) %>% 
     rowid_to_column("index") %>% 
     filter(index %in% cmar_grid$index) %>% 
     gather(year,"abd",`1995`:`2059`) %>% 
     left_join(cmar_grid) %>% 
     mutate(period = ifelse(year < 2014 & year > 1995,"present_1995_2014",
                            ifelse(year < 2039 & year > 2020,"ear_2020_2039",
-                                  "mid_2040_2059"))
+                                  ifelse(year < 2059 & year > 2040,"mid_2040_2059",
+                                         "end_2081_2100"))
+    )
     ) %>% 
     filter(!is.na(eez_id)) %>% 
     # Aggregate abd by EEZ
