@@ -33,7 +33,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
 
-results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios/results"
+results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios_paper/results"
 
 ```
 
@@ -61,6 +61,40 @@ dbem_grid <- my_data("dbem_coords")
 unique(mpas_grid$mpa_abrev)
 
 ```
+
+```{r}
+
+mpas_grid %>% 
+  filter(mpa_abrev == "Hermandad_Ecuador") %>% 
+  left_join(dbem_grid) %>% 
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = fe_prop
+      # color = fe_prop
+    ) ,
+    color = "black"
+  ) +
+  # scale_fill_gradient2() +
+  # scale_color_gradient2() +
+  scale_fill_viridis_c() +
+  scale_color_viridis_c() +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
+  my_land_map()+ 
+  coord_sf(
+    # xlim = c(-95,-77),
+    # ylim = c(-4,9)
+    xlim = c(-94,-85),
+    ylim = c(-1,4)
+  )
+
+  
+```
+
+
+
 
 ## Re-calculate fishing effort
 
@@ -94,6 +128,11 @@ sq_mpa_grid_f <- mpas_grid %>%
 # grid parcial f 118276
 # grid NO F 119702
 
+mpas_grid %>% 
+  filter(index %in% sq_map$index
+         # mpa_abrev == "Galapagos_Ecuador",
+         ) %>% 
+  View()
 
 ```
 
@@ -125,6 +164,7 @@ regional_index_sq <- read.csv(paste0(data_path,"spatial/iattc_gridded.csv")) %>%
 
 
 
+
 sq_dbem_grid <- dbem_grid %>% 
   left_join(sq_mpa_grid_f,
             by ="index") %>% 
@@ -138,6 +178,27 @@ sq_dbem_grid <- dbem_grid %>%
   distinct(index, .keep_all = T)
   
 
+
+# Double check grid
+x <- sq_dbem_grid %>% 
+  filter(status %in% c("protected","surrounding")) %>% 
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = status
+    )
+  ) +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black") +
+  facet_wrap(~mpa_abrev)
+
+
+ggsave(
+       "map_panel.png",
+       x,
+       width = 10,
+       height = 10)
 
 # Wirte grid for compute canada
 sq_dbem_grid %>% 
@@ -162,19 +223,19 @@ etp_eez_index_sq <- my_data("sau_index") %>%
          status = "unprotected",
          mpa_abrev = NA,
          scen = "status quo")# %>% 
-  # left_join(dbem_grid)
-
-etp_eez_index_sq
-
-
-# ggplot(etp_eez_index_sq) + 
+  
+# Double check grid
+# etp_eez_index_sq %>% 
+#   left_join(dbem_grid) %>% 
+#   ggplot() +
 #   geom_tile(
 #     aes(
 #       x = lon,
 #       y = lat,
 #       fill = "status"
 #     )
-#   )
+#   ) +
+#   geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")
 
 sq_dbem_grid <- dbem_grid %>% 
   left_join(sq_mpa_grid_f,
@@ -188,9 +249,35 @@ sq_dbem_grid <- dbem_grid %>%
   ) %>%
   distinct(index, .keep_all = T)
 
-# sq_dbem_grid %>% 
-#   filter(!is.na(status)) %>% 
-#   View()
+sq_mpa_grid_f %>%
+  left_join(dbem_grid) %>% 
+  filter(index %in% sq_map$index,
+         fe_prop > 1) %>%
+  # View()
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = fe_prop
+      # color = fe_prop
+    ) ,
+    color = "black"
+  ) +
+  # scale_fill_gradient2() +
+  # scale_color_gradient2() +
+  scale_fill_viridis_c() +
+  scale_color_viridis_c() +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
+  geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
+  my_land_map()+ 
+  coord_sf(
+    # xlim = c(-95,-77),
+    # ylim = c(-4,9)
+    xlim = c(-93,-88),
+    ylim = c(-2,2)
+  )
+
 
 
 # Wirte grid for compute canada
@@ -211,6 +298,9 @@ filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)
 
 
 sq_map <- sq_dbem_grid %>% 
+  # filter(f_finale <1,
+  #        mpa_abrev == "Galapagos_Ecuador",
+  #        status == "protected") %>%
   # View()
   ggplot() +
   geom_tile(
@@ -223,18 +313,20 @@ sq_map <- sq_dbem_grid %>%
   ) +
   # scale_fill_gradient2() +
   # scale_color_gradient2() +
-  scale_fill_viridis_b() +
-  scale_color_viridis_b() +
-  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "white")  +
-  geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
+  scale_fill_viridis_c() +
+  scale_color_viridis_c() +
+  geom_sf(data = combined_sf %>% filter(FID != 8), aes(), fill = "transparent", color = "black")  +
+  # geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
   coord_sf(
-    xlim = c(-95,-77),
-    ylim = c(-4,9)
+    # xlim = c(-95,-77),
+    # ylim = c(-4,9)
+    xlim = c(-94,-85),
+    ylim = c(-1,4)
   )
 
 ggsave(
-       "sq_scenario_map.png",
+       paste0(results_path,"/scenarios/sq_scenario_mapz.png"),
        sq_map)
 
 
