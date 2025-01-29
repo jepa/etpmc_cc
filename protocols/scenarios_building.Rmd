@@ -17,7 +17,9 @@ my_lib(
     "st",
     "janitor",
     # For grid estimation 
-    "spatialEco", "geosphere","raster","units","matrixStats","rmapshaper", "igraph"
+    "spatialEco", "geosphere","raster","units","matrixStats","rmapshaper", "igraph",
+    # For saptial... stuff
+    "rnaturalearth"
   )
 )
 
@@ -122,17 +124,130 @@ sq_mpa_grid_f <- mpas_grid %>%
     )
   )
   ) %>%   
-  select(-2,-6:-9,-notes) 
+  select(-2,-6:-9,-notes)  %>% 
+# Deal with duplicates, prioritize 'protected' status if there are multiple statuses for the same index
+  group_by(index) %>%
+  # Create a flag column to mark protected status rows (if any) for each index
+  mutate(priority_status = if_else(status == "protected", 1, 0)) %>%
+  arrange(index, desc(priority_status)) %>%  # Ensure 'protected' rows come first for each index
+  # Keep only the first occurrence for each index, effectively keeping 'protected' if it exists
+  distinct(index, .keep_all = TRUE) %>%
+  ungroup()
 
-# Tests with these grids (see notebook page 144)
-# grid parcial f 118276
-# grid NO F 119702
 
-mpas_grid %>% 
-  filter(index %in% sq_map$index
-         # mpa_abrev == "Galapagos_Ecuador",
-         ) %>% 
-  View()
+# Double check grid
+# status_grid <- sq_dbem_grid %>%
+#   filter(status %in% c("protected","surrounding")) %>%
+#   ggplot() +
+#   geom_tile(
+#     aes(
+#       x = lon,
+#       y = lat,
+#       fill = f_finale
+#       # fill = status
+#     )
+#     # color = "white"
+#   ) +
+#   geom_sf(data = combined_sf, aes(), fill = "transparent", color = "grey") +
+#   # facet_wrap(~mpa_abrev) +
+#   scale_fill_viridis_c()
+# 
+# ggsave(
+#   # paste0(data_path,"/spatial/gridded/a_status_grid.png"),
+#   # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
+#   paste0(data_path,"/spatial/gridded/a_f_finale_grid.png"),
+#   # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
+#   status_grid,
+#   width = 7,
+#   height = 7)
+
+
+```
+
+### Fix Galapagos land issue
+
+Because galaoagos MPA has, well, Galapagos, the land polygon is messing up the pixel area estimation because it thinks that the protected area is less than the total pixel area (because of land)
+
+
+```{r}
+
+# Manually tdentify what grids are problematic
+ gal_map <- sq_dbem_grid %>%
+  filter(status %in% c("protected","surrounding")) %>%
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = f_finale
+      # fill = status
+    ),
+    alpha = 0.4
+    # color = "white"
+  ) +
+  geom_text(
+    aes(
+      x = lon,
+      y = lat,
+      label = index
+    )
+  ) +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "grey") +
+  # facet_wrap(~mpa_abrev) +
+  scale_fill_viridis_c() +
+  coord_sf(
+    xlim = c(-95,-85),
+    ylim = c(-4,4)
+  )
+
+# Save figure for eas viz
+ggsave("galapagos_land_index.png",x,
+       width = 17,
+       height = 17)
+
+# Identified problematic grids
+galapagos_land <- c(128339,128340,129057,129058,129059,129060,129061,129777,129778,129779,130497,130498,130499,130500,130501,130502,131218,131219,131220,131221,129780)
+
+    # Fix final grid
+sq_dbem_grid_gp <- sq_mpa_grid_f %>% 
+  left_join(dbem_grid) %>% 
+  mutate(
+    f_finale = ifelse(index %in% galapagos_land, 0.2000000,f_finale)
+  )
+
+  # Double check fix
+gal_map <- sq_dbem_grid_gp %>%
+  filter(status %in% c("protected","surrounding")) %>%
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = f_finale
+      # fill = status
+    ),
+    alpha = 0.4
+    # color = "white"
+  ) +
+  geom_text(
+    aes(
+      x = lon,
+      y = lat,
+      label = index
+    )
+  ) +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "grey") +
+  # facet_wrap(~mpa_abrev) +
+  scale_fill_viridis_c() +
+  coord_sf(
+    xlim = c(-95,-85),
+    ylim = c(-4,4)
+  )
+   
+   ggsave("fix.png",gal_map,
+       width = 17,
+       height = 17)
+
 
 ```
 
@@ -162,9 +277,10 @@ regional_index_sq <- read.csv(paste0(data_path,"spatial/iattc_gridded.csv")) %>%
          scen = "status quo") %>% 
   left_join(dbem_grid)
 
+# Identified problematic grids
+galapagos_land <- c(128339,128340,129057,129058,129059,129060,129061,129777,129778,129779,130497,130498,130499,130500,130501,130502,131218,131219,131220,131221,129780)
 
-
-
+# Get the MPA grid
 sq_dbem_grid <- dbem_grid %>% 
   left_join(sq_mpa_grid_f,
             by ="index") %>% 
@@ -175,38 +291,49 @@ sq_dbem_grid <- dbem_grid %>%
                       ifelse(is.na(status) & ! index %in% regional_index_sq$index,1, f_finale)
     )
   ) %>% 
-  distinct(index, .keep_all = T)
-  
+  # fix galapagos
+  mutate(
+    f_finale = ifelse(index %in% galapagos_land, 0.2000000,f_finale)
+  )
 
-
-# Double check grid
-x <- sq_dbem_grid %>% 
-  filter(status %in% c("protected","surrounding")) %>% 
+sq_dbem_grid %>%
+  left_join(dbem_grid) %>% 
+  # filter(index %in% sq_map$index,
+         # fe_prop > 1) %>%
+  # View()
   ggplot() +
   geom_tile(
     aes(
       x = lon,
       y = lat,
-      fill = status
-    )
+      fill = fe_prop
+      # color = fe_prop
+    ) ,
+    color = "black"
   ) +
-  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black") +
-  facet_wrap(~mpa_abrev)
+  # scale_fill_gradient2() +
+  # scale_color_gradient2() +
+  scale_fill_viridis_c() +
+  scale_color_viridis_c() +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
+  my_land_map()+ 
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-4,9)
+    # xlim = c(-93,-88),
+    # ylim = c(-2,2)
+  )
 
 
-ggsave(
-       "map_panel.png",
-       x,
-       width = 10,
-       height = 10)
 
 # Wirte grid for compute canada
-sq_dbem_grid %>% 
-  select(f_finale) %>% 
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq.txt"),
-              sep="\t", col.names = F, row.names = F)
+# sq_dbem_grid %>% 
+#   select(f_finale) %>% 
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq.txt"),
+#               sep="\t", col.names = F, row.names = F)
 
 ```
+
 
 ### EEZs sub scenario
 
@@ -217,7 +344,7 @@ In this scenario, we assumed that the rest of the ETP EEZs are fished at F/FMSY 
 etp_eez_index_sq <- my_data("sau_index") %>% 
    filter(eez_name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>% 
   select(index) %>% 
-  filter(!index %in% sq_mpa_grid_f$index) %>% 
+  filter(!index %in% sq_dbem_grid$index) %>% 
   # mutate(rfmo_name = "IATTC") %>% 
   mutate(f_finale = 1.3,
          status = "unprotected",
@@ -251,8 +378,8 @@ sq_dbem_grid <- dbem_grid %>%
 
 sq_mpa_grid_f %>%
   left_join(dbem_grid) %>% 
-  filter(index %in% sq_map$index,
-         fe_prop > 1) %>%
+  # filter(index %in% sq_map$index,
+         # fe_prop > 1) %>%
   # View()
   ggplot() +
   geom_tile(
@@ -269,22 +396,21 @@ sq_mpa_grid_f %>%
   scale_fill_viridis_c() +
   scale_color_viridis_c() +
   geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
-  geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
   coord_sf(
-    # xlim = c(-95,-77),
-    # ylim = c(-4,9)
-    xlim = c(-93,-88),
-    ylim = c(-2,2)
+    xlim = c(-95,-77),
+    ylim = c(-4,9)
+    # xlim = c(-93,-88),
+    # ylim = c(-2,2)
   )
 
 
 
 # Wirte grid for compute canada
-sq_dbem_grid %>% 
-  select(f_finale) %>% 
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sqb.txt"),
-              sep="\t", col.names = F, row.names = F)
+# sq_dbem_grid %>% 
+#   select(f_finale) %>% 
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sqb.txt"),
+#               sep="\t", col.names = F, row.names = F)
 
 ```
 
