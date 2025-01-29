@@ -124,15 +124,8 @@ sq_mpa_grid_f <- mpas_grid %>%
     )
   )
   ) %>%   
-  select(-2,-6:-9,-notes)  %>% 
-# Deal with duplicates, prioritize 'protected' status if there are multiple statuses for the same index
-  group_by(index) %>%
-  # Create a flag column to mark protected status rows (if any) for each index
-  mutate(priority_status = if_else(status == "protected", 1, 0)) %>%
-  arrange(index, desc(priority_status)) %>%  # Ensure 'protected' rows come first for each index
-  # Keep only the first occurrence for each index, effectively keeping 'protected' if it exists
-  distinct(index, .keep_all = TRUE) %>%
-  ungroup()
+  select(-2,-6:-9,-notes) %>% 
+  prior_prot() # function for prioritization of duplicates
 
 
 # Double check grid
@@ -256,90 +249,14 @@ gal_map <- sq_dbem_grid_gp %>%
 
 Here we merged the MPA grid and create the DBEM layer for Compute Canada (CC)
 
-### IATTC sub-scenario
-
-In this scenario, we assumed that the whole IATCC region is fihsed at F/FMSY = 1.3 while the rest of the world is F/FMSY = 1.
-
-```{r iattc_fishing, eval = F}
-
-regional_index_sq <- read.csv(paste0(data_path,"spatial/iattc_gridded.csv")) %>% 
-   # filter(eez_name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>% 
-  select(index) %>% 
-  # mutate(rfmo_name = "IATTC") %>% 
-  # bind_rows(
-  # my_path("Spa","SAU/SAU_RFMO", "RFMO_Index_Code.csv", read = T)
-  # ) %>% 
-  # filter(rfmo_name == "IATTC") %>% 
-  select(index) %>% 
-  mutate(f_finale = 1.3,
-         status = "unprotected",
-         mpa_abrev = NA,
-         scen = "status quo") %>% 
-  left_join(dbem_grid)
-
-# Identified problematic grids
-galapagos_land <- c(128339,128340,129057,129058,129059,129060,129061,129777,129778,129779,130497,130498,130499,130500,130501,130502,131218,131219,131220,131221,129780)
-
-# Get the MPA grid
-sq_dbem_grid <- dbem_grid %>% 
-  left_join(sq_mpa_grid_f,
-            by ="index") %>% 
-  select(index,lon,lat,status,mpa_abrev,status,scen,f_finale) %>% 
-  mutate(
-    # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
-    f_finale = ifelse(is.na(status) & index %in% regional_index_sq$index, 1.3,
-                      ifelse(is.na(status) & ! index %in% regional_index_sq$index,1, f_finale)
-    )
-  ) %>% 
-  # fix galapagos
-  mutate(
-    f_finale = ifelse(index %in% galapagos_land, 0.2000000,f_finale)
-  )
-
-sq_dbem_grid %>%
-  left_join(dbem_grid) %>% 
-  # filter(index %in% sq_map$index,
-         # fe_prop > 1) %>%
-  # View()
-  ggplot() +
-  geom_tile(
-    aes(
-      x = lon,
-      y = lat,
-      fill = fe_prop
-      # color = fe_prop
-    ) ,
-    color = "black"
-  ) +
-  # scale_fill_gradient2() +
-  # scale_color_gradient2() +
-  scale_fill_viridis_c() +
-  scale_color_viridis_c() +
-  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
-  my_land_map()+ 
-  coord_sf(
-    xlim = c(-95,-77),
-    ylim = c(-4,9)
-    # xlim = c(-93,-88),
-    # ylim = c(-2,2)
-  )
-
-
-
-# Wirte grid for compute canada
-# sq_dbem_grid %>% 
-#   select(f_finale) %>% 
-#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq.txt"),
-#               sep="\t", col.names = F, row.names = F)
-
-```
-
-
 ### EEZs sub scenario
 
 In this scenario, we assumed that the rest of the ETP EEZs are fished at F/FMSY = 1.3 while the rest of the world is F/FMSY = 1, including the reion's high seas under the assumption that ICCAT has proper managmeent of the region
 
 ```{r, etp_eez_fishing, eval = T}
+
+# Identified problematic grids
+galapagos_land <- c(128339,128340,129057,129058,129059,129060,129061,129777,129778,129779,130497,130498,130499,130500,130501,130502,131218,131219,131220,131221,129780)
 
 etp_eez_index_sq <- my_data("sau_index") %>% 
    filter(eez_name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>% 
@@ -374,43 +291,18 @@ sq_dbem_grid <- dbem_grid %>%
                       ifelse(is.na(status) & ! index %in% etp_eez_index_sq$index,1, f_finale)
     )
   ) %>%
-  distinct(index, .keep_all = T)
-
-sq_mpa_grid_f %>%
-  left_join(dbem_grid) %>% 
-  # filter(index %in% sq_map$index,
-         # fe_prop > 1) %>%
-  # View()
-  ggplot() +
-  geom_tile(
-    aes(
-      x = lon,
-      y = lat,
-      fill = fe_prop
-      # color = fe_prop
-    ) ,
-    color = "black"
-  ) +
-  # scale_fill_gradient2() +
-  # scale_color_gradient2() +
-  scale_fill_viridis_c() +
-  scale_color_viridis_c() +
-  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
-  my_land_map()+ 
-  coord_sf(
-    xlim = c(-95,-77),
-    ylim = c(-4,9)
-    # xlim = c(-93,-88),
-    # ylim = c(-2,2)
+  # fix galapagos
+  mutate(
+    f_finale = ifelse(index %in% galapagos_land, 0.2000000,f_finale)
   )
 
-
-
 # Wirte grid for compute canada
-# sq_dbem_grid %>% 
-#   select(f_finale) %>% 
-#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sqb.txt"),
-#               sep="\t", col.names = F, row.names = F)
+sq_dbem_grid %>%
+  select(f_finale) %>%
+  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq_update.txt"),
+              sep="\t", 
+              col.names = F, 
+              row.names = F)
 
 ```
 
@@ -424,10 +316,6 @@ filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)
 
 
 sq_map <- sq_dbem_grid %>% 
-  # filter(f_finale <1,
-  #        mpa_abrev == "Galapagos_Ecuador",
-  #        status == "protected") %>%
-  # View()
   ggplot() +
   geom_tile(
     aes(
@@ -445,14 +333,14 @@ sq_map <- sq_dbem_grid %>%
   # geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
   coord_sf(
-    # xlim = c(-95,-77),
-    # ylim = c(-4,9)
-    xlim = c(-94,-85),
-    ylim = c(-1,4)
+    xlim = c(-95,-77),
+    ylim = c(-4,9)
+    # xlim = c(-94,-85),
+    # ylim = c(-1,4)
   )
 
 ggsave(
-       paste0(results_path,"/scenarios/sq_scenario_mapz.png"),
+       paste0(results_path,"/scenarios/sq_scenario_map.png"),
        sq_map)
 
 
@@ -486,7 +374,6 @@ unique(mpas_grid$mpa_abrev)
 
 ```{r}
 
-
 scen_reg_implement <- mpas_grid %>% 
   left_join(scenarios %>% filter(scen == "reg_implement"))
 
@@ -503,14 +390,17 @@ etp_eez_index_ri <- my_data("sau_index") %>%
 ri_dbem_grid <- dbem_grid %>% 
   left_join(scen_reg_implement,
             by ="index") %>% 
-  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen) %>% 
+  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen,fe_prop) %>% 
   mutate(
     # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
     f_finale = ifelse(is.na(status) & index %in% etp_eez_index_ri$index, 1.3,
-                      ifelse(is.na(status) & ! index %in% etp_eez_index_ri$index,1, f_scen)
+                      ifelse(is.na(status) & ! index %in% etp_eez_index_ri$index,1,
+                             ifelse(status == "surrounding",fe_prop,
+                                    f_scen)
+                      )
     )
   ) %>%
-  distinct(index, .keep_all = T)
+  prior_prot() # function for prioritization of duplicates
 
 # sq_dbem_grid %>% 
 #   filter(!is.na(status)) %>% 
@@ -526,7 +416,6 @@ ri_dbem_grid %>%
 ```
 
 ## Plot Map for supplements
-
 
 ```{r}
 
@@ -558,7 +447,7 @@ ri_map <- ri_dbem_grid %>%
   )
 
 ggsave(
-       paste0(data_path,"spatial/compute_canada/ri_scenario_map.png"),
+       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/ri_scenario_map.png"),
        ri_map)
 
 
@@ -860,5 +749,87 @@ ggsave(
        paste0(results_path,"/scenarios/nr_scenario_map.png"),
        rpp_map)
 
+
+```
+
+
+
+# OLD CODE 
+
+### IATTC sub-scenario
+
+In this scenario, we assumed that the whole IATCC region is fihsed at F/FMSY = 1.3 while the rest of the world is F/FMSY = 1.
+
+```{r iattc_fishing, eval = F}
+
+regional_index_sq <- read.csv(paste0(data_path,"spatial/iattc_gridded.csv")) %>% 
+   # filter(eez_name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>% 
+  select(index) %>% 
+  # mutate(rfmo_name = "IATTC") %>% 
+  # bind_rows(
+  # my_path("Spa","SAU/SAU_RFMO", "RFMO_Index_Code.csv", read = T)
+  # ) %>% 
+  # filter(rfmo_name == "IATTC") %>% 
+  select(index) %>% 
+  mutate(f_finale = 1.3,
+         status = "unprotected",
+         mpa_abrev = NA,
+         scen = "status quo") %>% 
+  left_join(dbem_grid)
+
+# Identified problematic grids
+galapagos_land <- c(128339,128340,129057,129058,129059,129060,129061,129777,129778,129779,130497,130498,130499,130500,130501,130502,131218,131219,131220,131221,129780)
+
+# Get the MPA grid
+sq_dbem_grid <- dbem_grid %>% 
+  left_join(sq_mpa_grid_f,
+            by ="index") %>% 
+  select(index,lon,lat,status,mpa_abrev,status,scen,f_finale) %>% 
+  mutate(
+    # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
+    f_finale = ifelse(is.na(status) & index %in% regional_index_sq$index, 1.3,
+                      ifelse(is.na(status) & ! index %in% regional_index_sq$index,1, f_finale)
+    )
+  ) %>% 
+  # fix galapagos
+  mutate(
+    f_finale = ifelse(index %in% galapagos_land, 0.2000000,f_finale)
+  )
+
+sq_dbem_grid %>%
+  left_join(dbem_grid) %>% 
+  # filter(index %in% sq_map$index,
+         # fe_prop > 1) %>%
+  # View()
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = fe_prop
+      # color = fe_prop
+    ) ,
+    color = "black"
+  ) +
+  # scale_fill_gradient2() +
+  # scale_color_gradient2() +
+  scale_fill_viridis_c() +
+  scale_color_viridis_c() +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
+  my_land_map()+ 
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-4,9)
+    # xlim = c(-93,-88),
+    # ylim = c(-2,2)
+  )
+
+
+
+# Wirte grid for compute canada
+# sq_dbem_grid %>% 
+#   select(f_finale) %>% 
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq.txt"),
+#               sep="\t", col.names = F, row.names = F)
 
 ```
