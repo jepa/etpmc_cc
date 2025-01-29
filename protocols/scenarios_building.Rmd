@@ -346,7 +346,7 @@ ggsave(
 
 ```
 
-# Scenario 2: Best Case (regulation implemented)
+# Scenario 2: Best Case (regulation implemented / ri)
 
 All regulations are implemented, and the fishing area within the marine protected areas is equivalent to the area specified in the management plan, or does not exist when no information is available. The fishing intensity, where permitted, is that of MSY
 
@@ -545,15 +545,15 @@ rpc_map <- rpc_dbem_grid %>%
   )
 
 ggsave(
-       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/rpc_scenario_mapb.png"),
+       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/rpc_scenario_map.png"),
        rpc_map)
 
 
 ```
 
-# Scenario 4: Partial rgulations For fisheries (reg_par_pes)
+# Scenario 4: Partial rgulations For fisheries (reg_par_pes / rpp)
 
-The fishing area within the marine protected areas is 20% larger than the area specified in the management plan. Fishing intensity in the region is at the level required for MSY
+Fishing regulations are implemented. The fishing area within the marine protected areas is 20% larger than the area specified in the management plan. Fishing intensity in the region is at the level required for MSY
 
 ```{r}
 
@@ -570,32 +570,32 @@ sq_mpa_grid_f <- mpas_grid %>%
   )
   )
 
-etp_eez_index_sq <- my_data("sau_index") %>% 
-   filter(eez_name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>% 
-  select(index) %>% 
-  filter(!index %in% sq_mpa_grid_f$index) %>% 
-  # mutate(rfmo_name = "IATTC") %>% 
+etp_eez_index_sq <- my_data("sau_index") %>%
+   filter(eez_name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>%
+  select(index) %>%
+  filter(!index %in% sq_mpa_grid_f$index) %>%
+  # mutate(rfmo_name = "IATTC") %>%
   mutate(f_finale = 1,
          status = "unprotected",
          mpa_abrev = NA,
          scen = "status quo")
 
-scen_reg_implement <- sq_mpa_grid_f %>% 
-  mutate(f_rpf = ifelse(status == "protected",f_scen,
-                        ifelse(status == "surrounding",f_finale-f_out,f_plan))
-  )
 
 rpp_dbem_grid <- dbem_grid %>% 
-  left_join(scen_reg_implement,
+  left_join(sq_mpa_grid_f,
             by ="index") %>% 
-  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen) %>% 
+  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen,fe_prop,f_out) %>% 
   mutate(
     # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
     f_finale = ifelse(is.na(status) & index %in% etp_eez_index_sq$index, 1,
-                      ifelse(is.na(status) & ! index %in% etp_eez_index_sq$index,1, f_scen)
+                      ifelse(is.na(status) & ! index %in% etp_eez_index_sq$index,1,
+                             ifelse(status == "surrounding",fe_prop*f_out,
+                           f_scen
+                           )
+    )
     )
   ) %>%
-  distinct(index, .keep_all = T)
+  prior_prot()
 
 # sq_dbem_grpcd %>% 
 #   filter(!is.na(status)) %>% 
@@ -638,8 +638,8 @@ rpp_map <- rpp_dbem_grid %>%
   ) +
   # scale_fill_gradient2() +
   # scale_color_gradient2() +
-  scale_fill_viridis_b() +
-  scale_color_viridis_b() +
+  scale_fill_viridis_c() +
+  scale_color_viridis_c() +
   geom_sf(data = combined_sf, aes(), fill = "transparent", color = "white")  +
   geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
