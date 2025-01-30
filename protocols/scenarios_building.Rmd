@@ -64,10 +64,18 @@ unique(mpas_grid$mpa_abrev)
 
 ```
 
+# Fix surrounding
+For the purpuse of the analysis, surrounding gridcells around MPAs when f = 1 inside the MPA are treated as a regular EEZ grid. This is because there is no point in increasing effort in these regions because fishing is not really re-distributed. 
+
 ```{r}
 
+mpas_grid <- mpas_grid %>% 
+  left_join(scenarios %>% filter(scen == "status_quo")) %>% 
+  filter(f_plan < 1) 
+
+
 mpas_grid %>% 
-  filter(mpa_abrev == "Hermandad_Ecuador") %>% 
+  filter(mpa_abrev == "CLomas Sub  Cuenca PacNor") %>% 
   left_join(dbem_grid) %>% 
   ggplot() +
   geom_tile(
@@ -330,7 +338,7 @@ sq_map <- sq_dbem_grid %>%
   scale_fill_viridis_c() +
   scale_color_viridis_c() +
   geom_sf(data = combined_sf %>% filter(FID != 8), aes(), fill = "transparent", color = "black")  +
-  # geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
+  geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
   coord_sf(
     xlim = c(-95,-77),
@@ -390,12 +398,12 @@ etp_eez_index_ri <- my_data("sau_index") %>%
 ri_dbem_grid <- dbem_grid %>% 
   left_join(scen_reg_implement,
             by ="index") %>% 
-  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen,fe_prop) %>% 
+  select(index,lon,lat,status,mpa_abrev,status,scen,f_plan,f_scen,fe_prop,f_out) %>% 
   mutate(
     # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
-    f_finale = ifelse(is.na(status) & index %in% etp_eez_index_ri$index, 1.3,
+    f_finale = ifelse(is.na(status) & index %in% etp_eez_index_ri$index, 1,
                       ifelse(is.na(status) & ! index %in% etp_eez_index_ri$index,1,
-                             ifelse(status == "surrounding",fe_prop,
+                             ifelse(status == "surrounding" & f_plan != 1,fe_prop*f_out,
                                     f_scen)
                       )
     )
@@ -419,8 +427,8 @@ ri_dbem_grid %>%
 
 ```{r}
 
-sau_sf <- my_sf("SAU") %>% 
-filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
+# sau_sf <- my_sf("SAU") %>% 
+# filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
 
 
 ri_map <- ri_dbem_grid %>% 
@@ -436,8 +444,8 @@ ri_map <- ri_dbem_grid %>%
   ) +
   # scale_fill_gradient2() +
   # scale_color_gradient2() +
-  scale_fill_viridis_b() +
-  scale_color_viridis_b() +
+  scale_fill_viridis_c() +
+  scale_color_viridis_c() +
   geom_sf(data = combined_sf, aes(), fill = "transparent", color = "white")  +
   geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
@@ -610,11 +618,11 @@ rpp_dbem_grid %>%
 
 
 
-rpp_dbem_grid %>% 
-  select(f_finale) %>% 
-  bind_cols(rpc_dbem_grid %>% select(f_finale)) %>% 
-  mutate(f_finale...1 - f_finale...2) %>% 
-  View()
+# rpp_dbem_grid %>% 
+#   select(f_finale) %>% 
+#   bind_cols(rpc_dbem_grid %>% select(f_finale)) %>% 
+#   mutate(f_finale...1 - f_finale...2) %>% 
+#   View()
 
 
 ```
