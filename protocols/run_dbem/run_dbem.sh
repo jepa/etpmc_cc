@@ -11,8 +11,9 @@
 #SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.out
 #SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.err
 
-Model=IPSL
-SSP=85
+Model=GFDL
+SSP=26
+runName=c6gfdl26F1sq
 # Extract necessary data into TempSlurm
 Root=~/projects/def-wailung/Data/Climate/C6${Model}${SSP}_annual
 
@@ -60,20 +61,17 @@ echo "Program $SLURM_JOB_NAME finished with exit code $? at: $(date)"
 
 
 # Process Run -----------------------
-mkdir ~/scratch/Results/$runName
-mkdir  ~/scratch/Results/$runName/netcdfs
-mkdir  ~/scratch/Results/$runName/Rdata
-echo 'made process dirs'
+mkdir  ~/scratch/Results/Rdata/$runName
+echo 'made process dir'
 
 # Compress DBEM outputs
 echo 'compressing DBEM outputs'
-cd $SLURM_TMPDIR
+cd  ~/scratch/Results/$runName
 tar --use-compress-program="pigz -p 4" -cf ${ESM}_${run_type}_${runName}.tar.gz $runName
 echo "Compressed as ${ESM}_${run_type}_${runName}.tar.gz"
 echo 'printing inside '${runName}
 ls ${runName}
-mv ${ESM}_${run_type}_${runName}.tar.gz ~/scratch/Results/$runName/ #move to scratch
-#mv ${runName} ~/scratch/Results/$runName/ #move to scratch
+mv ${ESM}_${run_type}_${runName}.tar.gz ~ ../Rdata/ #move to RData
 
 # Convert to RData
 echo 'Now running python aggregation'
