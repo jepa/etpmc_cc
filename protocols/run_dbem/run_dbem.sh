@@ -9,7 +9,8 @@
 #SBATCH --mail-type=ALL
 #SBATCH --array=10-10
 #SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.out
-#SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.err
+#SBATCH --error=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.err
+
 
 Model=GFDL
 SSP=26
@@ -74,7 +75,7 @@ ls ${runName}
 mv ${ESM}_${run_type}_${runName}.tar.gz ~ ../Rdata/ #move to RData
 
 # Convert to RData
-echo 'Now running python aggregation'
+echo 'Now running R convertion'
 module load StdEnv/2023 gcc/12.3 r/4.3.1
 export R_LIBS=~/local/R_libs/
 Rscript conversion_protocol.R Settings.R$SLURM_ARRAY_TASK_ID
