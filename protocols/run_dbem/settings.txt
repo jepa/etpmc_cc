@@ -2,9 +2,9 @@
  CCSc C6IPSL26                                
  SSP SSP126                                  
  rsfile EtpSppList          
- rpath c6ipsl26F1rpp                 
+ rpath c6ipsl26F1rpc                 
  tpath TaxonDataC0                   
- ifile 11                  
+ ifile 10                  
  FHS    1.00
  FEEZ    1.00
- MPApath mpa_rpp                                 
+ MPApath mpa_rpc                                 
