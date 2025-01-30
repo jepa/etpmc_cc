@@ -4,7 +4,7 @@
  rsfile EtpSppList          
  rpath c6mpis26F0sq                  
  tpath TaxonDataC0                   
- ifile 11                  
+ ifile 12                  
  FHS    0.00
  FEEZ    0.00
  MPApath mpa_sq                                  
