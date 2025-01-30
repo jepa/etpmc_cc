@@ -649,13 +649,13 @@ rpp_map <- rpp_dbem_grid %>%
   )
 
 ggsave(
-       paste0(results_path,"/scenarios/rpp_scenario_map.png"),
+       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/rpp_scenario_map.png"),
        rpp_map)
 
 
 ```
 
-# Scenario 5: No regulations
+# Scenario 5: No regulations (nr)
 
 Regulations are not implemented, and the fishing area within the marine protected areas is 50% larger than the area stipulated in the management plan. Fishing intensity in the region is 50% higher than the level required for MSY.
 
@@ -687,22 +687,22 @@ etp_eez_index_np <- my_data("sau_index") %>%
          mpa_abrev = NA,
          scen = "status quo")
 
-scen_reg_implement <- np_mpa_grid_f %>% 
-  mutate(f_nr = ifelse(status == "protected",f_scen,
-                        ifelse(status == "surrounding",f_finale-f_out,f_plan))
-  )
+
 
 nr_dbem_grid <- dbem_grid %>% 
-  left_join(scen_reg_implement,
+  left_join(np_mpa_grid_f,
             by ="index") %>% 
-  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen) %>% 
+  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen,fe_prop,f_out) %>% 
   mutate(
     # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
     f_finale = ifelse(is.na(status) & index %in% etp_eez_index_np$index, 1.5,
-                      ifelse(is.na(status) & ! index %in% etp_eez_index_np$index,1, f_scen)
+                      ifelse(is.na(status) & ! index %in% etp_eez_index_np$index,1, 
+                             ifelse(status == "surrounding",fe_prop*f_out,
+                                    f_scen)
+                      )
     )
-  ) %>%
-  distinct(index, .keep_all = T)
+  )%>%
+  prior_prot()
 
 # sq_dbem_grpcd %>% 
 #   filter(!is.na(status)) %>% 
@@ -736,8 +736,8 @@ rpp_map <- nr_dbem_grid %>%
   ) +
   # scale_fill_gradient2() +
   # scale_color_gradient2() +
-  scale_fill_viridis_b() +
-  scale_color_viridis_b() +
+  scale_fill_viridis_c() +
+  scale_color_viridis_c() +
   geom_sf(data = combined_sf, aes(), fill = "transparent", color = "white")  +
   geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
@@ -747,7 +747,7 @@ rpp_map <- nr_dbem_grid %>%
   )
 
 ggsave(
-       paste0(results_path,"/scenarios/nr_scenario_map.png"),
+       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/nr_scenario_map.png"),
        rpp_map)
 
 
