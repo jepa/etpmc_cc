@@ -106,7 +106,11 @@ all_runs <- bind_rows(
 
 all_runs %>% 
   group_by(scenario) %>% 
-  tally()
+  summarise(
+    n = n(),
+    tax = paste(unique(abd),collapse = ";")
+  ) %>% 
+  arrange(n)
 
 # RUNS
 # c6gfdl85F1pc 11 
