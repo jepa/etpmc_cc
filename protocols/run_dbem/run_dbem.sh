@@ -3,7 +3,7 @@
 #SBATCH --account=def-wailung
 #SBATCH -N 1 	#Nodes
 #SBATCH -N 1	#CPU count
-#SBATCH --mem-per-cpu=700M
+#SBATCH --mem-per-cpu=900M
 #SBATCH -t 02-00:00:00
 #SBATCH --mail-user=jepa88@gmail.com
 #SBATCH --mail-type=ALL
@@ -12,9 +12,8 @@
 #SBATCH --error=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.err
 
 
-Model=GFDL
+Model=IPSL
 SSP=26
-runName=c6gfdl26F1sq
 # Extract necessary data into TempSlurm
 Root=~/projects/def-wailung/Data/Climate/C6${Model}${SSP}_annual
 
@@ -59,26 +58,3 @@ sleep ${SLURM_ARRAY_TASK_ID}5s
 export OMP_NUM_THREADS=1
 ~/projects/def-wailung/jepa/dbem/dbem_scripts/DBEM_v2_y $SLURM_TMPDIR
 echo "Program $SLURM_JOB_NAME finished with exit code $? at: $(date)"
-
-
-# Process Run -----------------------
-mkdir  ~/scratch/Results/Rdata/$runName
-echo 'made process dir'
-
-# Compress DBEM outputs
-echo 'compressing DBEM outputs'
-cd  ~/scratch/Results/$runName
-tar --use-compress-program="pigz -p 4" -cf ${ESM}_${run_type}_${runName}.tar.gz $runName
-echo "Compressed as ${ESM}_${run_type}_${runName}.tar.gz"
-echo 'printing inside '${runName}
-ls ${runName}
-mv ${ESM}_${run_type}_${runName}.tar.gz ~ ../Rdata/ #move to RData
-
-# Convert to RData
-echo 'Now running R convertion'
-module load StdEnv/2023 gcc/12.3 r/4.3.1
-export R_LIBS=~/local/R_libs/
-Rscript conversion_protocol.R Settings.R$SLURM_ARRAY_TASK_ID
-
-# Compare script against most up to date one 
-echo 'Completed output conversion'

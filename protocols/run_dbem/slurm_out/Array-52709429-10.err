@@ -1,6 +1,0 @@
-mkdir: cannot create directory ‘/home/jepa/scratch/Results/’: File exists
-mkdir: cannot create directory ‘/home/jepa/scratch/Results//netcdfs’: File exists
-mkdir: cannot create directory ‘/home/jepa/scratch/Results//Rdata’: File exists
-tar: Cowardly refusing to create an empty archive
-Try 'tar --help' or 'tar --usage' for more information.
-mv: cannot stat '__.tar.gz': No such file or directory
