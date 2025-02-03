@@ -1,0 +1,4 @@
+pigz: abort: write error on <stdout> (Disk quota exceeded)
+tar: c6ipsl26F1rpc.tar.gz: Wrote only 2048 of 10240 bytes
+tar: Child returned status 122
+tar: Error is not recoverable: exiting now

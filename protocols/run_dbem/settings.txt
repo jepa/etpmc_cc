@@ -2,7 +2,7 @@
  CCSc C6MPI26                                 
  SSP SSP126                                  
  rsfile EtpSppList          
- rpath c6ipsl26F1sqb                 
+ rpath c6ipsl85F1sq                  
  tpath TaxonDataC0                   
  ifile 11                  
  FHS    1.00

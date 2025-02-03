@@ -14,11 +14,11 @@ r_path <- "~/scratch/Results/R/"#output_path
 source("~/projects/def-wailung/jepa/dbem/support_fx/txt_to_rdata_fx.R")
 
 # Determine the start and end year you want to include
-year_one <- 1851
+year_one <- 1951
 year_end <- 2100
 
 # Scenario to call (Note this will determine the results directory)
-scenarios <- c("c6gfdl26F1sq")
+scenarios <- c("c6ipsl85F1sq","c6ipsl85F1ri","c6ipsl85F1nr")
 
 # Variables to be converted (Abundace or Catch)
   category <- c("Abd")
