@@ -499,17 +499,23 @@ scen_reg_implement <- sq_mpa_grid_f %>%
 rpc_dbem_grid <- dbem_grid %>% 
   left_join(scen_reg_implement,
             by ="index") %>% 
-  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen,fe_prop,f_out) %>% 
+  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen,fe_prop,f_out,f_plan) %>% 
   mutate(
     # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
     f_finale = ifelse(is.na(status) & index %in% etp_eez_index_ri$index, 1.3,
                       ifelse(is.na(status) & ! index %in% etp_eez_index_ri$index,1,
                              ifelse(status == "surrounding",fe_prop*f_out,
-                                    f_scen)
+                                     ifelse(status == "protected" & f_plan != 0,(1-fe_prop)*f_plan,
+                                    fe_prop)
+                      )
                       )
     )
   ) %>%
-  prior_prot() # function for prioritization of duplicates
+  prior_prot() %>% # function for prioritization of duplicates
+  # fix galapagos
+  mutate(
+    f_finale = ifelse(index %in% galapagos_land, 0,f_finale)
+  )
 
 # sq_dbem_grpcd %>% 
 #   filter(!is.na(status)) %>% 
