@@ -275,12 +275,14 @@ write_csv(
 ```{r save_layers, eval = F}
 
 # Load all grid cells
-list_mpas <- list.files(paste0(data_path,"spatial/gridded/"),pattern = ".csv",full.names = T)
+list_mpas <- list.files(paste0(data_path,"spatial/gridded/"),pattern = ".csv",full.names = T)[-1]
 
 dbem_grid <- my_data("dbem_coords")
 
 mpas_grid <- bind_rows(
-  lapply(list_mpas, read_csv)
+  lapply(list_mpas, read_csv 
+         # col_types = col_types
+         )
   ) %>% 
   # Fix minimal negative values when full protection
   mutate(
@@ -296,14 +298,16 @@ mpas_grid %>%
       x = lon,
       y = lat,
       fill = mpa
-    )
+    ),
+    # alpha = 0.8
   ) +
   scale_fill_viridis_d() +
   my_land_map() +
   coord_sf(
     xlim = c(-95,-77),
     ylim = c(-4,9)
-  )
+  ) 
+  # facet_wrap(~mpa)
 
 # Save grid with all mpas
 write_csv(
