@@ -683,12 +683,12 @@ np_mpa_grid_f <- mpas_grid %>%
   mutate(
     # For protected areas
     f_finale = ifelse(status == "protected" & f_plan == 1,f_scen,
-                    ifelse(status == "protected" & f_plan != 1,((1-fe_prop)*f_scen)+(fe_prop*f_out),
-                           ifelse(status == "surrounding",fe_prop*f_out,
-                           f_scen
-                           )
+                      ifelse(status == "protected" & f_plan != 1,((1-fe_prop)*f_scen)+(fe_prop*f_out),
+                             ifelse(status == "surrounding",fe_prop*f_out,
+                                    f_scen
+                             )
+                      )
     )
-  )
   )
 
 
@@ -708,17 +708,18 @@ etp_eez_index_np <- my_data("sau_index") %>%
 nr_dbem_grid <- dbem_grid %>% 
   left_join(np_mpa_grid_f,
             by ="index") %>% 
-  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen,fe_prop,f_out) %>% 
   mutate(
-    # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
     f_finale = ifelse(is.na(status) & index %in% etp_eez_index_np$index, 1.5,
-                      ifelse(is.na(status) & ! index %in% etp_eez_index_np$index,1, 
-                             ifelse(status == "surrounding",fe_prop*f_out,
-                                    f_scen)
+                      ifelse(is.na(status) & ! index %in% etp_eez_index_np$index,1,
+                             f_finale
                       )
     )
-  )%>%
-  prior_prot()
+  ) %>%
+  prior_prot() %>% 
+  # fix galapagos
+  mutate(
+    f_finale = ifelse(index %in% galapagos_land, f_scen,f_finale)
+  )
 
 # sq_dbem_grpcd %>% 
 #   filter(!is.na(status)) %>% 
@@ -735,7 +736,6 @@ nr_dbem_grid %>%
 
 
 ## Plot Map for supplements
-
 
 ```{r}
 
