@@ -16,6 +16,7 @@ my_lib(
     "sf",
     "st",
     "janitor",
+    "here",
     # For grid estimation 
     "spatialEco", "geosphere","raster","units","matrixStats","rmapshaper", "igraph",
     # For saptial... stuff
@@ -37,6 +38,12 @@ data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfe
 
 results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios_paper/results"
 
+
+# Load functions
+
+source(here("functions/prior_prot_fx.R"))
+
+
 ```
 
 # Scenario 1: Status quo
@@ -48,11 +55,17 @@ results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/le
 
 # Load Grid data
 grid_path <- paste0(data_path,"spatial/gridded/all_mpa_grid_fe.csv")
-mpas_grid <- read_csv(grid_path) %>% 
-  rename(mpa_abrev = mpa)
 
 # Load Fishing effort data
-scenarios <- read_excel(paste0(data_path,"spatial/scenarios_info.xlsx"))
+scenarios <- read_excel(paste0(data_path,"spatial/scenarios_info.xlsx")) %>% 
+  filter(fishing != "yes")
+
+remove_mpa <- read_excel(paste0(data_path,"spatial/scenarios_info.xlsx")) %>% 
+  filter(fishing == "yes")
+
+mpas_grid <- read_csv(grid_path) %>% 
+  rename(mpa_abrev = mpa) %>% 
+  filter(!mpa_abrev %in% remove_mpa$mpa_abrev)
 
 # combined mpas
 combined_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
@@ -60,7 +73,7 @@ combined_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
 # DBEM grid
 dbem_grid <- my_data("dbem_coords")
 
-unique(mpas_grid$mpa_abrev)
+# unique(mpas_grid$mpa_abrev)
 
 ```
 
@@ -75,29 +88,28 @@ mpas_grid <- mpas_grid %>%
 
 
 mpas_grid %>% 
-  filter(mpa_abrev == "CLomas Sub  Cuenca PacNor") %>% 
   left_join(dbem_grid) %>% 
   ggplot() +
   geom_tile(
     aes(
       x = lon,
       y = lat,
-      fill = fe_prop
-      # color = fe_prop
-    ) ,
-    color = "black"
+      fill = status,
+      color = status
+    ) 
+    # color = "black"
   ) +
   # scale_fill_gradient2() +
   # scale_color_gradient2() +
-  scale_fill_viridis_c() +
-  scale_color_viridis_c() +
+  scale_fill_viridis_d() +
+  scale_color_viridis_d() +
   geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
   coord_sf(
-    # xlim = c(-95,-77),
-    # ylim = c(-4,9)
-    xlim = c(-94,-85),
-    ylim = c(-1,4)
+    xlim = c(-95,-77),
+    ylim = c(-4,9)
+    # xlim = c(-94,-85),
+    # ylim = c(-1,4)
   )
 
   
@@ -121,46 +133,49 @@ For grid cells that are surrounding an MPA, $\frac{F}{FMSY}$ = $f_{prop}*f_{out}
 ```{r}
 
 sq_mpa_grid_f <- mpas_grid %>% 
-  left_join(scenarios %>% filter(scen == "status_quo")) %>% 
+  # filter()
+  left_join(scenarios %>% filter(scen == "status_quo")
+            ) %>%
   mutate(
     # For protected areas
     f_finale = ifelse(status == "protected" & f_plan == 1,f_scen,
                     ifelse(status == "protected" & f_plan != 1,((1-fe_prop)*f_scen)+(fe_prop*f_out),
-                           ifelse(status == "surrounding",fe_prop*f_out,
+                           ifelse(status == "surrounding" & f_plan < 1,fe_prop*f_out,
                            f_scen
                            )
     )
   )
   ) %>%   
-  select(-2,-6:-9,-notes) %>% 
+  # select(-6:-9,-notes) %>% 
   prior_prot() # function for prioritization of duplicates
 
 
 # Double check grid
-# status_grid <- sq_dbem_grid %>%
-#   filter(status %in% c("protected","surrounding")) %>%
-#   ggplot() +
-#   geom_tile(
-#     aes(
-#       x = lon,
-#       y = lat,
-#       fill = f_finale
-#       # fill = status
-#     )
-#     # color = "white"
-#   ) +
-#   geom_sf(data = combined_sf, aes(), fill = "transparent", color = "grey") +
-#   # facet_wrap(~mpa_abrev) +
-#   scale_fill_viridis_c()
-# 
-# ggsave(
-#   # paste0(data_path,"/spatial/gridded/a_status_grid.png"),
-#   # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
-#   paste0(data_path,"/spatial/gridded/a_f_finale_grid.png"),
-#   # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
-#   status_grid,
-#   width = 7,
-#   height = 7)
+status_grid <- sq_mpa_grid_f %>%
+  left_join(dbem_grid) %>% 
+  filter(status %in% c("protected","surrounding")) %>%
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      # fill = fe_prop
+      fill = status
+    )
+    # color = "white"
+  ) +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "grey") +
+  # facet_wrap(~mpa_abrev) +
+  scale_fill_viridis_d()
+
+ggsave(
+  paste0(data_path,"/spatial/gridded/a_status_grid.png"),
+  # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
+  # paste0(data_path,"/spatial/gridded/a_f_finale_grid.png"),
+  # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
+  status_grid,
+  width = 7,
+  height = 7)
 
 
 ```
@@ -170,7 +185,7 @@ sq_mpa_grid_f <- mpas_grid %>%
 Because galaoagos MPA has, well, Galapagos, the land polygon is messing up the pixel area estimation because it thinks that the protected area is less than the total pixel area (because of land)
 
 
-```{r}
+```{r eval = F}
 
 # Manually tdentify what grids are problematic
  gal_map <- sq_dbem_grid %>%
@@ -269,7 +284,7 @@ galapagos_land <- c(128339,128340,129057,129058,129059,129060,129061,129777,1297
 etp_eez_index_sq <- my_data("sau_index") %>% 
    filter(eez_name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>% 
   select(index) %>% 
-  filter(!index %in% sq_dbem_grid$index) %>% 
+  filter(!index %in% sq_mpa_grid_f$index) %>% 
   # mutate(rfmo_name = "IATTC") %>% 
   mutate(f_finale = 1.3,
          status = "unprotected",
@@ -307,9 +322,9 @@ sq_dbem_grid <- dbem_grid %>%
 # Wirte grid for compute canada
 sq_dbem_grid %>%
   select(f_finale) %>%
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq_update.txt"),
-              sep="\t", 
-              col.names = F, 
+  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq.txt"),
+              sep="\t",
+              col.names = F,
               row.names = F)
 
 ```
@@ -324,6 +339,7 @@ filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)
 
 
 sq_map <- sq_dbem_grid %>% 
+  # filter(status != "protected") %>% 
   ggplot() +
   geom_tile(
     aes(
@@ -357,27 +373,6 @@ ggsave(
 # Scenario 2: Best Case (regulation implemented / ri)
 
 All regulations are implemented, and the fishing area within the marine protected areas is equivalent to the area specified in the management plan, or does not exist when no information is available. The fishing intensity, where permitted, is that of MSY
-
-
-```{r}
-
-# Load Grid data
-grid_path <- paste0(data_path,"spatial/gridded/all_mpa_grid_fe.csv")
-mpas_grid <- read_csv(grid_path) %>% 
-  rename(mpa_abrev = mpa)
-
-# Load Fishing effort data
-scenarios <- read_excel(paste0(data_path,"spatial/scenarios_info.xlsx"))
-
-# combined mpas
-combined_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
-
-# DBEM grid
-dbem_grid <- my_data("dbem_coords")
-
-unique(mpas_grid$mpa_abrev)
-
-```
 
 
 ```{r}
@@ -731,7 +726,7 @@ nr_dbem_grid %>%
 
 ```{r}
 
-rpp_map <- nr_dbem_grid %>% 
+nr_map <- nr_dbem_grid %>% 
   # View()
   ggplot() +
   geom_tile(
@@ -756,7 +751,7 @@ rpp_map <- nr_dbem_grid %>%
 
 ggsave(
        paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/nr_scenario_map.png"),
-       rpp_map)
+       nr_map)
 
 
 ```
