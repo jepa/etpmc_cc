@@ -57,12 +57,12 @@ scenario_pallet <- c("#02401B", # S1
 data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
 
 
-results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios/results/figures"
+results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios_paper/results"
 ```
 
 
 
-## Determine grid
+# Determine grid
 
 ```{r}
 # Load Grid data
@@ -94,6 +94,16 @@ cmar_grid <- my_data("dbem_coords") %>%
 
 ```
 
+```{r}
+file_to_read <- str_sub(list.files(my_path("R","c6ipsl85F1sq"),full.names = F,pattern = "Abd"),1,6)
+
+
+my_data("sau_species") %>% 
+  filter(taxon_key %in% file_to_read) %>% 
+  View()
+
+
+```
 
 
 ## Aggregate spp data
@@ -112,12 +122,12 @@ agg_fx <- function(scenario, category){
     spp_data <- as.data.frame(data) %>% 
       rowid_to_column("index") %>% 
       filter(index %in% cmar_grid$index)
-    colnames(spp_data) <- c("index",(seq(1851,2100,1)))
+    colnames(spp_data) <- c("index",(seq(1951,2100,1)))
     rm(data) # remove data for computing power
     
     
     partial_data <- spp_data %>% 
-      gather("year","value",`1851`:`2100`)
+      gather("year","value",`1951`:`2100`)
     
     # Join data for all three models
     if(i == 1){
@@ -142,7 +152,7 @@ agg_fx <- function(scenario, category){
     mutate(
       esm = str_sub(scenario,3,6),
       rcp = str_sub(scenario,7,8),
-      scenario = str_sub(scenario,10,12)
+      scenario = str_sub(scenario,str_count(scenario)-2,str_count(scenario))
     )
   
   
@@ -154,12 +164,18 @@ agg_fx <- function(scenario, category){
 
 ```
 
-# Estimate percentage change
+# Per scenario
+
+## Estimate percentage change
 
 ```{r}
 
+scen <- "c6ipsl85F1sq"
 
-sqb_scen_df <- agg_fx("c6gfdl26F1nr", "Abd")
+sqb_scen_df <- agg_fx(scenario = scen, category =  "Abd")
+
+sc_name <- str_sub(scen,str_count(scen)-2,str_count(scen))
+ssp <- str_sub(scen,7,8)
 
 cmar_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
 
@@ -180,8 +196,11 @@ early_data <- sqb_scen_df %>%
 
 # Estimate percentage change in future data for all species
 future_data <-  sqb_scen_df %>% 
-  mutate(period = ifelse(year < 2059 & year > 2040,"mid",
-                         ifelse(year < 2040 & year > 2029,"ear",NA)
+  mutate(period = ifelse(year < 2060 & year > 2041,"2060_mid",
+                         ifelse(year < 2040 & year > 2021,"2040_ear",
+                                ifelse(year < 2100 & year > 2081,"2100_end",
+                                       NA)
+                         )
                          
   )
   ) %>% 
@@ -199,7 +218,7 @@ future_data <-  sqb_scen_df %>%
     per_change = ifelse(mean_temp_value == 0 & mean_temp_value_fut > 0,100, 
                         round((mean_temp_value_fut-mean_temp_value)/mean_temp_value*100)
     ),
-    per_change_scale = ifelse(per_change > 50,50,per_change)
+    per_change_scale = ifelse(abs(per_change) > 50, sign(per_change) * 50, per_change)
   ) %>% 
   filter(!is.na(per_change))
 
@@ -264,9 +283,8 @@ map <- future_data %>%
   facet_wrap(~period) +
   theme(legend.position = "bottom")
 
-
 ggsave(
-  paste0(results_path,"/scenario_map_nr.jpg"),
+  paste0(results_path,"/scenario_map_",sc_name,"_",ssp,".jpg"),
   map,
   width = 14)
 
@@ -301,8 +319,10 @@ future_data %>%
 
 
 ggsave(
-  paste0(results_path,"/status_boxplot_nr.jpg"),
-  last_plot()
+  paste0(results_path,"/status_boxplot_",sc_name,"_",ssp,".jpg"),
+  last_plot(),
+  width = 9,
+  height = 8
 )
 
 ```
@@ -332,26 +352,391 @@ future_data %>%
   scale_fill_viridis(discrete = TRUE, alpha=0.3) +
   # scale_color_viridis_d(direction = -1,option = "A") +
   theme(
-    axis.text.x = element_text(angle = 45,hjust = 1)
+    axis.text.x = element_text(angle = 45,hjust = 1),
+    legend.position = ""
   )+
   facet_wrap(~period)
 
 
 ggsave(
-  paste0(results_path,"/mpa_boxplot_nr.jpg"),
+  paste0(results_path,"/mpa_boxplot_",sc_name,"_",ssp,".jpg"),
   last_plot(),
   width = 14)
 
 ```
 
-## All scenarios
+# All scenarios
+
+```{r, eval = F}
+
+scenarios <- list.files(my_path("R"))
+
+all_scen <- bind_rows(
+  lapply(scenarios, agg_fx, category = "Abd")
+)
+
+unique(all_scen$esm)
+unique(all_scen$rcp)
+unique(all_scen$scenario)
+
+# write_csv(all_scen,
+#           paste0(results_path,"/full_data.csv"),
+#           )
+
+```
+
+## Estimate percentage change
 
 ```{r}
 
-scenarios <- list.files(my_path("R"))[-6]
 
-all_scen <- bind_rows(
-lapply(scenarios, agg_fx, category = "Abd")
-)
+all_scen <- read_csv(paste0(results_path,"/tables/full_data.csv"))
+
+
+# Estimate historical MCP data for all species
+early_data <- all_scen %>% 
+  mutate(period = ifelse(year < 2014 & year > 1995,"present",NA)) %>% 
+  filter(!is.na(period)) %>% 
+  group_by(index,period,rcp,scenario) %>% 
+  # Average yearly data
+  summarise(mean_temp_value = mean(value,na.rm = T),.groups = "drop") %>% 
+  select(-period)
+
+# Estimate percentage change in future data for all species
+future_data <-  all_scen %>% 
+  mutate(period = ifelse(year < 2060 & year > 2041,"2060_mid",
+                         ifelse(year < 2040 & year > 2021,"2040_ear",
+                                ifelse(year < 2100 & year > 2081,"2100_end",
+                                       NA)
+                         )
+  )
+  ) %>% 
+  filter(!is.na(period)) %>% 
+  group_by(index,period,rcp,scenario) %>% 
+  # Sum total catch per eez per year
+  summarise(mean_temp_value_fut = mean(value, na.rm = T),.groups = "drop") %>%
+  left_join(early_data,
+            by = c("index","rcp","scenario")
+  ) %>%
+  mutate(
+    per_change = ifelse(mean_temp_value == 0 & mean_temp_value_fut > 0,100, 
+                        round((mean_temp_value_fut-mean_temp_value)/mean_temp_value*100)
+    ),
+    per_change_scale = ifelse(abs(per_change) > 50, sign(per_change) * 50, per_change)
+  ) %>% 
+  # filter(!is.na(per_change),
+  #        period != "2100_end")
+  filter(!is.na(per_change),
+         period != "2100_end")
+
+
+unique(future_data$rcp)
+unique(future_data$scenario)
+
 ```
 
+## Map
+
+```{r}
+
+ssp <- 26
+
+map <- future_data %>% 
+  filter(rcp == ssp) %>% 
+  left_join(cmar_grid) %>% 
+  ggplot() +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = per_change_scale
+    )
+  ) +
+  # geom_sf_label(data = cmar_sf, aes(label = mpa_abrev)) +
+  my_land_map()+ 
+  scale_fill_gradient2() +
+  geom_sf(data = cmar_sf, aes(), color = "black", fill = "transparent") +
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-4,9)
+  ) +
+  facet_wrap(period~scenario,
+             nrow = 2) +
+  theme(legend.position = "bottom")
+
+ggsave(
+  paste0(results_path,"/figures/scenario_map_all_",ssp,".jpg"),
+  map,
+  width = 14)
+
+
+```
+
+## Boxplot
+
+```{r}
+
+
+future_data %>% 
+  filter(rcp == ssp) %>% 
+  left_join(cmar_grid) %>% 
+  ggplot() +
+  facet_wrap(~period) +
+  geom_boxplot(
+    aes(
+      x = scenario,
+      y = per_change_scale,
+      fill = scenario
+    )
+  ) +
+  theme_ipsum() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+  theme(legend.position = "") +
+  facet_wrap(period~status,
+             nrow = 2,
+             scale = "free")
+
+
+ggsave(
+  paste0(results_path,"/figures/status_boxplot_all_",ssp,".jpg"),
+  last_plot(),
+  width = 9,
+  height = 8
+)
+
+```
+
+
+
+```{r}
+
+future_data %>% 
+  left_join(mpas_grid) %>% 
+  filter(!is.na(mpa_abrev)) %>% 
+  filter(rcp == ssp) %>% 
+  ggplot() +
+  geom_jitter(aes(
+    x = reorder(scenario, per_change_scale, FUN = median),
+    y = per_change_scale,
+    color = status
+  ),
+  size=0.4, alpha=0.5) +
+  geom_boxplot(
+    aes(
+      x = reorder(scenario, per_change_scale, FUN = median),
+      y = per_change_scale,
+      fill = mpa_abrev
+    )
+  ) +
+  scale_y_continuous(limits = c(-20,15)) +
+  theme_ipsum() +
+  scale_fill_viridis(discrete = TRUE, alpha=0.3) +
+  theme(
+    axis.text.x = element_text(angle = 45,hjust = 1),
+    legend.position = ""
+  ) +
+  # facet_wrap(mpa_abrev~period,
+  #            nrow = 2,
+  #            scale = "free")
+  facet_grid(period~mpa_abrev)
+
+
+ggsave(
+  paste0(results_path,"/figures/mpa_boxplot_all","_",ssp,".jpg"),
+  last_plot(),
+  width = 14,
+  heigh = 10)
+
+```
+# Per MPA
+
+```{r, eval = F}
+
+scenarios <- list.files(my_path("R"))
+
+all_scen <- bind_rows(
+  lapply(scenarios, agg_fx, category = "Abd")
+)
+
+unique(all_scen$esm)
+unique(all_scen$rcp)
+unique(all_scen$scenario)
+
+# write_csv(all_scen,
+#           paste0(results_path,"/full_data.csv"),
+#           )
+
+```
+
+## Estimate percentage change
+
+```{r}
+
+
+all_scen <- read_csv(paste0(results_path,"/tables/full_data.csv"))
+
+
+# Estimate historical MCP data for all species
+early_data <- all_scen %>% 
+  left_join(cmar_grid) %>% 
+  mutate(period = ifelse(year < 2014 & year > 1995,"present",NA)) %>% 
+  filter(!is.na(period)) %>% 
+  group_by(mpa_abrev,year,period,rcp,scenario) %>% 
+  # Average yearly data
+  summarise(sum_temp_value = sum(value,na.rm = T),.groups = "drop") %>% 
+  group_by(mpa_abrev,period,rcp,scenario) %>% 
+  # Average yearly data
+  summarise(mean_temp_value = mean(sum_temp_value,na.rm = T),.groups = "drop") %>% 
+  select(-period)
+
+# Estimate percentage change in future data for all species
+future_data <-  all_scen %>% 
+  mutate(period = ifelse(year < 2060 & year > 2041,"2060_mid",
+                         ifelse(year < 2040 & year > 2021,"2040_ear",
+                                ifelse(year < 2100 & year > 2081,"2100_end",
+                                       NA)
+                         )
+  )
+  ) %>% 
+  left_join(cmar_grid) %>% 
+  filter(!is.na(period)) %>% 
+  group_by(mpa_abrev,year,period,rcp,scenario) %>% 
+  # Sum total catch per eez per year
+  summarise(mean_temp_value_fut = sum(value, na.rm = T),.groups = "drop") %>%
+  group_by(mpa_abrev,period,rcp,scenario) %>% 
+  # Sum total catch per eez per year
+  summarise(mean_temp_value_fut = mean(mean_temp_value_fut, na.rm = T),.groups = "drop") %>%
+  left_join(early_data,
+            by = c("mpa_abrev","rcp","scenario")
+  ) %>%
+  mutate(
+    per_change = ifelse(mean_temp_value == 0 & mean_temp_value_fut > 0,100, 
+                        round((mean_temp_value_fut-mean_temp_value)/mean_temp_value*100)
+    ),
+    per_change_scale = ifelse(abs(per_change) > 50, sign(per_change) * 50, per_change)
+  ) %>% 
+  filter(!is.na(per_change))
+
+
+unique(future_data$rcp)
+unique(future_data$scenario)
+
+```
+
+## Map
+
+```{r}
+
+ssp <- 26
+
+mpa <- unique(cmar_grid$mpa_abrev)
+
+for(i in 2:11){
+  
+  mpa_selected <- mpa[i]
+  
+  mpa_data <- cmar_grid %>% 
+    filter(mpa_abrev == mpa_selected)
+  
+  path_mpa <- st_read(paste0(data_path,"spatial/cmar_capas/",mpa_selected,".shp")) %>% 
+    st_transform(4326)
+  
+  map <- future_data %>% 
+    filter(rcp == ssp) %>% 
+    left_join(mpa_data) %>% 
+    filter(!is.na(lon)) %>% 
+    ggplot() +
+    geom_tile(
+      aes(
+        x = lon,
+        y = lat,
+        fill = per_change_scale
+      )
+    ) +
+    # geom_sf_label(data = cmar_sf, aes(label = mpa_abrev)) +
+    # my_land_map()+ 
+    scale_fill_gradient2() +
+    # coord_sf(
+    # xlim = c(-95,-77),
+    # ylim = c(-4,9)
+    # ) +
+    geom_sf(data = path_mpa, aes(), color = "black", fill = "transparent") +
+    facet_wrap(period~scenario,
+               nrow = 3) +
+    theme(legend.position = "bottom") +
+    ggtitle(paste(mpa_selected,ssp))
+  
+  ggsave(
+    paste0(results_path,"/figures/mpa_level/mpa_scenario_map_all_",ssp,"_",mpa_selected,".jpg"),
+    map,
+    width = 14)
+  
+  ## Boxplot
+  future_data %>% 
+    filter(rcp == ssp) %>% 
+    left_join(mpa_data) %>% 
+    ggplot() +
+    facet_wrap(~period) +
+    geom_boxplot(
+      aes(
+        x = scenario,
+        y = per_change_scale,
+        fill = scenario
+      )
+    ) +
+    theme_ipsum() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.6) +
+    theme(legend.position = "") +
+    facet_wrap(period~status,
+               nrow = 3,
+               scale = "free") +
+    ggtitle(paste(mpa_selected,ssp))
+  
+  
+  ggsave(
+    paste0(results_path,"/figures/mpa_level/status_boxplot_all_",ssp,"_",mpa_selected,".jpg"),
+    last_plot(),
+    width = 9,
+    height = 8
+  )
+  
+  # Boxplor status
+  
+  future_data %>% 
+    left_join(mpa_data) %>% 
+    filter(!is.na(mpa_abrev)) %>% 
+    filter(rcp == ssp) %>% 
+    ggplot() +
+    geom_jitter(aes(
+      x = reorder(scenario, per_change_scale, FUN = median),
+      y = per_change_scale,
+      color = status
+    ),
+    size=0.4, alpha=0.5) +
+    geom_boxplot(
+      aes(
+        x = reorder(scenario, per_change_scale, FUN = median),
+        y = per_change_scale,
+        fill = mpa_abrev
+      )
+    ) +
+    # scale_y_continuous(limits = c(-20,15)) +
+    theme_ipsum() +
+    scale_fill_viridis(discrete = TRUE, alpha=0.3) +
+    theme(
+      axis.text.x = element_text(angle = 45,hjust = 1),
+      legend.position = ""
+    ) +
+    facet_grid(period~mpa_abrev) +
+    ggtitle(paste(mpa_selected,ssp))
+  
+  
+  ggsave(
+    paste0(results_path,"/figures/mpa_level/mpa_boxplot_all",ssp,"_",mpa_selected,".jpg"),
+    last_plot(),
+    width = 14,
+    heigh = 10)
+  
+}
+
+```
