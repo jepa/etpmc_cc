@@ -393,22 +393,20 @@ etp_eez_index_ri <- my_data("sau_index") %>%
 ri_dbem_grid <- dbem_grid %>% 
   left_join(scen_reg_implement,
             by ="index") %>% 
-  select(index,lon,lat,status,mpa_abrev,status,scen,f_plan,f_scen,fe_prop,f_out) %>% 
   mutate(
-    # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
     f_finale = ifelse(is.na(status) & index %in% etp_eez_index_ri$index, 1,
                       ifelse(is.na(status) & ! index %in% etp_eez_index_ri$index,1,
-                             ifelse(status == "surrounding" & f_plan != 1,fe_prop*f_out,
-                                    ifelse(status == "protected" & f_plan != 0,(1-fe_prop)*f_plan,
-                                    fe_prop)
-                      )
+                             ifelse(status == "surrounding",fe_prop*f_out,
+                                    ifelse(status == "protected" & fe_prop == 0,f_plan,
+                                           ((1-fe_prop)*f_scen)+fe_prop)
+                             )
                       )
     )
   ) %>%
   prior_prot() %>% # function for prioritization of duplicates
   # fix galapagos
   mutate(
-    f_finale = ifelse(index %in% galapagos_land, 0,f_finale)
+    f_finale = ifelse(index %in% galapagos_land, f_plan,f_finale)
   )
 
 # sq_dbem_grid %>% 
