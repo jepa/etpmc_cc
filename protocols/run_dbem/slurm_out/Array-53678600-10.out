@@ -1,0 +1,306 @@
+extracting data
+SST complete
+bot_temp complete
+AdvectionU complete
+AdvectionV complete
+htotal_btm complete
+htotal_surf complete
+O2_btm complete
+O2_surf complete
+Salinity_btm complete
+Salinity_surf complete
+totalphy2 complete
+IceExt complete
+Current working directory is /project/6006523/jepa/etpmc_cc/protocols/run_dbem
+Starting run at:Mon 03 Feb 2025 06:34:36 PM PST
+“Starting task: 10”
+ Read filenumber:    10
+ Species list:    10
+ EtpSppList10.txt    
+ Initializing, loading files...
+          42
+ 600006    
+ Results/c6gfdl26F1nr/600006                                                    
+  
+ Read Parameters...
+ Running Taxon C_hippurus          
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600006.csv              
+                                          
+  2.146895607922831E-007
+ Thread           0  starting...
+ 600077    
+ Results/c6gfdl26F1nr/600077                                                    
+  
+ Read Parameters...
+ Running Taxon I_platypterus       
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600077.csv              
+                                          
+  2.105946581986330E-007
+ Thread           0  starting...
+ 600089    
+ Results/c6gfdl26F1nr/600089                                                    
+  
+ Read Parameters...
+ Running Taxon A_solandri          
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600089.csv              
+                                          
+  2.251117147082168E-007
+ Thread           0  starting...
+ 600098    
+ Results/c6gfdl26F1nr/600098                                                    
+  
+ Read Parameters...
+ Running Taxon E_lineatus          
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600098.csv              
+                                          
+  4.878218993241116E-007
+ Thread           0  starting...
+ 600107    
+ Results/c6gfdl26F1nr/600107                                                    
+  
+ Read Parameters...
+ Running Taxon K_pelamis           
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600107.csv              
+                                          
+  2.135914007570138E-007
+ Thread           0  starting...
+ 600114    
+ Results/c6gfdl26F1nr/600114                                                    
+  
+ Read Parameters...
+ Running Taxon S_orientalis        
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600114.csv              
+                                          
+  3.044550460884274E-007
+ Thread           0  starting...
+ 600117    
+ Results/c6gfdl26F1nr/600117                                                    
+  
+ Read Parameters...
+ Running Taxon S_japonicus         
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600117.csv              
+                                          
+  2.619438987799045E-007
+ Thread           0  starting...
+ 600136    
+ Results/c6gfdl26F1nr/600136                                                    
+  
+ Read Parameters...
+ Running Taxon S_sierra            
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600136.csv              
+                                          
+  5.170359742948490E-007
+ Thread           0  starting...
+ 600143    
+ Results/c6gfdl26F1nr/600143                                                    
+  
+ Read Parameters...
+ Running Taxon T_albacares         
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600143.csv              
+                                          
+  2.066484638737464E-007
+ Thread           0  starting...
+ 600146    
+ Results/c6gfdl26F1nr/600146                                                    
+  
+ Read Parameters...
+ Running Taxon T_obesus            
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600146.csv              
+                                          
+  2.020792452474106E-007
+ Thread           0  starting...
+ 600216    
+ Results/c6gfdl26F1nr/600216                                                    
+  
+ Read Parameters...
+ Running Taxon M_nigricans         
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600216.csv              
+                                          
+  2.071175536792191E-007
+ Thread           0  starting...
+ 600217    
+ Results/c6gfdl26F1nr/600217                                                    
+  
+ Read Parameters...
+ Running Taxon M_indica            
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600217.csv              
+                                          
+  2.027995873376706E-007
+ Thread           0  starting...
+ 600223    
+ Results/c6gfdl26F1nr/600223                                                    
+  
+ Read Parameters...
+ Running Taxon T_audax             
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600223.csv              
+                                          
+  2.087780370293076E-007
+ Thread           0  starting...
+ 600226    
+ Results/c6gfdl26F1nr/600226                                                    
+  
+ Read Parameters...
+ Running Taxon X_gladius           
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600226.csv              
+                                          
+  2.117550044168695E-007
+ Thread           0  starting...
+ 600348    
+ Results/c6gfdl26F1nr/600348                                                    
+  
+ Read Parameters...
+ Running Taxon E_analogus          
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600348.csv              
+                                          
+  3.191200677995147E-007
+ Thread           0  starting...
+ 600382    
+ Results/c6gfdl26F1nr/600382                                                    
+  
+ Read Parameters...
+ Running Taxon S_lalandi           
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600382.csv              
+                                          
+  2.099773047125304E-007
+ Thread           0  starting...
+ 600412    
+ Results/c6gfdl26F1nr/600412                                                    
+  
+ Read Parameters...
+ Running Taxon E_bipinnulata       
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600412.csv              
+                                          
+  2.161883151132784E-007
+ Thread           0  starting...
+ 600752    
+ Results/c6gfdl26F1nr/600752                                                    
+  
+ Read Parameters...
+ Running Taxon I_oxyrinchus        
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600752.csv              
+                                          
+  2.127903378960635E-007
+ Thread           0  starting...
+ 600753    
+ Results/c6gfdl26F1nr/600753                                                    
+  
+ Read Parameters...
+ Running Taxon I_paucus            
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600753.csv              
+                                          
+  1.737693232560192E-007
+ Thread           0  starting...
+ 600785    
+ Results/c6gfdl26F1nr/600785                                                    
+  
+ Read Parameters...
+ Running Taxon M_cephalus          
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600785.csv              
+                                          
+  3.090430184449264E-007
+ Thread           0  starting...
+ 600868    
+ Results/c6gfdl26F1nr/600868                                                    
+  
+ Read Parameters...
+ Running Taxon C_falciformis       
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600868.csv              
+                                          
+  2.643569766189535E-007
+ Thread           0  starting...
+ 600874    
+ Results/c6gfdl26F1nr/600874                                                    
+  
+ Read Parameters...
+ Running Taxon C_limbatus          
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600874.csv              
+                                          
+  2.992798740500479E-007
+ Thread           0  starting...
+ 600875    
+ Results/c6gfdl26F1nr/600875                                                    
+  
+ Read Parameters...
+ Running Taxon C_longimanus        
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600875.csv              
+                                          
+  1.981926429798802E-007
+ Thread           0  starting...
+ 600886    
+ Results/c6gfdl26F1nr/600886                                                    
+  
+ Read Parameters...
+ Running Taxon G_cuvier            
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600886.csv              
+                                          
+  3.302698505807186E-007
+ Thread           0  starting...
+ 600898    
+ Results/c6gfdl26F1nr/600898                                                    
+  
+ Read Parameters...
+ Running Taxon P_glauca            
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600898.csv              
+                                          
+  2.100040521763727E-007
+ Thread           0  starting...
+ 600912    
+ Results/c6gfdl26F1nr/600912                                                    
+  
+ Read Parameters...
+ Running Taxon S_lewini            
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600912.csv              
+                                          
+  2.055324267608264E-007
+ Thread           0  starting...
+ 600917    
+ Results/c6gfdl26F1nr/600917                                                    
+  
+ Read Parameters...
+ Running Taxon S_zygaena           
+ ~/projects/def-wailung/Data/Species/auc_distributions/S600917.csv              
+                                          
+  2.124087056693231E-007
+ Thread           0  starting...
+ 601408    
+ Results/c6gfdl26F1nr/601408                                                    
+  
+ Read Parameters...
+ Running Taxon L_argentiventris    
+ ~/projects/def-wailung/Data/Species/auc_distributions/S601408.csv              
+                                          
+  3.178692730582413E-007
+ Thread           0  starting...
+ 601732    
+ Results/c6gfdl26F1nr/601732                                                    
+  
+ Read Parameters...
+ Running Taxon M_mola              
+ ~/projects/def-wailung/Data/Species/auc_distributions/S601732.csv              
+                                          
+  2.287446120702887E-007
+ Thread           0  starting...
+ 601906    
+ Results/c6gfdl26F1nr/601906                                                    
+  
+ Read Parameters...
+ Running Taxon C_melampygus        
+ ~/projects/def-wailung/Data/Species/auc_distributions/S601906.csv              
+                                          
+  3.065051691786282E-007
+ Thread           0  starting...
+ 601917    
+ Results/c6gfdl26F1nr/601917                                                    
+  
+ Read Parameters...
+ Running Taxon C_sexfasciatus      
+ ~/projects/def-wailung/Data/Species/auc_distributions/S601917.csv              
+                                          
+  2.335863850139256E-007
+ Thread           0  starting...
+ 602532    
+ Results/c6gfdl26F1nr/602532                                                    
+  
+ Read Parameters...
+ Running Taxon G_cirratum          
+Program ADRDisp finished with exit code 135 at: Mon 03 Feb 2025 08:20:33 PM PST

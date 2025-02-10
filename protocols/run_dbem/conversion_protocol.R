@@ -3,6 +3,8 @@
 # Juliano Palacios
 
 # Load required functions
+
+
 library(here)
 library(tidyverse)
 library(doParallel)
@@ -18,7 +20,7 @@ year_one <- 1951
 year_end <- 2100
 
 # Scenario to call (Note this will determine the results directory)
-scenarios <- c("c6ipsl85F1sq","c6ipsl85F1ri","c6ipsl85F1nr")
+scenarios <- c("c6mpis26F0sq","c6mpis85F0sq")
 
 # Variables to be converted (Abundace or Catch)
   category <- c("Abd")
