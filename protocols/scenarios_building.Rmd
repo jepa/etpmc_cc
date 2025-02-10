@@ -469,56 +469,38 @@ Conservation regulations are implemented, and the fishing area within the marine
 
 ```{r}
 
-sq_mpa_grid_f <- mpas_grid %>% 
-  left_join(scenarios %>% filter(scen == "status_quo")) %>% 
-  mutate(
-    # For protected areas
-    f_finale = ifelse(status == "protected" & f_plan == 1,f_scen,
-                    ifelse(status == "protected" & f_plan != 1,((1-fe_prop)*f_scen)+(fe_prop*f_out),
-                           ifelse(status == "surrounding",fe_prop*f_out,
-                           f_scen
-                           )
-    )
-  )
-  )
 
-etp_eez_index_sq <- my_data("sau_index") %>% 
+scen_reg_implement <- mpas_grid %>% 
+  left_join(scenarios %>% filter(scen == "reg_implement"))
+
+etp_eez_index_ri <- my_data("sau_index") %>% 
    filter(eez_name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>% 
   select(index) %>% 
-  filter(!index %in% sq_mpa_grid_f$index) %>% 
-  mutate(f_finale = 1.3,
+  filter(!index %in% scen_reg_implement$index) %>% 
+  mutate(f_finale = 1,
          status = "unprotected",
          mpa_abrev = NA,
-         scen = "status quo")
+         scen = "status reg_implement")
 
-scen_reg_implement <- sq_mpa_grid_f %>% 
-  mutate(f_rpc = ifelse(status == "protected",f_plan,f_scen))
 
 rpc_dbem_grid <- dbem_grid %>% 
   left_join(scen_reg_implement,
             by ="index") %>% 
-  select(index,lon,lat,status,mpa_abrev,status,scen,f_scen,fe_prop,f_out,f_plan) %>% 
   mutate(
-    # f_finale_plot = ifelse(f_finale > 1, f_finale, f_finale*-1),
     f_finale = ifelse(is.na(status) & index %in% etp_eez_index_ri$index, 1.3,
                       ifelse(is.na(status) & ! index %in% etp_eez_index_ri$index,1,
-                             ifelse(status == "surrounding",fe_prop*f_out,
-                                     ifelse(status == "protected" & f_plan != 0,(1-fe_prop)*f_plan,
-                                    fe_prop)
-                      )
+                             ifelse(status == "surrounding",fe_prop*1.3,
+                                    ifelse(status == "protected" & fe_prop == 0,f_plan,
+                                           ((1-fe_prop)*f_scen)+fe_prop)
+                             )
                       )
     )
   ) %>%
   prior_prot() %>% # function for prioritization of duplicates
   # fix galapagos
   mutate(
-    f_finale = ifelse(index %in% galapagos_land, 0,f_finale)
+    f_finale = ifelse(index %in% galapagos_land, f_plan,f_finale)
   )
-
-# sq_dbem_grpcd %>% 
-#   filter(!is.na(status)) %>% 
-#   View()
-
 
 # Wirte grpcd for compute canada
 rpc_dbem_grid %>% 
