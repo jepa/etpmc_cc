@@ -65,6 +65,15 @@ results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/le
 # Determine grid
 
 ```{r}
+
+# Load SAU SF
+sau_sf <- my_sf("SAU") %>% 
+  filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
+
+
+
+
+
 # Load Grid data
 grid_path <- paste0(data_path,"spatial/gridded/all_mpa_grid_fe.csv")
 mpas_grid <- read_csv(grid_path) %>% 
@@ -74,20 +83,29 @@ mpas_grid <- read_csv(grid_path) %>%
 cmar_grid <- my_data("dbem_coords") %>% 
   filter(lat < 10 & lat > -10 & lon > -100 & lon < -70) %>% 
   left_join(mpas_grid) %>% 
-  mutate(status = ifelse(is.na(status),"non_protected",status)) 
-# ggplot() +
-# geom_tile(
-#   aes(
-#     x = lon,
-#     y = lat,
-#     fill = status
-# )
-# ) +
-# my_land_map()+
-# coord_sf(
-#   xlim = c(-95,-77),
-#   ylim = c(-4,9)
-# )
+  left_join(my_data("sau_index")) %>% 
+  mutate(status = ifelse(is.na(status),"non_protected",status),
+         mpa_abrev = ifelse(is.na(mpa_abrev),eez_name,mpa_abrev)
+  ) %>% 
+  filter(!mpa_abrev %in% c("Colombia (Caribbean)","Panama (Caribbean)","Costa Rica (Caribbean)","El Salvador","Nicaragua (Pacific)","Peru","Venezuela"),
+         !is.na(eez_name))
+
+ggplot(cmar_grid) +
+  geom_tile(
+    aes(
+      x = lon,
+      y = lat,
+      fill = status
+    )
+  ) +
+  my_land_map()+
+  geom_sf(data = sau_sf, aes(), fill = "transparent") +
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-4,9)
+  )
+
+# facet_wrap(~mpa_abrev)
 
 
 
@@ -106,9 +124,125 @@ my_data("sau_species") %>%
 ```
 
 
-## Aggregate spp data
+## Per Species Data
+
+
+```{r main_fx, eval = F, echo = F}
+
+
+mainfx <- function(taxon){
+  
+  to_read <- paste0(taxon,"Catch.RData")
+  
+  for(m in 1:6){
+    
+    file_to_read <- paste0(scen[m],"/",to_read)
+    
+    if(file.exists(file_to_read)){
+      
+      load(file_to_read)
+      
+      # Transform it to same name sppMCPfnl
+      # suppressWarnings(
+      # if(exists("data")){
+      spp_data <- as.data.frame(data) %>%
+        rowid_to_column("index")
+      rm(data)
+      # }
+      
+      colnames(spp_data) <- c("index",(seq(1951,2100,1)))
+      
+      early_data <- spp_data %>% 
+        gather("year","value",`1951`:`2100`) %>% 
+        filter(index %in% cmar_grid$index) %>% 
+        mutate(period = ifelse(year < 2060 & year > 2041,"2060_mid",
+                               ifelse(year < 2040 & year > 2021,"2040_ear",
+                                      ifelse(year < 2100 & year > 2081,"2100_end",
+                                             NA)
+                               )
+                               
+        )
+        ) %>% 
+        filter(!is.na(period)) %>% 
+        left_join(mpas_grid,
+                  by = "index",
+                  relationship = "many-to-many") %>%
+        filter(!is.na(eez_id)) %>%
+        group_by(eez_name,year,period) %>% 
+        # Sum total catch per eez per year
+        summarise(eez_catch = sum(value, na.rm = T),.groups = "drop") %>% 
+        group_by(eez_name,period) %>% 
+        # Average yearly data
+        summarise(mcp = mean(eez_catch,na.rm = T),.groups = "drop") %>% 
+        mutate(
+          taxon_key = taxon,
+          esm = str_sub(file_to_read,79,82),
+          ssp = ifelse(str_sub(file_to_read,83,84) == 26,"ssp126","ssp585"),
+          scen = str_sub(file_to_read,88,89)
+        )
+      
+      
+      # Join data for all three models
+      if(m == 1){
+        partial_output <- early_data
+      }else{
+        partial_output <- bind_rows(partial_output,early_data)
+      }
+      
+    }else{
+      partial_output
+      print(file_to_read)
+    }
+  }
+  
+  print(paste(unique(partial_output$esm)))
+  
+  # Average ESMs +- SD
+  final_output <- partial_output %>% 
+    group_by(taxon_key,eez_name,period,ssp) %>% 
+    summarise(mean_mcp = mean(mcp, na.rm =T),
+              sd_mcp = sd(mcp, na.rm =T),
+              .groups = "drop") %>% 
+    # remove cases where all three periods are 0
+    group_by(taxon_key,eez_name,period,ssp) %>% 
+    filter(any(mean_mcp != 0))
+  
+  
+  
+  name <- paste0(taxon,"_mcp_of.csv")
+  print(paste(unique(name)))
+  
+  write_csv(final_output,
+            my_path("R","mcp_nutrition",name))
+  
+  
+} # Close function
+
+```
+
 
 ```{r}
+
+# species list
+etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species (1)/EtpSppList10.txt", quote="\"", comment.char="") %>% 
+  rename(taxon_key = V1)
+
+ran_spp <- list.files(my_path("R","processed"))
+
+ran_spp <- str_sub(ran_spp,1,6)
+
+dbem_spp <- dbem_spp %>% 
+  filter(!taxon_key %in% ran_spp)
+
+```
+
+
+
+
+
+```{r}
+
+
 
 agg_fx <- function(scenario, category){
   
@@ -166,11 +300,11 @@ agg_fx <- function(scenario, category){
 
 # Per scenario
 
-## Estimate percentage change
+## Create Data Estimate percentage change
 
 ```{r}
 
-scen <- "c6ipsl85F1sq"
+scen <- my_path("R","Rdata",list_files = "paths")
 
 sqb_scen_df <- agg_fx(scenario = scen, category =  "Abd")
 
