@@ -1,0 +1,52 @@
+#!/bin/bash
+#SBATCH --job-name=ADRDisp
+#SBATCH --account=def-wailung
+#SBATCH -N 1  # Nodes
+#SBATCH -c 12  # CPUs for parallel compression
+#SBATCH --mem-per-cpu=2GB
+#SBATCH -t 00-05:00:00
+#SBATCH --mail-user=jepa88@gmail.com
+#SBATCH --mail-type=ALL
+#SBATCH --output=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/comp_%A.out
+#SBATCH --error=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/comp_%A.err
+
+# Define base directory
+BASE_DIR="/home/jepa/projects/def-wailung/CMIP6/etp_outputs"
+
+# Move to the base directory
+cd "$BASE_DIR" || { echo "Failed to access directory: $BASE_DIR"; exit 1; }
+
+# Find directories and store as arrays
+#mapfile -t gfdl_dirs_26 < <(find . -maxdepth 1 -type d -name "*gfdl26*")
+#mapfile -t ipsl_dirs_26 < <(find . -maxdepth 1 -type d -name "*ipsl26*")
+#mapfile -t mpis_dirs_26 < <(find . -maxdepth 1 -type d -name "*mpis26*")
+#mapfile -t gfdl_dirs_85 < <(find . -maxdepth 1 -type d -name "*gfdl85*")
+#mapfile -t ipsl_dirs_85 < <(find . -maxdepth 1 -type d -name "*ipsl85*")
+mapfile -t mpis_dirs_85 < <(find . -maxdepth 1 -type d -name "*mpis85*")
+
+# Function to compress directories using pigz
+compress_group() {
+    local output_file=$1
+    shift
+    local dirs=("$@")
+    
+    if [[ ${#dirs[@]} -gt 0 ]]; then
+        echo "Compressing ${output_file}..."
+        tar --use-compress-program="pigz -p 4" -cf "${BASE_DIR}/${output_file}.tar.gz" "${dirs[@]}"
+        echo "Created ${output_file}.tar.gz"
+    else
+        echo "No directories found for ${output_file}."
+    fi
+}
+
+# Run all compressions in parallel
+#compress_group "ipsl_26_outputs" "${ipsl_dirs_26[@]}" &
+#compress_group "mpis_26_outputs" "${mpis_dirs_26[@]}" &
+#compress_group "gfdl_85_outputs" "${gfdl_dirs_85[@]}" & 
+#compress_group "ipsl_85_outputs" "${ipsl_dirs_85[@]}" &
+compress_group "mpis_85_outputs" "${mpis_dirs_85[@]}" &
+
+# Wait for all parallel processes to complete
+wait  
+
+echo "All compressions completed!"

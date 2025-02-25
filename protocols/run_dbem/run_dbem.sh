@@ -12,7 +12,7 @@
 #SBATCH --error=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.err
 
 
-Model=GFDL
+Model=MPI
 SSP=85
 # Extract necessary data into TempSlurm
 Root=~/projects/def-wailung/Data/Climate/C6${Model}${SSP}_annual

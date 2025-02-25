@@ -1,0 +1,10 @@
+/localscratch/spool/slurmd/job55452999/slurm_script: line 20: mapfile -t gfdl_dirs_26 < <(find . -maxdepth 1 -type d -name *gfdl26*): command not found
+/localscratch/spool/slurmd/job55452999/slurm_script: line 21: mapfile -t ipsl_dirs_26 < <(find . -maxdepth 1 -type d -name *ipsl26*): command not found
+/localscratch/spool/slurmd/job55452999/slurm_script: line 22: mapfile -t mpis_dirs_26 < <(find . -maxdepth 1 -type d -name *mpis26*): command not found
+/localscratch/spool/slurmd/job55452999/slurm_script: line 23: mapfile -t gfdl_dirs_85 < <(find . -maxdepth 1 -type d -name *gfdl85*): command not found
+/localscratch/spool/slurmd/job55452999/slurm_script: line 24: mapfile -t ipsl_dirs_85 < <(find . -maxdepth 1 -type d -name *ipsl85*): command not found
+/localscratch/spool/slurmd/job55452999/slurm_script: line 43: compress_group ipsl_26_outputs  &: command not found
+/localscratch/spool/slurmd/job55452999/slurm_script: line 44: compress_group mpis_26_outputs  &: command not found
+/localscratch/spool/slurmd/job55452999/slurm_script: line 45: compress_group gfdl_85_outputs  &: command not found
+/localscratch/spool/slurmd/job55452999/slurm_script: line 46: compress_group ipsl_85_outputs  &: command not found
+slurmstepd: error: *** JOB 55452999 ON cdr469 CANCELLED AT 2025-02-24T08:32:56 DUE TO TIME LIMIT ***
