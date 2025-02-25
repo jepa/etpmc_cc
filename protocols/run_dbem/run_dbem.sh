@@ -3,7 +3,7 @@
 #SBATCH --account=def-wailung
 #SBATCH -N 1 	#Nodes
 #SBATCH -N 1	#CPU count
-#SBATCH --mem-per-cpu=900M
+#SBATCH --mem-per-cpu=1500M
 #SBATCH -t 02-00:00:00
 #SBATCH --mail-user=jepa88@gmail.com
 #SBATCH --mail-type=ALL
@@ -12,7 +12,7 @@
 #SBATCH --error=/home/jepa/projects/def-wailung/jepa/etpmc_cc/protocols/run_dbem/slurm_out/Array-%A-%a.err
 
 
-Model=IPSL
+Model=MPI
 SSP=85
 # Extract necessary data into TempSlurm
 Root=~/projects/def-wailung/Data/Climate/C6${Model}${SSP}_annual
