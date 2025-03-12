@@ -85,9 +85,9 @@ cmar_grid <- my_data("dbem_coords") %>%
   left_join(mpas_grid) %>% 
   left_join(my_data("sau_index")) %>% 
   mutate(status = ifelse(is.na(status),"non_protected",status),
-         mpa_abrev = ifelse(is.na(mpa_abrev),eez_name,mpa_abrev)
+         region = ifelse(is.na(mpa_abrev),eez_name,mpa_abrev)
   ) %>% 
-  filter(!mpa_abrev %in% c("Colombia (Caribbean)","Panama (Caribbean)","Costa Rica (Caribbean)","El Salvador","Nicaragua (Pacific)","Peru","Venezuela"),
+  filter(!region %in% c("Colombia (Caribbean)","Panama (Caribbean)","Costa Rica (Caribbean)","El Salvador","Nicaragua (Pacific)","Peru","Venezuela"),
          !is.na(eez_name))
 
 ggplot(cmar_grid) +
@@ -127,14 +127,14 @@ my_data("sau_species") %>%
 ## Per Species Data
 
 
-```{r main_fx, eval = F, echo = F}
+```{r sppfx, eval = F, echo = F}
 
 
-mainfx <- function(taxon){
+spp_fx <- function(taxon){
   
   to_read <- paste0(taxon,"Catch.RData")
   
-  for(m in 1:6){
+  for(m in 1:length(scen)){
     
     file_to_read <- paste0(scen[m],"/",to_read)
     
@@ -164,21 +164,20 @@ mainfx <- function(taxon){
         )
         ) %>% 
         filter(!is.na(period)) %>% 
-        left_join(mpas_grid,
+        left_join(cmar_grid,
                   by = "index",
-                  relationship = "many-to-many") %>%
-        filter(!is.na(eez_id)) %>%
-        group_by(eez_name,year,period) %>% 
+                  relationship = "many-to-many") %>% 
+        group_by(region,year,period) %>% 
         # Sum total catch per eez per year
         summarise(eez_catch = sum(value, na.rm = T),.groups = "drop") %>% 
-        group_by(eez_name,period) %>% 
+        group_by(region,period) %>% 
         # Average yearly data
         summarise(mcp = mean(eez_catch,na.rm = T),.groups = "drop") %>% 
         mutate(
           taxon_key = taxon,
-          esm = str_sub(file_to_read,79,82),
-          ssp = ifelse(str_sub(file_to_read,83,84) == 26,"ssp126","ssp585"),
-          scen = str_sub(file_to_read,88,89)
+          esm = str_sub(file_to_read,65,68),
+          ssp = ifelse(str_sub(file_to_read,69,70) == 26,"ssp126","ssp585"),
+          scen = str_sub(file_to_read,73,74)
         )
       
       
@@ -195,25 +194,28 @@ mainfx <- function(taxon){
     }
   }
   
-  print(paste(unique(partial_output$esm)))
+  # print(paste(unique(partial_output$esm)))
+  # print(paste(unique(partial_output$scen)))
+  # print(paste(unique(partial_output$ssp)))
+  # print(paste(unique(partial_output$region)))
   
   # Average ESMs +- SD
   final_output <- partial_output %>% 
-    group_by(taxon_key,eez_name,period,ssp) %>% 
-    summarise(mean_mcp = mean(mcp, na.rm =T),
-              sd_mcp = sd(mcp, na.rm =T),
+    group_by(taxon_key,region,period,ssp,scen) %>% 
+    summarise(mean_mcp_esm = mean(mcp, na.rm =T),
+              sd_mcp_esm = sd(mcp, na.rm =T),
               .groups = "drop") %>% 
     # remove cases where all three periods are 0
-    group_by(taxon_key,eez_name,period,ssp) %>% 
-    filter(any(mean_mcp != 0))
+    group_by(taxon_key,region,period,ssp) %>% 
+    filter(any(mean_mcp_esm != 0))
   
   
   
-  name <- paste0(taxon,"_mcp_of.csv")
+  name <- paste0(taxon,"_mcp_change.csv")
   print(paste(unique(name)))
   
   write_csv(final_output,
-            my_path("R","mcp_nutrition",name))
+            my_path("R","processed/species/",name))
   
   
 } # Close function
@@ -234,8 +236,12 @@ ran_spp <- str_sub(ran_spp,1,6)
 dbem_spp <- dbem_spp %>% 
   filter(!taxon_key %in% ran_spp)
 
-```
 
+mclapply(etpmc_spp$taxon_key, spp_fx, mc.cores = detectCores() - 4)
+
+
+
+```
 
 
 
@@ -304,7 +310,10 @@ agg_fx <- function(scenario, category){
 
 ```{r}
 
-scen <- my_path("R","Rdata",list_files = "paths")
+scen <-
+  my_path("R","dbem_outputs/Rdata",
+                list_files = "paths",
+                system = "juliano")
 
 sqb_scen_df <- agg_fx(scenario = scen, category =  "Abd")
 
