@@ -158,7 +158,9 @@ spp_fx <- function(taxon){
         mutate(period = ifelse(year < 2060 & year > 2041,"2060_mid",
                                ifelse(year < 2040 & year > 2021,"2040_ear",
                                       ifelse(year < 2100 & year > 2081,"2100_end",
+                                             ifelse(year < 2014 & year > 1995,"2014_hist",
                                              NA)
+                               )
                                )
                                
         )
@@ -211,11 +213,11 @@ spp_fx <- function(taxon){
   
   
   
-  name <- paste0(taxon,"_mcp_change.csv")
+  name <- paste0(taxon,"_mcp_period.csv")
   print(paste(unique(name)))
   
   write_csv(final_output,
-            my_path("R","processed/species/",name))
+            my_path("R","processed/species/period_data/",name))
   
   
 } # Close function
@@ -227,21 +229,108 @@ spp_fx <- function(taxon){
 
 # species list
 etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species (1)/EtpSppList10.txt", quote="\"", comment.char="") %>% 
-  rename(taxon_key = V1)
+  rename(taxon_key = V1) %>% 
+  left_join(dbem_spp)
 
-ran_spp <- list.files(my_path("R","processed"))
+# ran_spp <- list.files(my_path("R","dbem_outputs/Rdata/",system = "juliano"))
 
 ran_spp <- str_sub(ran_spp,1,6)
+
+scen <-
+  my_path("R","dbem_outputs/Rdata",
+                list_files = "paths",
+                system = "juliano")
+
 
 dbem_spp <- dbem_spp %>% 
   filter(!taxon_key %in% ran_spp)
 
+library(parallel)
 
 mclapply(etpmc_spp$taxon_key, spp_fx, mc.cores = detectCores() - 4)
 
 
 
 ```
+
+
+
+## Per species percentage change SQ
+
+
+This analysis estimates the species percentage change relative to the SQ scenario
+
+
+```{r}
+
+sau_sf <- my_sf("SAU") %>% 
+  filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
+
+cmar_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
+
+
+scen_dif_fx <- function(taxon,var = "abd"){
+
+  name <- paste0(taxon,"_",var,"_period.csv")
+  
+  spp_data <-
+    my_path("R","processed/species/period_data/",name,read = T) %>% 
+    select(-sd_mcp_esm) %>% 
+    pivot_wider(names_from = scen, values_from = mean_mcp_esm) %>% 
+    mutate(
+      dif_no_reg = my_chng(sq,nr),
+      dif_reg_cons = my_chng(sq,rc),
+      dif_reg_imp = my_chng(sq,ri),
+      per_reg_fish = my_chng(sq,rp)
+    ) %>% 
+    select(
+      taxon_key:ssp,region, dif_no_reg:per_reg_fish
+    ) %>% 
+    gather("scen","per_change",dif_no_reg:per_reg_fish) %>% 
+    filter(period != "2014_hist")
+  
+  
+  # species map
+  map_t <- ggplot() +
+    geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(spp_data) %>% filter(ssp == "ssp585"),
+            aes(fill = per_change),
+            color = "grey"
+    ) +
+    geom_sf(data = cmar_sf %>%  left_join(spp_data) %>% filter(ssp == "ssp585"),
+            aes(fill = per_change),
+            color = "black"
+    ) +
+    facet_grid(period~scen) +
+    scale_fill_gradient2() +
+    ggtitle(etpmc_spp %>% filter(taxon_key == taxon) %>% pull(common_name)) +
+    my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 3,leg_tl_s = 3,leg_tx_s = 3) +
+    theme(legend.text = element_text(size = 6),
+          legend.title = element_text(size = 6),
+          legend.key.height = unit(0.2, "line"),
+          title = element_text(size = 6)
+          )
+  
+  
+  map_name <- paste0(unique(spp_data$taxon_key),"_",var,"_scen_diff.png")
+  
+  ggsave(
+    my_path("R","figures/scen_diff/species/",map_name),
+    map_t,
+    height = 3,
+    width = 4)
+  
+  
+}
+
+
+scen_dif_fx(600077)
+
+
+lapply(etpmc_spp$taxon_key, scen_dif_fx)
+
+
+```
+
 
 
 
