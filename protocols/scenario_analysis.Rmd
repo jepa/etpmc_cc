@@ -130,9 +130,13 @@ my_data("sau_species") %>%
 ```{r sppfx, eval = F, echo = F}
 
 
-spp_fx <- function(taxon){
+spp_fx <- function(taxon,variable){
   
+  if(variable == "mcp"){
   to_read <- paste0(taxon,"Catch.RData")
+  }else{
+    to_read <- paste0(taxon,"Abd.RData")
+  }
   
   for(m in 1:length(scen)){
     
@@ -209,11 +213,12 @@ spp_fx <- function(taxon){
               .groups = "drop") %>% 
     # remove cases where all three periods are 0
     group_by(taxon_key,region,period,ssp) %>% 
-    filter(any(mean_mcp_esm != 0))
+    filter(any(mean_mcp_esm != 0)) %>% 
+    mutate(variable = variable)
   
   
   
-  name <- paste0(taxon,"_mcp_period.csv")
+  name <- paste0(taxon,"_",variable,"_period.csv")
   print(paste(unique(name)))
   
   write_csv(final_output,
@@ -227,15 +232,19 @@ spp_fx <- function(taxon){
 
 ```{r}
 
-# species list
-etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species (1)/EtpSppList10.txt", quote="\"", comment.char="") %>% 
-  rename(taxon_key = V1) %>% 
-  left_join(dbem_spp)
 
-# ran_spp <- list.files(my_path("R","dbem_outputs/Rdata/",system = "juliano"))
+dbem_spp <- my_data("sau_species")
+
+# species list
+etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/EtpSppList10.txt", quote="\"", comment.char="") %>% 
+  rename(taxon_key = V1) %>% 
+  left_join(dbem_spp) %>% 
+  filter(!taxon_key %in% c(600216, 600218,690032))
+
+ran_spp <- list.files(my_path("R","dbem_outputs/Rdata/c6gfdl26F1nr/",system = "juliano"))
 
 ran_spp <- str_sub(ran_spp,1,6)
-
+# 
 scen <-
   my_path("R","dbem_outputs/Rdata",
                 list_files = "paths",
@@ -247,19 +256,15 @@ dbem_spp <- dbem_spp %>%
 
 library(parallel)
 
-mclapply(etpmc_spp$taxon_key, spp_fx, mc.cores = detectCores() - 4)
+mclapply(etpmc_spp$taxon_key, spp_fx, variable = "abd", mc.cores = detectCores() - 4)
 
-
+spp_fx(603539,"abd")
 
 ```
 
-
-
 ## Per species percentage change SQ
 
-
 This analysis estimates the species percentage change relative to the SQ scenario
-
 
 ```{r}
 
@@ -270,8 +275,14 @@ cmar_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
 
 
 scen_dif_fx <- function(taxon,var = "abd"){
+  
+  print(taxon)
 
+  if(var == "abd"){
   name <- paste0(taxon,"_",var,"_period.csv")
+  }else{
+    name <- paste0(taxon,"_",var,"_period.csv")
+  }
   
   spp_data <-
     my_path("R","processed/species/period_data/",name,read = T) %>% 
@@ -322,11 +333,7 @@ scen_dif_fx <- function(taxon,var = "abd"){
   
 }
 
-
-scen_dif_fx(600077)
-
-
-lapply(etpmc_spp$taxon_key, scen_dif_fx)
+lapply(etpmc_spp$taxon_key, scen_dif_fx,"abd")
 
 
 ```
@@ -334,6 +341,10 @@ lapply(etpmc_spp$taxon_key, scen_dif_fx)
 
 
 
+
+
+
+# |OLD CODE |
 
 ```{r}
 
