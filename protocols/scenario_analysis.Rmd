@@ -212,7 +212,7 @@ final_output %>%
   group_by(year,taxon_key,esm,ssp,scen) %>% 
   summarise(sum_all_regions = sum(eez_value,na.rm = T),
             mean_all_region = sum(mean_value_esm)) %>% 
-  filter(ssp == "ssp585") %>% 
+  filter(ssp == "ssp126") %>% 
   # View()
   ggplot() + 
     geom_line(
@@ -408,8 +408,18 @@ scen_group_dif_fx <- function(variable = "abd",grupo){
     spp_data <- as.data.frame(data) %>% 
       rowid_to_column("index") %>% 
       filter(index %in% cmar_grid$index)
-    colnames(spp_data) <- c("index",(seq(1951,2100,1)))
+    
+    
+    
+    if(ncol(spp_data) == 251){
+      colnames(spp_data) <- c("index",(seq(1851,2100,1)))
+      }else{
+        colnames(spp_data) <- c("index",(seq(1951,2100,1)))
+      }
+    
     rm(data) # remove data for computing power
+    
+    
     
     
     partial_data <- spp_data %>% 
@@ -527,7 +537,7 @@ groups <- etpmc_spp %>%
     ))
 
 
-lapply(unique(groups$group), scen_group_dif_fx, variable = "Catch")
+lapply(unique(groups$group), scen_group_dif_fx, variable = "abd")
 
 
 ```
@@ -555,7 +565,12 @@ agg_esm_fx <- function(scenario, category){
     spp_data <- as.data.frame(data) %>% 
       rowid_to_column("index") %>% 
       filter(index %in% cmar_grid$index)
-    colnames(spp_data) <- c("index",(seq(1951,2100,1)))
+    
+    if(ncol(spp_data) == 251){
+      colnames(spp_data) <- c("index",(seq(1851,2100,1)))
+      }else{
+        colnames(spp_data) <- c("index",(seq(1951,2100,1)))
+      }
     rm(data) # remove data for computing power
     
     
