@@ -338,7 +338,9 @@ filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)
 
 
 sq_map <- sq_dbem_grid %>% 
-  # filter(status != "protected") %>% 
+  # filter(status == "protected") %>%
+  # filter(status == "surrounding") %>%
+  # filter(status %in% c("surrounding","protected")) %>%
   ggplot() +
   geom_tile(
     aes(
@@ -352,7 +354,7 @@ sq_map <- sq_dbem_grid %>%
   # scale_color_gradient2() +
   scale_fill_viridis_c() +
   scale_color_viridis_c() +
-  geom_sf(data = combined_sf %>% filter(FID != 8), aes(), fill = "transparent", color = "black")  +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
   geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
   coord_sf(
@@ -395,7 +397,7 @@ ri_dbem_grid <- dbem_grid %>%
   mutate(
     f_finale = ifelse(is.na(status) & index %in% etp_eez_index_ri$index, 1,
                       ifelse(is.na(status) & ! index %in% etp_eez_index_ri$index,1,
-                             ifelse(status == "surrounding",fe_prop*f_out,
+                             ifelse(status == "surrounding",fe_prop*1,
                                     ifelse(status == "protected" & fe_prop == 0,f_plan,
                                            ((1-fe_prop)*f_plan)+fe_prop)
                              )
@@ -414,8 +416,8 @@ ri_dbem_grid <- dbem_grid %>%
 
 
 # Wirte grid for compute canada
-ri_dbem_grid %>% 
-  select(f_finale) %>% 
+ri_dbem_grid %>%
+  select(f_finale) %>%
   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_ri.txt"),
               sep="\t", col.names = F, row.names = F)
 
@@ -430,7 +432,9 @@ ri_dbem_grid %>%
 
 
 ri_map <- ri_dbem_grid %>% 
-  # View()
+  # filter(status == "protected") %>%
+  # filter(status == "surrounding") %>%
+  # filter(status %in% c("surrounding","protected")) %>%
   ggplot() +
   geom_tile(
     aes(
@@ -502,10 +506,10 @@ rpc_dbem_grid <- dbem_grid %>%
   )
 
 # Wirte grpcd for compute canada
-rpc_dbem_grid %>% 
-  select(f_finale) %>% 
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_rpc.txt"),
-              sep="\t", col.names = F, row.names = F)
+# rpc_dbem_grid %>% 
+#   select(f_finale) %>% 
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_rpc.txt"),
+#               sep="\t", col.names = F, row.names = F)
 
 ```
 
@@ -516,7 +520,9 @@ rpc_dbem_grid %>%
 ```{r}
 
 rpc_map <- rpc_dbem_grid %>% 
-  # View()
+  # filter(status == "protected") %>%
+  # filter(status == "surrounding") %>%
+  # filter(status %in% c("surrounding","protected")) %>%
   ggplot() +
   geom_tile(
     aes(
@@ -598,10 +604,10 @@ rpp_dbem_grid <- dbem_grid %>%
 
 
 # Wirte grpcd for compute canada
-rpp_dbem_grid %>% 
-  select(f_finale) %>% 
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_rpp.txt"),
-              sep="\t", col.names = F, row.names = F)
+# rpp_dbem_grid %>% 
+#   select(f_finale) %>% 
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_rpp.txt"),
+#               sep="\t", col.names = F, row.names = F)
 
 
 
@@ -621,7 +627,9 @@ rpp_dbem_grid %>%
 ```{r}
 
 rpp_map <- rpp_dbem_grid %>% 
-  # View()
+  # filter(status == "protected") %>%
+  filter(status == "surrounding") %>%
+  # filter(status %in% c("surrounding","protected")) %>%
   ggplot() +
   geom_tile(
     aes(
@@ -644,7 +652,7 @@ rpp_map <- rpp_dbem_grid %>%
   )
 
 ggsave(
-       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/rpp_scenario_map.png"),
+       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/rpp_scenario_map_s.png"),
        rpp_map)
 
 
