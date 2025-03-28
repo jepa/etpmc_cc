@@ -22,7 +22,8 @@ my_lib(c(
   # For nitce figures
   "hrbrthemes",
   "viridis",
-  "parallel"
+  "parallel",
+  "readxl"
 ))
 
 # For grid e
@@ -245,7 +246,7 @@ final_output %>%
 
 spp_fx <- function(taxon,variable){
   
-  if(variable == "mcp"){
+  if(variable == "catch"){
     to_read <- paste0(taxon,"Catch.RData")
   }else{
     to_read <- paste0(taxon,"Abd.RData")
@@ -369,7 +370,7 @@ scen <-
   # filter(!taxon_key %in% ran_spp)
 
 
-mclapply(etpmc_spp$taxon_key, spp_fx, variable = "abd", mc.cores = detectCores() - 4)
+mclapply(etpmc_spp$taxon_key, spp_fx, variable = "mcp", mc.cores = detectCores() - 4)
 
 spp_fx(600006,"abd")
 
@@ -537,7 +538,7 @@ groups <- etpmc_spp %>%
     ))
 
 
-lapply(unique(groups$group), scen_group_dif_fx, variable = "abd")
+lapply(unique(groups$group), scen_group_dif_fx, variable = "catch")
 
 
 ```
@@ -643,7 +644,7 @@ scenarios <- list.files(my_path("R","dbem_outputs/Rdata",system = "juliano"))
 
 # get data
 scenarios_data <- bind_rows(
-lapply(scenarios, agg_esm_fx,category = "Abd")
+lapply(scenarios, agg_esm_fx,category = "Catch")
   )
 
 #
@@ -653,16 +654,19 @@ agg_average_data <- scenarios_data %>%
     mean_value_esm = mean(mean_value_tp,na.rm =T),
     sd_value_esm = sd(mean_value_tp,na.rm =T),
   ) %>%
-  write_csv(my_path("R","processed/all/period_data/","all_period_data_abd.csv"))
+  write_csv(my_path("R","processed/all/period_data/","all_period_data_catch.csv"))
 
 
 ```
 
 
-##Plots making
+## Plots making
 
 ```{r}
+
+# Load functions needed
 source("../functions/scen_dif_fx.r")
+source(here("functions/scenario_names_fx.R"))
 
 dbem_spp <- my_data("sau_species")
 
@@ -672,79 +676,156 @@ etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My 
   left_join(dbem_spp) %>% 
   filter(!taxon_key %in% c(600216, 600218,690032))
 
-```
-
-
-#### Ch. rel. to SQ, per species
-
-This analysis estimates the species percentage change relative to the SQ scenario
-
-```{r}
 
 sau_sf <- my_sf("SAU") %>% 
   filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
 
 cmar_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
 
-# Run plot making
-mclapply(etpmc_spp$taxon_key[1], scen_dif_fx, var = "abd", mc.cores = detectCores() - 4)
-mclapply(etpmc_spp$taxon_key, scen_dif_fx, var = "Catch", mc.cores = detectCores() - 4)
-
+spp_groups <-  read_excel("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/etp_spp_grouping.xlsx", 
+    skip = 1)
 
 
 ```
-#### Ch. rel. to SQ, per group percentage change SQ
+
+#### Change relative to historical time period (`relative_to_hist`)
+
+##### Species
+
+This section creates maps of change in variable relative to the historical period for each species and scenario
+
+
+*Note that areas missing represent regions where the species is not present according to the model*
 
 ```{r}
-sau_sf <- my_sf("SAU") %>% 
-  filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
 
-cmar_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
-
-groups <- etpmc_spp %>% 
-  mutate(
-    group =c(
-      "dorado",
-      rep("picudos",3),
-      "atunes",
-      "picudos",
-      "pequeños_pelagicos",
-      "picudos",
-      "atunes",
-      "atunes",
-      rep("picudos",3),
-      "meros",
-      "pequeños_pelagicos",
-      "picudos",
-      "tiburones",
-      "tiburones",
-      "others", #Mugil cephalus
-      rep("tiburones",7),
-      "meros",
-      "others", #mola mola
-      "jureles",
-      "jureles",
-      rep("tiburones",3),
-      "meros",
-      "pequeños_pelagicos",
-      "picudos",
-      "others", #pez perico
-      rep("invertebrados",3)
-    ))
-
+# hist_dif(600006, var = "abd")
 # Run plot making
-lapply(unique(groups$group), scen_dif_fx,"Catch")
-lapply(unique(groups$group), scen_dif_fx,"Abd")
-
-
-lapply("dorado", scen_dif_fx,"Abd")
-
+for(i in 1:2){
+  vars <- c("abd","mcp")[i]
+mclapply(etpmc_spp$taxon_key, hist_dif, var = vars, mc.cores = detectCores() - 4)
+mclapply(etpmc_spp$taxon_key, hist_dif, var = vars, mc.cores = detectCores() - 4)
+}
 
 ```
 
 
+##### Groups
+
+This section creates maps of change in variable relative to the historical period for each species group and scenario
 
 
+*Note that areas missing represent regions where the group has values of zero*
+
+```{r}
+
+
+spp_groups_list <- unique(spp_groups$group)
+
+# hist_dif("dorado", var = "catch")
+# Run plot making
+for(i in 1:2){
+  vars <- c("abd","catch")[i]
+mclapply(spp_groups_list, hist_dif, var = vars, mc.cores = detectCores() - 4)
+mclapply(spp_groups_list, hist_dif, var = vars, mc.cores = detectCores() - 4)
+}
+
+```
+
+##### All aggregated
+
+This section creates maps of change in variable relative to the historical period for each species and scenario.
+
+
+```{r}
+
+
+data_paths <- my_path("R","processed/all/period_data/",list_files = "paths")
+
+agg_data <- bind_rows(lapply(data_paths, read_csv))
+
+spp_data <- agg_data %>% 
+    select(-sd_value_esm) %>% 
+    pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
+    mutate(
+      dif_2040 = my_chng(`2014_hist`,`2040_ear`)
+    ) %>% 
+    select(
+      scen:ssp,dif_2040
+    ) %>% 
+  scenario_names()
+  
+    
+ssp_selected <- "ssp585"
+category_selected = "Abd"
+
+  map_t <- ggplot() +
+    geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(spp_data) %>% filter(ssp == ssp_selected, category == category_selected),
+            aes(fill = dif_2040),
+            color = "grey"
+    ) +
+    geom_sf(data = cmar_sf %>%  left_join(spp_data) %>% filter(ssp == ssp_selected,category == category_selected),
+            aes(fill = dif_2040),
+            color = "black"
+    ) +
+    facet_wrap(~scenario) +
+    scale_fill_gradient2("Diferencia relativa al valor historico (%)") +
+    my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 3,leg_tl_s = 4,leg_tx_s = 4) +
+    theme(legend.text = element_text(size = 6),
+          legend.title = element_text(size = 6),
+          legend.key.height = unit(0.2, "line"),
+          title = element_text(size = 6)
+    )
+  
+  map_name <- paste0(category_selected,"_",ssp_selected,"_time_diff.png")
+  
+  ggsave(
+    my_path("R",paste0("figures/relative_to_hist/all/"),map_name),
+    map_t,
+    height = 4,
+    width = 5)
+  
+```
+
+
+
+#### Change relative to SQ scenario (`scen_diff`)
+
+##### Species
+
+This analysis estimates the species percentage change relative to the SQ scenario in each time step
+
+```{r}
+
+# Run plot making
+mclapply(etpmc_spp$taxon_key, scen_dif_fx, var = "abd", mc.cores = detectCores() - 4)
+
+mclapply(etpmc_spp$taxon_key, scen_dif_fx, var = "mcp", mc.cores = detectCores() - 4)
+
+
+
+```
+
+#### Groups
+
+This analysis estimates the group percentage change relative to the SQ scenario in each time step
+
+```{r}
+
+
+# Run plot making
+lapply(unique(spp_groups$group), scen_dif_fx,"Catch")
+lapply(unique(spp_groups$group), scen_dif_fx,"Abd")
+
+
+# lapply("dorado", scen_dif_fx,"Abd")
+
+
+```
+
+#### Change relative to SQ, per all species percentage change SQ
+
+This analysis estimates the percentage change relative to the SQ scenario in each time step for all species aggregated
 
 ```{r}
 
@@ -773,22 +854,22 @@ spp_data
   
 ```
 
+#### Change relative to SQ, per species, historical
 
-### Ch. rel. SQ hisotrical
+This analysis estimates the group percentage change relative to the SQ scenario in the historical time step
 
 ```{r}
-
 
 hist_data <- agg_data %>% 
   filter(scen == "sq",
          period == "2014_hist") %>% 
   select(region,category,ssp,mean_value_esm_sq = mean_value_esm)
 
-period_data <-
-  agg_data %>% 
+period_data <- agg_data %>% 
     filter(scen != "sq",
-           period != "2014_hist") %>% 
-    left_join(hist_data) %>% 
+           period != "2014_hist") %>%
+    left_join(hist_data,
+              ) %>% 
     select(-sd_value_esm) %>% 
     pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
     mutate(
@@ -803,6 +884,13 @@ period_data <-
     filter(#period != "2014_hist",
            !is.na(region)
     )
+
+# Create plot
+per_change_map(df = period_data,
+               level = "agg",
+               ssp_selected = "ssp126",
+               cat_selected = "Abd")
+
 ```
 
 
@@ -825,6 +913,15 @@ spp_data <- agg_data %>%
     filter(#period != "2014_hist",
            !is.na(region)
     )
+
+
+# Create plot
+per_change_map(df = spp_data,
+               level = "agg",
+               relative = "period_diff",
+               ssp_selected = "ssp126",
+               cat_selected = "Catch")
+
 ```
 
 ### Change relative to scenario 
@@ -886,11 +983,12 @@ period_data <- agg_data %>%
 # species map
   
 map_t <- ggplot() +
-    geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(spp_data) %>% filter(ssp == "ssp585"),
+    geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(spp_data) %>% filter(ssp == "ssp585",category == "Abd"
+      ), 
             aes(fill = per_change),
             color = "grey"
     ) +
-    geom_sf(data = cmar_sf %>%  left_join(spp_data) %>% filter(ssp == "ssp585"),
+    geom_sf(data = cmar_sf %>%  left_join(spp_data) %>% filter(ssp == "ssp585",category == "Abd"),
             aes(fill = per_change),
             color = "black"
     ) +
@@ -905,7 +1003,7 @@ map_t <- ggplot() +
           title = element_text(size = 6)
     )
 
-map_name <- paste0("agg_catch_scen_diff_ssp585.png")
+map_name <- paste0("agg_Abd_scen_diff_ssp585.png")
   
     ggsave(
       my_path("R","figures/scen_diff/all/",map_name),
@@ -919,8 +1017,8 @@ map_name <- paste0("agg_catch_scen_diff_ssp585.png")
 
 ```{r}
 
-ssp_sel <- "ssp126"
-cat_sel = "Abd"
+ssp_sel <- "ssp585"
+cat_sel = "Catch"
 
 spp_data %>% 
   filter(ssp == ssp_sel,
@@ -957,7 +1055,7 @@ spp_data %>%
 ```{r}
 
 ssp_sel <- "ssp585"
-cat_sel = "Abd"
+cat_sel = "Catch"
 
 spp_data %>% 
   filter(ssp == ssp_sel,
@@ -990,6 +1088,15 @@ spp_data %>%
       width = 10)
   
 ```
+
+
+
+
+
+
+
+
+
 
 # |OLD CODE |
 
