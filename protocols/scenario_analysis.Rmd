@@ -88,6 +88,10 @@ cmar_grid <- my_data("dbem_coords") %>%
   filter(!region %in% c("Colombia (Caribbean)","Panama (Caribbean)","Costa Rica (Caribbean)","El Salvador","Nicaragua (Pacific)","Peru","Venezuela"),
          !is.na(eez_name))
 
+spp_groups <-  read_excel("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/etp_spp_grouping.xlsx", 
+    skip = 1) %>% 
+  filter(group != "mola")
+
 # ggplot(cmar_grid) +
 #   geom_tile(
 #     aes(
@@ -382,7 +386,7 @@ spp_fx(600006,"abd")
 scen_group_dif_fx <- function(variable = "abd",grupo){
   
   
-  selected_group <- groups %>% 
+  selected_group <- spp_groups %>% 
     filter(group == grupo)
   
   
@@ -414,9 +418,9 @@ scen_group_dif_fx <- function(variable = "abd",grupo){
     
     if(ncol(spp_data) == 251){
       colnames(spp_data) <- c("index",(seq(1851,2100,1)))
-      }else{
-        colnames(spp_data) <- c("index",(seq(1951,2100,1)))
-      }
+    }else{
+      colnames(spp_data) <- c("index",(seq(1951,2100,1)))
+    }
     
     rm(data) # remove data for computing power
     
@@ -426,16 +430,16 @@ scen_group_dif_fx <- function(variable = "abd",grupo){
     partial_data <- spp_data %>% 
       gather("year","value",`1951`:`2100`) %>% 
       filter(index %in% cmar_grid$index) %>% 
-        mutate(period = ifelse(year < 2060 & year > 2041,"2060_mid",
-                               ifelse(year < 2040 & year > 2021,"2040_ear",
-                                      ifelse(year < 2100 & year > 2081,"2100_end",
-                                             ifelse(year < 2014 & year > 1995,"2014_hist",
-                                                    NA)
-                                      )
-                               )
-                               
-        )
-        ) %>% 
+      mutate(period = ifelse(year < 2060 & year > 2041,"2060_mid",
+                             ifelse(year < 2040 & year > 2021,"2040_ear",
+                                    ifelse(year < 2100 & year > 2081,"2100_end",
+                                           ifelse(year < 2014 & year > 1995,"2014_hist",
+                                                  NA)
+                                    )
+                             )
+                             
+      )
+      ) %>% 
       filter(!is.na(period)) %>% 
       mutate(
         esm = str_sub(file_to_read[i],65,68),
@@ -467,9 +471,9 @@ scen_group_dif_fx <- function(variable = "abd",grupo){
   
   
   final_output <- complete_output %>% 
-      left_join(cmar_grid,
-                  by = "index",
-                  relationship = "many-to-many") %>% 
+    left_join(cmar_grid,
+              by = "index",
+              relationship = "many-to-many") %>% 
     group_by(scen,period,year,region,esm,group,ssp) %>% 
     #aggregate all grids
     summarise(
@@ -489,10 +493,10 @@ scen_group_dif_fx <- function(variable = "abd",grupo){
       sd_value_esm = sd(mean_value_tp, na.rm =T),
       .groups = "keep"
     )
-    # remove cases where all three periods are 0
-    # group_by(group,region,period,ssp) %>% 
-    # filter(any(mean_value_esm != 0)) %>% 
-    # mutate(variable = variable)
+  # remove cases where all three periods are 0
+  # group_by(group,region,period,ssp) %>% 
+  # filter(any(mean_value_esm != 0)) %>% 
+  # mutate(variable = variable)
   
   
   
@@ -506,39 +510,8 @@ scen_group_dif_fx <- function(variable = "abd",grupo){
 }
 
 
-groups <- etpmc_spp %>% 
-  mutate(
-    group =c(
-      "dorado",
-      rep("picudos",3),
-      "atunes",
-      "picudos",
-      "pequeños_pelagicos",
-      "picudos",
-      "atunes",
-      "atunes",
-      rep("picudos",3),
-      "meros",
-      "pequeños_pelagicos",
-      "picudos",
-      "tiburones",
-      "tiburones",
-      "others", #Mugil cephalus
-      rep("tiburones",7),
-      "meros",
-      "others", #mola mola
-      "jureles",
-      "jureles",
-      rep("tiburones",3),
-      "meros",
-      "pequeños_pelagicos",
-      "picudos",
-      "others", #pez perico
-      rep("invertebrados",3)
-    ))
-
-
-lapply(unique(groups$group), scen_group_dif_fx, variable = "catch")
+lapply(unique(spp_groups$group), scen_group_dif_fx, variable = "catch")
+lapply(unique(spp_groups$group), scen_group_dif_fx, variable = "abd")
 
 
 ```
@@ -665,8 +638,7 @@ agg_average_data <- scenarios_data %>%
 ```{r}
 
 # Load functions needed
-source("../functions/scen_dif_fx.r")
-source(here("functions/scenario_names_fx.R"))
+sapply(list.files(here("functions/"),full.names = T), source)
 
 dbem_spp <- my_data("sau_species")
 
@@ -683,7 +655,9 @@ sau_sf <- my_sf("SAU") %>%
 cmar_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
 
 spp_groups <-  read_excel("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/etp_spp_grouping.xlsx", 
-    skip = 1)
+    skip = 1) %>% 
+  filter(group != "mola",
+         taxon_key != 600226)
 
 
 ```
@@ -699,13 +673,16 @@ This section creates maps of change in variable relative to the historical perio
 
 ```{r}
 
-# hist_dif(600006, var = "abd")
+# MAP
+
+# hist_dif(600006, var = "abd", map = F)
 # Run plot making
 for(i in 1:2){
   vars <- c("abd","mcp")[i]
 mclapply(etpmc_spp$taxon_key, hist_dif, var = vars, mc.cores = detectCores() - 4)
 mclapply(etpmc_spp$taxon_key, hist_dif, var = vars, mc.cores = detectCores() - 4)
 }
+
 
 ```
 
@@ -722,8 +699,8 @@ This section creates maps of change in variable relative to the historical perio
 
 spp_groups_list <- unique(spp_groups$group)
 
-# hist_dif("dorado", var = "catch")
-# Run plot making
+# hist_dif("dorado", var = "abd")
+ # Run plot making
 for(i in 1:2){
   vars <- c("abd","catch")[i]
 mclapply(spp_groups_list, hist_dif, var = vars, mc.cores = detectCores() - 4)
@@ -757,7 +734,7 @@ spp_data <- agg_data %>%
   
     
 ssp_selected <- "ssp585"
-category_selected = "Abd"
+category_selected = "Catch"
 
   map_t <- ggplot() +
     geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(spp_data) %>% filter(ssp == ssp_selected, category == category_selected),
@@ -797,16 +774,16 @@ This analysis estimates the species percentage change relative to the SQ scenari
 
 ```{r}
 
+scen_dif_fx(600006, "abd")
+
 # Run plot making
 mclapply(etpmc_spp$taxon_key, scen_dif_fx, var = "abd", mc.cores = detectCores() - 4)
 
 mclapply(etpmc_spp$taxon_key, scen_dif_fx, var = "mcp", mc.cores = detectCores() - 4)
 
-
-
 ```
 
-#### Groups
+##### Groups
 
 This analysis estimates the group percentage change relative to the SQ scenario in each time step
 
@@ -814,16 +791,28 @@ This analysis estimates the group percentage change relative to the SQ scenario 
 
 
 # Run plot making
-lapply(unique(spp_groups$group), scen_dif_fx,"Catch")
-lapply(unique(spp_groups$group), scen_dif_fx,"Abd")
+# scen_dif_fx(
+#   category = "dorado",
+#   var = "catch",
+#   ssp_selected = "ssp126"
+#   )
 
+
+for(i in 1:2){
+  
+  ssps <- c("ssp585","ssp126")[i]
+  
+  lapply(unique(spp_groups$group), scen_dif_fx,"abd",ssp_selected =ssps)
+  lapply(unique(spp_groups$group), scen_dif_fx,"catch",ssps)
+  
+}
 
 # lapply("dorado", scen_dif_fx,"Abd")
 
 
 ```
 
-#### Change relative to SQ, per all species percentage change SQ
+##### All species
 
 This analysis estimates the percentage change relative to the SQ scenario in each time step for all species aggregated
 
@@ -837,26 +826,59 @@ spp_data <- agg_data %>%
     select(-sd_value_esm) %>% 
     pivot_wider(names_from = scen, values_from = mean_value_esm) %>% 
     mutate(
-      dif_no_reg = my_chng(sq,nr),
-      dif_reg_cons = my_chng(sq,rc),
-      dif_reg_imp = my_chng(sq,ri),
-      per_reg_fish = my_chng(sq,rp)
+      dif_nr = my_chng(sq,nr),
+      dif_rc = my_chng(sq,rc),
+      dif_ri = my_chng(sq,ri),
+      dif_rp = my_chng(sq,rp)
     ) %>% 
     select(
-      period,category,ssp,region, dif_no_reg:per_reg_fish
+      period,category,ssp,region, dif_nr:dif_rp
     ) %>% 
-    gather("scen","per_change",dif_no_reg:per_reg_fish) %>% 
+    gather("scen","per_change",dif_nr:dif_rp) %>% 
     filter(period != "2014_hist",
            !is.na(region)
+    ) %>% 
+  scenario_names()
+  
+# spp_data
+
+
+ssp_selected <- "ssp126"
+category_selected = "Abd"
+
+  map_t <- ggplot() +
+    geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(spp_data) %>% filter(ssp == ssp_selected, category == category_selected),
+            aes(fill = per_change),
+            color = "grey"
+    ) +
+    geom_sf(data = cmar_sf %>%  left_join(spp_data) %>% filter(ssp == ssp_selected,category == category_selected),
+            aes(fill = per_change),
+            color = "black"
+    ) +
+    facet_wrap(~scenario) +
+    scale_fill_gradient2("Percentage change relative to the SQ scenario by 2040") +
+    my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 3,leg_tl_s = 4,leg_tx_s = 4) +
+    theme(legend.text = element_text(size = 6),
+          legend.title = element_text(size = 6),
+          legend.key.height = unit(0.2, "line"),
+          title = element_text(size = 6)
     )
   
-spp_data
+  map_name <- paste0(category_selected,"_",ssp_selected,"_time_diff.png")
+  
+  ggsave(
+    my_path("R",paste0("figures/scen_diff/all/"),map_name),
+    map_t,
+    height = 4,
+    width = 5)
   
 ```
 
-#### Change relative to SQ, per species, historical
+#### Change relative to SQ scenario in 2014  (`historica/period`)
 
-This analysis estimates the group percentage change relative to the SQ scenario in the historical time step
+##### All
+
+This analysis estimates the group percentage change relative to the SQ scenario in the historical time step (fixed)
 
 ```{r}
 
@@ -873,80 +895,27 @@ period_data <- agg_data %>%
     select(-sd_value_esm) %>% 
     pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
     mutate(
-      dif_2040 = my_chng(mean_value_esm_sq,`2040_ear`),
-      dif_2060 = my_chng(mean_value_esm_sq,`2060_mid`),
-      dif_2100 = my_chng(mean_value_esm_sq,`2100_end`)
+      per_change = my_chng(mean_value_esm_sq,`2040_ear`)
     ) %>% 
     select(
-      scen,category,ssp,region, dif_2040:dif_2100
+      scen,category,ssp,region, per_change
     ) %>% 
-    gather("period","per_change",dif_2040:dif_2100) %>% 
-    filter(#period != "2014_hist",
-           !is.na(region)
-    )
+    # gather("period","per_change",dif_2040:dif_2100) %>% 
+    filter(!is.na(region)
+    ) %>% 
+  scenario_names()
 
 # Create plot
 per_change_map(df = period_data,
                level = "agg",
                ssp_selected = "ssp126",
-               cat_selected = "Abd")
+               cat_selected = "Catch",
+               relative = "period_diff")
 
 ```
 
 
-### Change relative to time period
-
-```{r}
-
-spp_data <- agg_data %>% 
-    select(-sd_value_esm) %>% 
-    pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
-    mutate(
-      dif_2040 = my_chng(`2014_hist`,`2040_ear`),
-      dif_2060 = my_chng(`2014_hist`,`2060_mid`),
-      dif_2100 = my_chng(`2014_hist`,`2100_end`)
-    ) %>% 
-    select(
-      scen,category,ssp,region, dif_2040:dif_2100
-    ) %>% 
-    gather("period","per_change",dif_2040:dif_2100) %>% 
-    filter(#period != "2014_hist",
-           !is.na(region)
-    )
-
-
-# Create plot
-per_change_map(df = spp_data,
-               level = "agg",
-               relative = "period_diff",
-               ssp_selected = "ssp126",
-               cat_selected = "Catch")
-
-```
-
-### Change relative to scenario 
-
-```{r}
-
-spp_data <- agg_data %>% 
-     select(-sd_value_esm) %>% 
-     pivot_wider(names_from = scen, values_from = mean_value_esm) %>% 
-     mutate(
-       dif_no_reg = my_chng(sq,nr),
-       dif_reg_cons = my_chng(sq,rc),
-       dif_reg_imp = my_chng(sq,ri),
-       per_reg_fish = my_chng(sq,rp)
-     ) %>% 
-     select(
-       period,category,ssp,region, dif_no_reg:per_reg_fish
-     ) %>% 
-     gather("scen","per_change",dif_no_reg:per_reg_fish) %>% 
-     filter(period != "2014_hist",
-            !is.na(region)
-     )
-```
-
-### Change relative to SQ historical scenario 
+### Change relative to SQ scenario in 2014 (`historical/scen`)
 
 ```{r}
 
@@ -956,25 +925,34 @@ hist_data <- agg_data %>%
   select(region,category,ssp,mean_value_esm_sq = mean_value_esm)
 
 
-period_data <- agg_data %>% 
+scen_data <- agg_data %>% 
     filter(scen != "sq",
            period != "2014_hist") %>% 
     left_join(hist_data) %>% 
      select(-sd_value_esm) %>% 
      pivot_wider(names_from = scen, values_from = mean_value_esm) %>% 
      mutate(
-       dif_no_reg = my_chng(mean_value_esm_sq,nr),
-       dif_reg_cons = my_chng(mean_value_esm_sq,rc),
-       dif_reg_imp = my_chng(mean_value_esm_sq,ri),
-       per_reg_fish = my_chng(mean_value_esm_sq,rp)
+       dif_nr = my_chng(mean_value_esm_sq,nr),
+       dif_rc = my_chng(mean_value_esm_sq,rc),
+       dif_ri= my_chng(mean_value_esm_sq,ri),
+       diff_rp = my_chng(mean_value_esm_sq,rp)
      ) %>% 
      select(
-       period,category,ssp,region, dif_no_reg:per_reg_fish
+       period,category,ssp,region, dif_nr:diff_rp
      ) %>% 
-     gather("scen","per_change",dif_no_reg:per_reg_fish) %>% 
+     gather("scen","per_change",dif_nr:diff_rp) %>% 
      filter(period != "2014_hist",
             !is.na(region)
-     )
+     ) %>% 
+  scenario_names()
+
+
+# Create plot
+per_change_map(df = scen_data,
+               level = "agg",
+               ssp_selected = "ssp585",
+               cat_selected = "Abd",
+               relative = "scen_diff")
 ```
 
 #### Map
@@ -1057,35 +1035,7 @@ spp_data %>%
 ssp_sel <- "ssp585"
 cat_sel = "Catch"
 
-spp_data %>% 
-  filter(ssp == ssp_sel,
-         category == cat_sel) %>% 
-  ggplot() + 
-  geom_bar(
-    aes(
-      x = region,
-      y = per_change,
-      fill = scen
-    ),
-    stat = "identity",
-    position = "dodge"
-  ) +
-  facet_grid(~period) +
-  scale_fill_viridis_d() +
-  coord_flip() +
-  labs(x="",
-     y = "Change in MCP relative to SQ (%)")+
-  my_ggtheme_p(leg_pos = "right") +
-    scale_x_discrete(limits = rev(sort(unique(spp_data$region))))
-  
-  
-  bar_name <- paste0("bar_agg_d_",cat_sel,"_scen_diff_",ssp_sel,".png")
-  
-    ggsave(
-      my_path("R","figures/scen_diff/all/",bar_name),
-      last_plot(),
-      height = 8,
-      width = 10)
+
   
 ```
 
