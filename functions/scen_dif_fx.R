@@ -25,16 +25,17 @@ scen_dif_fx <- function(category, var = "abd"){
     select(-sd_value_esm) %>% 
     pivot_wider(names_from = scen, values_from = mean_value_esm) %>% 
     mutate(
-      dif_no_reg = my_chng(sq,nr),
-      dif_reg_cons = my_chng(sq,rc),
-      dif_reg_imp = my_chng(sq,ri),
-      per_reg_fish = my_chng(sq,rp)
+      dif_nr = my_chng(sq,nr),
+      dif_rc = my_chng(sq,rc),
+      dif_ri = my_chng(sq,ri),
+      per_rp = my_chng(sq,rp)
     ) %>% 
     select(
-      period,category:ssp,region, dif_no_reg:per_reg_fish
+      period,category:ssp,region, dif_nr:per_rp
     ) %>% 
-    gather("scen","per_change",dif_no_reg:per_reg_fish) %>% 
-    filter(period != "2014_hist")
+    gather("scen","per_change",dif_nr:per_rp) %>% 
+    filter(period == "2040_ear") %>% 
+    scenario_names()
   
   
   # species map
@@ -47,11 +48,12 @@ scen_dif_fx <- function(category, var = "abd"){
             aes(fill = per_change),
             color = "black"
     ) +
-    facet_grid(period~scen) +
-    scale_fill_gradient2() +
+    # facet_grid(period~scen) +
+    facet_wrap(~scenario) +
+    scale_fill_gradient2("Diferencia relativa al escenario de SQ\n en 2040 (%)") +
     # ggtitle(etpmc_spp %>% filter(taxon_key == taxon) %>% pull(common_name)) +
-    ggtitle(paste(category,var)) +
-    my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 3,leg_tl_s = 3,leg_tx_s = 3) +
+    # ggtitle(paste(category,var)) +
+    my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 4,leg_tl_s = 4,leg_tx_s = 4) +
     theme(legend.text = element_text(size = 6),
           legend.title = element_text(size = 6),
           legend.key.height = unit(0.2, "line"),
@@ -65,14 +67,14 @@ scen_dif_fx <- function(category, var = "abd"){
     ggsave(
       my_path("R","figures/scen_diff/groups/",map_name),
       map_t,
-      height = 3,
-      width = 4)
+      height = 4,
+      width = 5)
   }else{
     ggsave(
       my_path("R","figures/scen_diff/species/",map_name),
       map_t,
-      height = 3,
-      width = 4)
+      height = 4,
+      width = 5)
   }
   
   
