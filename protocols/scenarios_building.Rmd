@@ -762,11 +762,11 @@ ggsave(
 
 scenario_pannel <-
   bind_rows(
-  sq_dbem_grid %>% mutate(scen = "1_stat_quo"),
-  nr_dbem_grid %>% mutate(scen = "2_no_reg"),
-  ri_dbem_grid %>% mutate(scen = "3_reg_imp"),
-  rpp_dbem_grid %>% mutate(scen = "4_reg_par_fish"),
-  rpc_dbem_grid %>% mutate(scen = "5_reg_par_cons")
+  sq_dbem_grid %>% mutate(scen = "Status quo"),
+  nr_dbem_grid %>% mutate(scen = "No Regulations"),
+  ri_dbem_grid %>% mutate(scen = "Regulations implemented"),
+  rpp_dbem_grid %>% mutate(scen = "Regulations for fishing"),
+  rpc_dbem_grid %>% mutate(scen = "Regulations for conservation")
 ) %>% 
   # View()
   ggplot() +
@@ -778,13 +778,14 @@ scenario_pannel <-
       color = f_finale
     ) 
   ) +
-  # scale_fill_gradient2() +
-  # scale_color_gradient2() +
-  scale_fill_viridis_c() +
-  scale_color_viridis_c() +
+  scale_fill_viridis_c("F mort/F msy") +
+  scale_color_viridis_c("F mort/F msy") +
   geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
-  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "grey30")  +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "red")  +
   my_land_map()+ 
+  my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 4,leg_tl_s = 4,leg_tx_s = 4) +
+  labs(x = "Latitude",
+       y = "Longitude") +
   coord_sf(
     xlim = c(-95,-77),
     ylim = c(-4,9)
