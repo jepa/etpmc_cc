@@ -861,7 +861,62 @@ ggsave(
 
 ```
 
+##### Delta Delta
 
+```{r}
+
+ssp_selected <- "ssp585"
+category_selected = "Catch"
+
+delta_delta <- spp_data %>% 
+  filter(category == category_selected,
+         ssp == ssp_selected) %>% 
+  select(region,scen,dif_2040) %>% 
+  pivot_wider(names_from = scen, values_from = dif_2040) %>% 
+    mutate(
+      dif_nr = my_chng(sq,nr, limit = 100),
+      dif_rc = my_chng(sq,rc, limit = 100),
+      dif_ri = my_chng(sq,ri, limit = 100),
+      dif_rp = my_chng(sq,rp, limit = 100)
+    ) %>% 
+  gather("scen","per_change",dif_nr:dif_rp) %>% 
+    # filter(period == "2040_ear") %>% 
+    scenario_names() %>% 
+    filter(!is.na(per_change)) %>% 
+    mutate(
+      per_change = ifelse(per_change == "Inf",100,per_change),
+      region = gsub("_"," ",region)
+    )
+
+
+delta_delta %>% 
+  ggplot() + 
+  geom_bar(
+    aes(
+      x = region,
+      y = per_change,
+      fill = scenario
+    ),
+    stat = "identity",
+    position = "dodge"
+  ) +
+  # facet_grid(~period) +
+  scale_fill_viridis_d("Scenario") +
+  coord_flip() +
+  labs(x="",
+       y = "Percentage difference between management scenarios and the SQ (%)")+
+  my_ggtheme_p(leg_pos = "right") +
+  scale_x_discrete(limits = rev(sort(delta_delta %>% mutate(region = gsub("_"," ",region)) %>% pull(region) %>% unique())))
+
+names <- paste0("bar_delta_all_",category_selected,"_",ssp_selected,".png")
+
+ggsave(
+        my_path("R","figures/relative_to_hist/delta_delta/",names),
+        last_plot(),
+        height = 5,
+        width = 7)
+
+```
 
 #### Change relative to SQ scenario (`scen_diff`)
 
@@ -1158,7 +1213,5 @@ per_change_map(df = scen_data,
                cat_selected = "Abd",
                relative = "scen_diff")
 ```
-
-
 
 
