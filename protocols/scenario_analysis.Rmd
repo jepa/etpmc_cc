@@ -33,27 +33,6 @@ sf::sf_use_s2(use_s2 = FALSE)
 select <- dplyr::select
 
 
-
-# Global color pallets standardization
-
-# Status pallet
-status_pallet <- c("#00A08A", # Open
-                   "#046C9A", # Protected
-                   "#F98400" # Surrounding
-) 
-
-# SSP pallet
-ssp_pallet <- c("#5BBCD6", #126
-                "#FF0000" #585x
-)
-
-# Scenario pallet
-scenario_pallet <- c("#02401B", # S1
-                     "#FD6467", # S2
-                     "#B6854D" # S3
-)
-
-
 # Change paths to your computer
 
 data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
@@ -721,17 +700,16 @@ groups_list <- groups_list[grep("abd", groups_list)]
 
 groups_df <- bind_rows(
   lapply(groups_list, read_csv)
-  ) %>% 
-  filter(ssp == "ssp585")
+  ) 
 
 per_chng_groups_period <- groups_df %>% 
     select(-sd_value_esm) %>% 
     pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
     mutate(
-      per_change = my_chng(`2014_hist`,`2040_ear`)
+      per_change = my_chng(`2014_hist`,`2040_ear`, limit = 50)
     ) %>% 
     select(
-      scen,region, group, per_change
+      scen,region, group, ssp,per_change
     ) %>% 
     # gather("scen","per_change",dif_nr:dif_rp) %>% 
     filter(!is.na(per_change)) %>%
@@ -740,6 +718,13 @@ per_chng_groups_period <- groups_df %>%
     #   per_change = ifelse(per_change == "Inf",100,per_change),
       scenario = gsub(" ","\n" ,scenario)
     )
+
+
+```
+
+###### Map
+
+```{r}
 
 facet_map <- ggplot(per_chng_groups_period) +
       geom_sf(data = sau_sf %>% select(region = name) %>% left_join(per_chng_groups_period),
@@ -772,6 +757,42 @@ ggsave(
 
 ```
 
+###### Bars
+
+```{r}
+per_chng_groups_period %>% 
+  filter(region != "High seas",
+         ssp == "ssp126") %>% 
+  ggplot() +
+  geom_bar(
+    aes(
+      x = region,
+      y = per_change,
+      fill = scenario
+    ),
+    stat = "identity",
+    position = "dodge"
+  ) +
+  facet_wrap(~group,
+             scales = "free_x"
+  ) +
+  scale_fill_viridis_d("Management scenario") +
+  coord_flip() +
+  labs(x="",
+       y = "Change in value relative to historic (%)")+
+  my_ggtheme_p(leg_pos = "right") +
+  scale_x_discrete(limits = rev(sort(spp_data %>% filter(region != "High seas") %>% mutate(region = gsub("_"," ",region)) %>% pull(region) %>% unique())))
+
+
+
+ggsave(
+  my_path("R","figures/relative_to_hist/groups/","x_groups_facet_bar_ssp126_time_2040.png"),
+  last_plot(),
+  height = 8,
+  width = 9)
+
+```
+
 
 ##### All aggregated
 
@@ -789,7 +810,7 @@ spp_data <- agg_data %>%
   select(-sd_value_esm) %>% 
   pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
   mutate(
-    dif_2040 = my_chng(`2014_hist`,`2040_ear`)
+    dif_2040 = my_chng(`2014_hist`,`2060_mid`)
   ) %>% 
   select(
     scen:ssp,dif_2040
@@ -810,7 +831,7 @@ map_t <- ggplot() +
           color = "black"
   ) +
   facet_wrap(~scenario) +
-  scale_fill_gradient2("Diferencia relativa al valor historico (%)") +
+  scale_fill_gradient2("Change in biomass relative to 2014 (%)") +
   my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 3,leg_tl_s = 4,leg_tx_s = 4) +
   theme(legend.text = element_text(size = 6),
         legend.title = element_text(size = 6),
@@ -818,7 +839,7 @@ map_t <- ggplot() +
         title = element_text(size = 6)
   )
 
-map_name <- paste0("map_",category_selected,"_",ssp_selected,"_time_diff.png")
+map_name <- paste0("map_",category_selected,"_",ssp_selected,"_time_diff_2060.png")
 
 ggsave(
   my_path("R",paste0("figures/relative_to_hist/all/"),map_name),
@@ -1069,67 +1090,78 @@ spp_data <- agg_data %>%
 
 # spp_data
 
-
-ssp_selected <- "ssp126"
-category_selected = "Catch"
-
-map_t <- ggplot() +
-  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(spp_data) %>% filter(ssp == ssp_selected, category == category_selected),
-          aes(fill = per_change),
-          color = "grey"
-  ) +
-  geom_sf(data = cmar_sf %>%  left_join(spp_data) %>% filter(ssp == ssp_selected,category == category_selected),
-          aes(fill = per_change),
-          color = "black"
-  ) +
-  facet_wrap(~scenario) +
-  scale_fill_gradient2("Percentage change relative to the SQ scenario by 2040") +
-  my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 3,leg_tl_s = 4,leg_tx_s = 4) +
-  theme(legend.text = element_text(size = 6),
-        legend.title = element_text(size = 6),
-        legend.key.height = unit(0.2, "line"),
-        title = element_text(size = 6)
-  )
-
-map_name <- paste0(category_selected,"_",ssp_selected,"_time_diff.png")
-
-ggsave(
-  my_path("R",paste0("figures/scen_diff/all/"),map_name),
-  map_t,
-  height = 4,
-  width = 5)
-
-
-spp_data %>% 
-  filter(ssp == ssp_selected,
-         category == category_selected) %>% 
-  mutate(region = gsub("_"," ",region)) %>% 
-  ggplot() + 
-  geom_bar(
-    aes(
-      x = region,
-      y = per_change,
-      fill = scenario
-    ),
-    stat = "identity",
-    position = "dodge"
-  ) +
-  # facet_grid(~period) +
-  scale_fill_viridis_d() +
-  coord_flip() +
-  labs(x="",
-       y = "Change in value relative to historic (%)")+
-  my_ggtheme_p(leg_pos = "right") +
-  scale_x_discrete(limits = rev(sort(spp_data %>% mutate(region = gsub("_"," ",region)) %>% pull(region) %>% unique())))
-
-
-bar_name <- paste0("bar_",category_selected,"_",ssp_selected,"_time_diff.png")
-
-ggsave(
-  my_path("R",paste0("figures/scen_diff/all/"),bar_name),
-  last_plot(),
-  height = 4,
-  width = 7)
+for(s in 1:2){
+  for(p in 1:2){
+    
+    ssp_selected <- c("ssp126","ssp585")[s]
+    category_selected <- "Abd"
+    period_selected <- c("2060_mid","2040_ear")[p]
+    
+    map_t <- ggplot() +
+      geom_sf(data = sau_sf %>% select(region = name) %>%  
+                left_join(spp_data) %>% 
+                filter(ssp == ssp_selected, 
+                       category == category_selected,
+                       period ==period_selected),
+              aes(fill = per_change),
+              color = "grey"
+      ) +
+      geom_sf(data = cmar_sf %>%  left_join(spp_data) %>% filter(ssp == ssp_selected,category == category_selected, period == period_selected),
+              aes(fill = per_change),
+              color = "black"
+      ) +
+      facet_wrap(~scenario) +
+      scale_fill_gradient2("Percentage change relative to the SQ scenario by 2040") +
+      my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 3,leg_tl_s = 4,leg_tx_s = 4) +
+      theme(legend.text = element_text(size = 6),
+            legend.title = element_text(size = 6),
+            legend.key.height = unit(0.2, "line"),
+            title = element_text(size = 6)
+      )
+    
+    map_name <- paste0(category_selected,"_",ssp_selected,"_",period_selected,"_time_diff.png")
+    
+    ggsave(
+      my_path("R",paste0("figures/scen_diff/all/"),map_name),
+      map_t,
+      height = 4,
+      width = 5)
+    
+    
+    spp_data %>% 
+      filter(ssp == ssp_selected,
+             category == category_selected,
+             period == period_selected) %>% 
+      mutate(region = gsub("_"," ",region)) %>% 
+      ggplot() + 
+      geom_bar(
+        aes(
+          x = region,
+          y = per_change,
+          fill = scenario
+        ),
+        stat = "identity",
+        position = "dodge"
+      ) +
+      # facet_grid(~period) +
+      scale_fill_viridis_d() +
+      coord_flip() +
+      labs(x="",
+           y = "Change in value relative to historic (%)")+
+      my_ggtheme_p(leg_pos = "right") +
+      scale_x_discrete(limits = rev(sort(spp_data %>% mutate(region = gsub("_"," ",region)) %>% pull(region) %>% unique())))
+    
+    
+    bar_name <- paste0("bar_",category_selected,"_",ssp_selected,"_",period_selected,"_time_diff.png")
+    
+    ggsave(
+      my_path("R",paste0("figures/scen_diff/all/"),bar_name),
+      last_plot(),
+      height = 4,
+      width = 7)
+    
+  }
+}
 
 ```
 
