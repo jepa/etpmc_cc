@@ -361,7 +361,11 @@ mpa_name <- c(
 path_mpa <- paste0(data_path,"spatial/cmar_capas/",mpa_name,".shp")
 
 
-sf_list <- lapply(path_mpa, st_read)
+sf_list <- lapply(seq_along(path_mpa), function(i) {
+  sf_obj <- st_read(path_mpa[i])
+  sf_obj$mpa_name <- mpa_name[i]  # Add the corresponding MPA name
+  return(sf_obj)
+})
 
 # Check the CRS of each sf object and determine a common CRS
 common_crs <- st_crs(sf_list[[1]])  # You can choose any sf object or a standard CRS
@@ -380,10 +384,14 @@ sf_list_standardized <- lapply(sf_list_transformed, function(x) {
 # Combine the standardized sf objects
 combined_sf <- do.call(rbind, sf_list_standardized)
 
+# Ensure 'mpa_name' is included in the final dataset
+if (!"mpa_name" %in% names(combined_sf)) {
+  stop("mpa_name column was not retained in the final dataset. Check column standardization.")
+}
 
-
+# Plot
 ggplot(data = combined_sf) +
-  geom_sf() +
+  geom_sf(aes(fill = mpa_name)) +  # Color by MPA name
   theme_minimal()
 
 

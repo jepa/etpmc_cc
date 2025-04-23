@@ -168,14 +168,14 @@ status_grid <- sq_mpa_grid_f %>%
   # facet_wrap(~mpa_abrev) +
   scale_fill_viridis_d()
 
-ggsave(
-  paste0(data_path,"/spatial/gridded/a_status_grid.png"),
-  # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
-  # paste0(data_path,"/spatial/gridded/a_f_finale_grid.png"),
-  # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
-  status_grid,
-  width = 7,
-  height = 7)
+# ggsave(
+#   paste0(data_path,"/spatial/gridded/a_status_grid.png"),
+#   # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
+#   # paste0(data_path,"/spatial/gridded/a_f_finale_grid.png"),
+#   # paste0(data_path,"/spatial/gridded/a_status_grid_all.png"),
+#   status_grid,
+#   width = 7,
+#   height = 7)
 
 
 ```
@@ -260,9 +260,9 @@ gal_map <- sq_dbem_grid_gp %>%
     ylim = c(-4,4)
   )
    
-   ggsave("fix.png",gal_map,
-       width = 17,
-       height = 17)
+   # ggsave("fix.png",gal_map,
+   #     width = 17,
+   #     height = 17)
 
 
 ```
@@ -319,12 +319,12 @@ sq_dbem_grid <- dbem_grid %>%
   )
 
 # Wirte grid for compute canada
-sq_dbem_grid %>%
-  select(f_finale) %>%
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq.txt"),
-              sep="\t",
-              col.names = F,
-              row.names = F)
+# sq_dbem_grid %>%
+#   select(f_finale) %>%
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_sq.txt"),
+#               sep="\t",
+#               col.names = F,
+#               row.names = F)
 
 ```
 
@@ -338,7 +338,9 @@ filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)
 
 
 sq_map <- sq_dbem_grid %>% 
-  # filter(status != "protected") %>% 
+  # filter(status == "protected") %>%
+  # filter(status == "surrounding") %>%
+  # filter(status %in% c("surrounding","protected")) %>%
   ggplot() +
   geom_tile(
     aes(
@@ -352,7 +354,7 @@ sq_map <- sq_dbem_grid %>%
   # scale_color_gradient2() +
   scale_fill_viridis_c() +
   scale_color_viridis_c() +
-  geom_sf(data = combined_sf %>% filter(FID != 8), aes(), fill = "transparent", color = "black")  +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
   geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
   coord_sf(
@@ -362,9 +364,9 @@ sq_map <- sq_dbem_grid %>%
     # ylim = c(-1,4)
   )
 
-ggsave(
-       paste0(results_path,"/scenarios/sq_scenario_map.png"),
-       sq_map)
+# ggsave(
+#        paste0(results_path,"/scenarios/sq_scenario_map.png"),
+       # sq_map)
 
 
 ```
@@ -395,7 +397,7 @@ ri_dbem_grid <- dbem_grid %>%
   mutate(
     f_finale = ifelse(is.na(status) & index %in% etp_eez_index_ri$index, 1,
                       ifelse(is.na(status) & ! index %in% etp_eez_index_ri$index,1,
-                             ifelse(status == "surrounding",fe_prop*f_out,
+                             ifelse(status == "surrounding",fe_prop*1,
                                     ifelse(status == "protected" & fe_prop == 0,f_plan,
                                            ((1-fe_prop)*f_plan)+fe_prop)
                              )
@@ -414,10 +416,10 @@ ri_dbem_grid <- dbem_grid %>%
 
 
 # Wirte grid for compute canada
-ri_dbem_grid %>% 
-  select(f_finale) %>% 
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_ri.txt"),
-              sep="\t", col.names = F, row.names = F)
+# ri_dbem_grid %>%
+#   select(f_finale) %>%
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_ri.txt"),
+#               sep="\t", col.names = F, row.names = F)
 
 ```
 
@@ -430,7 +432,9 @@ ri_dbem_grid %>%
 
 
 ri_map <- ri_dbem_grid %>% 
-  # View()
+  # filter(status == "protected") %>%
+  # filter(status == "surrounding") %>%
+  # filter(status %in% c("surrounding","protected")) %>%
   ggplot() +
   geom_tile(
     aes(
@@ -452,9 +456,9 @@ ri_map <- ri_dbem_grid %>%
     ylim = c(-4,9)
   )
 
-ggsave(
-       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/ri_scenario_map.png"),
-       ri_map)
+# ggsave(
+#        paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/ri_scenario_map.png"),
+#        ri_map)
 
 
 ```
@@ -502,10 +506,10 @@ rpc_dbem_grid <- dbem_grid %>%
   )
 
 # Wirte grpcd for compute canada
-rpc_dbem_grid %>% 
-  select(f_finale) %>% 
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_rpc.txt"),
-              sep="\t", col.names = F, row.names = F)
+# rpc_dbem_grid %>% 
+#   select(f_finale) %>% 
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_rpc.txt"),
+#               sep="\t", col.names = F, row.names = F)
 
 ```
 
@@ -516,7 +520,9 @@ rpc_dbem_grid %>%
 ```{r}
 
 rpc_map <- rpc_dbem_grid %>% 
-  # View()
+  # filter(status == "protected") %>%
+  # filter(status == "surrounding") %>%
+  # filter(status %in% c("surrounding","protected")) %>%
   ggplot() +
   geom_tile(
     aes(
@@ -538,9 +544,9 @@ rpc_map <- rpc_dbem_grid %>%
     ylim = c(-4,9)
   )
 
-ggsave(
-       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/rpc_scenario_map.png"),
-       rpc_map)
+# ggsave(
+#        paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/rpc_scenario_map.png"),
+#        rpc_map)
 
 
 ```
@@ -598,10 +604,10 @@ rpp_dbem_grid <- dbem_grid %>%
 
 
 # Wirte grpcd for compute canada
-rpp_dbem_grid %>% 
-  select(f_finale) %>% 
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_rpp.txt"),
-              sep="\t", col.names = F, row.names = F)
+# rpp_dbem_grid %>% 
+#   select(f_finale) %>% 
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_rpp.txt"),
+#               sep="\t", col.names = F, row.names = F)
 
 
 
@@ -621,7 +627,9 @@ rpp_dbem_grid %>%
 ```{r}
 
 rpp_map <- rpp_dbem_grid %>% 
-  # View()
+  # filter(status == "protected") %>%
+  filter(status == "surrounding") %>%
+  # filter(status %in% c("surrounding","protected")) %>%
   ggplot() +
   geom_tile(
     aes(
@@ -643,9 +651,9 @@ rpp_map <- rpp_dbem_grid %>%
     ylim = c(-4,9)
   )
 
-ggsave(
-       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/rpp_scenario_map.png"),
-       rpp_map)
+# ggsave(
+#        paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/rpp_scenario_map_s.png"),
+#        rpp_map)
 
 
 ```
@@ -706,10 +714,10 @@ nr_dbem_grid <- dbem_grid %>%
 
 
 # Wirte grpcd for compute canada
-nr_dbem_grid %>% 
-  select(f_finale) %>% 
-  write.table(file = paste0(data_path,"spatial/compute_canada/mpa_nr.txt"),
-              sep="\t", col.names = F, row.names = F)
+# nr_dbem_grid %>% 
+#   select(f_finale) %>% 
+#   write.table(file = paste0(data_path,"spatial/compute_canada/mpa_nr.txt"),
+#               sep="\t", col.names = F, row.names = F)
 
 ```
 
@@ -741,9 +749,9 @@ nr_map <- nr_dbem_grid %>%
     ylim = c(-4,9)
   )
 
-ggsave(
-       paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/nr_scenario_map.png"),
-       nr_map)
+# ggsave(
+#        paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/nr_scenario_map.png"),
+#        nr_map)
 
 
 ```
@@ -754,11 +762,11 @@ ggsave(
 
 scenario_pannel <-
   bind_rows(
-  sq_dbem_grid %>% mutate(scen = "1_stat_quo"),
-  nr_dbem_grid %>% mutate(scen = "2_no_reg"),
-  ri_dbem_grid %>% mutate(scen = "3_reg_imp"),
-  rpp_dbem_grid %>% mutate(scen = "4_reg_par_fish"),
-  rpc_dbem_grid %>% mutate(scen = "5_reg_par_cons")
+  sq_dbem_grid %>% mutate(scen = "Status quo (SQ)"),
+  nr_dbem_grid %>% mutate(scen = "Regulations not implemented (RN)"),
+  ri_dbem_grid %>% mutate(scen = "Regulations implemented (RI)"),
+  rpp_dbem_grid %>% mutate(scen = "Regulations for fishing (RF)"),
+  rpc_dbem_grid %>% mutate(scen = "Regulations for conservation (RC)")
 ) %>% 
   # View()
   ggplot() +
@@ -770,13 +778,14 @@ scenario_pannel <-
       color = f_finale
     ) 
   ) +
-  # scale_fill_gradient2() +
-  # scale_color_gradient2() +
-  scale_fill_viridis_c() +
-  scale_color_viridis_c() +
-  geom_sf(data = sau_sf, aes(), fill = "transparent", color = "black")  +
-  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "grey30")  +
+  scale_fill_viridis_c("F mort/F msy") +
+  scale_color_viridis_c("F mort/F msy") +
+  geom_sf(data = sau_sf, aes(), fill = "transparent", color = "grey30")  +
+  geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
   my_land_map()+ 
+  my_ggtheme_m("Reg",facet_tl_s = 8,ax_tl_s = 6,ax_tx_s = 4,leg_tl_s = 4,leg_tx_s = 4) +
+  labs(x = "Latitude",
+       y = "Longitude") +
   coord_sf(
     xlim = c(-95,-77),
     ylim = c(-4,9)
@@ -786,7 +795,7 @@ scenario_pannel <-
 ggsave(
   paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/scenario_pannel.png"),
   scenario_pannel,
-  width = 8,
+  width = 7,
   height = 5)
 
 ```
