@@ -612,6 +612,31 @@ agg_average_data <- scenarios_data %>%
 ```
 
 
+
+## Data exploration
+
+```{r}
+
+
+all_abd_data <- my_path("R","processed/all/period_data/",name = 'all_period_data_abd.csv',read = T)
+
+change_all_abd_data <- all_abd_data %>% 
+    select(category,everything(),-sd_value_esm) %>%
+    pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
+    mutate(
+      dif_2040 = my_chng(`2014_hist`,`2040_ear`),
+      dif_2060 = my_chng(`2014_hist`,`2060_mid`),
+      dif_2100 = my_chng(`2014_hist`,`2100_end`)
+    ) %>% 
+    # select(
+    #   category:ssp,dif_2040
+    # ) %>% 
+    scenario_names() %>% 
+    filter(!is.na(dif_2040))
+
+```
+
+
 ## Plots making
 
 ```{r}
@@ -1070,7 +1095,7 @@ data_paths <- my_path("R","processed/all/period_data/",list_files = "paths")
 
 agg_data <- bind_rows(lapply(data_paths, read_csv))
 
-spp_data <- agg_data %>% 
+spp_data <- all_abd_data %>% 
   select(-sd_value_esm) %>% 
   pivot_wider(names_from = scen, values_from = mean_value_esm) %>% 
   mutate(
@@ -1086,7 +1111,8 @@ spp_data <- agg_data %>%
   filter(period != "2014_hist",
          !is.na(region)
   ) %>% 
-  scenario_names()
+  scenario_names() %>% 
+  filter(period != "2100_end")
 
 # spp_data
 
