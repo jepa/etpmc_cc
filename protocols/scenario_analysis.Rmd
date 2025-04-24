@@ -599,6 +599,11 @@ scenarios_data <- bind_rows(
   lapply(scenarios, agg_esm_fx,category = "Catch")
 )
 
+# Save the esm for uncertainty data
+write_csv(scenarios_data,
+          my_path("R","processed/all/period_data/","all_period_data_abd_esm.csv"))
+
+
 #
 agg_average_data <- scenarios_data %>%
   group_by(scen,region,period,category,ssp) %>%
@@ -1272,4 +1277,77 @@ per_change_map(df = scen_data,
                relative = "scen_diff")
 ```
 
+
+## Uncertainty figure
+
+Statistical uncertainty using anova
+
+```{r}
+
+
+library(purrr)
+library(broom)
+# Function to compute percent variance explained by each factor
+get_var_contrib <- function(df) {
+  if (n_distinct(df$ssp) > 1 & n_distinct(df$esm) > 1) {
+    model <- aov(mean_value_tp ~ esm + ssp, data = df)
+    anova_tbl <- broom::tidy(model)
+    
+    total_ss <- sum(anova_tbl$sumsq, na.rm = TRUE)
+    
+    anova_tbl %>%
+      filter(term %in% c("esm", "ssp")) %>%
+      mutate(perc_var = 100 * sumsq / total_ss)
+  } else {
+    # Return NA if not enough variation
+    tibble(term = c("esm", "ssp"), sumsq = NA, df = NA, statistic = NA, p.value = NA, perc_var = NA)
+  }
+}
+
+
+uncertainty_by_region_period <- scenarios_data %>%
+  filter(scen == "sq") %>% 
+  #for aggregated
+  group_by(esm, period, ssp) %>%
+  summarise(mean_value_tp = sum(mean_value_tp,na.rm = T)) %>% 
+  # View()
+  group_by(period) %>%
+  group_modify(~ get_var_contrib(.x)) %>%
+  ungroup()
+
+
+ggplot(uncertainty_by_region_period, aes(x = period, y = perc_var, fill = term)) +
+  geom_col(position = "stack") +
+  # facet_wrap(~ region, scales = "free_x") +
+  labs(
+    y = "Proportion of Uncertainty (%)",
+    x = "Period",
+    fill = "Source of Uncertainty",
+    title = "Uncertainty Contribution by Region and Period"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "bottom"
+  )
+
+```
+
+
+```{r}
+scenarios_data %>%
+  filter(scen == "sq") %>% 
+  #for aggregated
+  group_by(esm, period, ssp) %>%
+  summarise(mean_value_tp = sum(mean_value_tp,na.rm = T)) %>% 
+  ggplot() +
+  geom_point(
+    aes(
+      x = period,
+      y = mean_value_tp,
+      color = esm,
+      shape = ssp
+    )
+  )
+```
 
