@@ -1,10 +1,10 @@
- SppNo           42
+ SppNo            2
  CCSc C6MPIS85                                
  SSP SSP585                                  
  rsfile EtpSppList          
- rpath c6mpis26F1rib                 
+ rpath c6gfdl26F0sqt                 
  tpath TaxonDataC0                   
- ifile 11                  
- FHS    1.00
- FEEZ    1.00
- MPApath mpa_ri                                  
+ ifile 10                  
+ FHS    0.00
+ FEEZ    0.00
+ MPApath mpa_sq                                  
