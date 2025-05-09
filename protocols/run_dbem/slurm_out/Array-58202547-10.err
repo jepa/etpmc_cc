@@ -1,0 +1,10 @@
+forrtl: Disk quota exceeded
+forrtl: severe (38): error during write, unit 1, file /home/jepa/scratch/Results/c6mpis26F1rib/600226/600226Abd1875.txt
+Image              PC                Routine            Line        Source             
+DBEM_v2_y          0000000000458197  Unknown               Unknown  Unknown
+DBEM_v2_y          000000000041E73F  Unknown               Unknown  Unknown
+DBEM_v2_y          000000000040FF35  Unknown               Unknown  Unknown
+DBEM_v2_y          000000000040432D  Unknown               Unknown  Unknown
+libc.so.6          000015438644E94A  Unknown               Unknown  Unknown
+libc.so.6          000015438644EA05  __libc_start_main     Unknown  Unknown
+DBEM_v2_y          0000000000404241  Unknown               Unknown  Unknown

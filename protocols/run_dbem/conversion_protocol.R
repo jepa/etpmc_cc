@@ -11,31 +11,31 @@ library(doParallel)
 
 # path to save R data
 #r_path <- "~/scratch/Results/R/"#output_path
+
 r_path <- "~/projects/def-wailung/CMIP6/etp_outputs/R/"
 
 # Load required functions
 source("~/projects/def-wailung/jepa/dbem/support_fx/txt_to_rdata_fx.R")
 
 # Determine the start and end year you want to include
-year_one <- 1951
+year_one <- 1851
 year_end <- 2100
 
 # Scenario to call (Note this will determine the results directory)
-scenarios <- c("c6mpis85F1rpc","c6mpis85F1rpp")
+scenarios <- c("c6mpis26F1ri")
 
 # Variables to be converted (Abundace or Catch)
-  category <- c("Catch")
+  category <- c("Catch","Abd")
   
   for(i in 1:length(scenarios)){
     
     scenario <- scenarios[i]
     
     # Include here the path of your DBEM raw outputs BEFORE the scenario
-    #taxon_list <- list.files(paste0("~/scratch/Results/",scenario,"/"),full.names = F)
+   # taxon_list <- list.files(paste0("~/scratch/Results/",scenario,"/"),full.names = F)
 
 taxon_list <- list.files(paste0("~/projects/def-wailung/CMIP6/etp_outputs/",scenario,"/"), full.names = F)
-    
-    
+
     
     # # Call function for scenarios in Settings file
     # lapply(taxon_list,
