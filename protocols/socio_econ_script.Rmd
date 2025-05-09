@@ -29,13 +29,13 @@ results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/le
 ```
 
 
-# 
+# Load data 
 
 ```{r}
 
 # library(readxl)
 sau_combo <- read_excel("~/Library/CloudStorage/OneDrive-UBC/Data/Spatial/SAU/EEZ-FAO-Country-Combo.xlsx")
-View(sau_combo)
+# View(sau_combo)
 
 # mPA grids
 # Load Grid data
@@ -73,7 +73,7 @@ ggplot(cmar_grid) +
     )
   )
 ```
-
+# Proportion estimates
 
 
 ```{r}
@@ -199,7 +199,7 @@ suppressWarnings(
 
 ```
 
-# Check percentage changes
+## Check percentage changes
 
 ```{r}
 
@@ -245,8 +245,8 @@ ggplot() +
 
 ```{r get_salmon_lif_history}
 
-
-etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species (1)/EtpSppList10.txt", quote="\"", comment.char="") %>% 
+# Get life history data
+etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/EtpSppList10.txt", quote="\"", comment.char="") %>% 
   rename(taxon_key = V1)
 
 
@@ -275,6 +275,110 @@ final %>%
   select("variable" = X1,
          "value" = X2,
          taxon_key) %>% 
-  write_csv("life_history_etp_spp.csv")
+  filter(variable == "IntrinsicR") %>% 
+  write_csv(my_path("R","socio_ecol/","life_history_etp_spp.csv"))
 
 ```
+
+
+# K
+
+```{r}
+
+taxon_file <- file_list[1]
+
+get_k_fx <- function(taxon_file){
+  
+  
+  taxon_path <- paste0(dbem_data,"/",taxon_file)
+  
+  taxon <- unique(str_sub(taxon_path,81,86))
+  print(taxon)
+  for(i in 1:6){
+  
+    taxon_path_load <- taxon_path[i]
+    
+  load(taxon_path_load)
+  
+  
+  esm <- unique(str_sub(taxon_path_load,70,73))
+  ssp <- unique(str_sub(taxon_path_load,74,75))
+  
+  
+  spp_data <- as.data.frame(data) %>% 
+    rowid_to_column("index")
+  rm(data)
+  colnames(spp_data) <- c("index",(seq(1951,2100,1)))
+
+  partial <- spp_data %>% 
+    select(`1995`:`2014`,`2020`:`2039`,`2040`:`2059`,`2081`:`2100`) %>% 
+    rowid_to_column("index") %>% 
+    filter(index %in% cmar_grid$index) %>% 
+    gather(year,"abd",`1995`:`2059`) %>% 
+    left_join(cmar_grid,
+              by = "index") %>% 
+    mutate(period = ifelse(year < 2014 & year > 1995,"1995_2014_present",
+                           ifelse(year < 2039 & year > 2020,"2020_2039_ear",
+                                  ifelse(year < 2059 & year > 2040,"2040_2059_mid",
+                                         "2081_2100_end"))
+    )
+    ) %>% 
+    filter(!is.na(eez_id)) %>% 
+    # Aggregate abd by EEZ
+    group_by(year,period) %>% 
+    summarise(eez_abd = sum(abd, na.rm = T)) %>% 
+    # Mean abd by period
+    group_by(period) %>% 
+    summarise(mean_cmar_k = mean(eez_abd, na.rm = T)) %>% 
+    mutate(
+      taxon_key = taxon,
+      ssp = ssp,
+      esm = esm)
+  
+  if(i == 1){
+    final_df <- partial
+  }else{
+    final_df <- bind_rows(final_df,partial)
+  }
+  
+  output_df <- final_df %>% 
+    group_by(taxon_key,period,ssp) %>%
+    summarise(
+      sd_cmar_k = sd(mean_cmar_k, na.rm = T),
+      mean_cmar_k = mean(mean_cmar_k, na.rm = T)
+    ) %>% 
+    select(taxon_key,period,ssp,mean_cmar_k,sd_cmar_k)
+  
+  }
+  
+  return(output_df)
+}
+  
+  
+  
+# list of data paths
+dbem_data <- list.files(my_path("R","dbem_outputs/results_f0",system = "juliano"),full.names = T)
+
+# List of species
+file_list <- list.files(my_path("R","dbem_outputs/results_f0/c6gfdl26F0sq",system = "juliano"),full.names = F)
+
+# taxon_path <- paste0(dbem_data,"/",file_list[i])
+
+
+# get_k_fx(taxon_path)
+
+suppressWarnings(
+  suppressMessages(
+      test <- bind_rows(
+        lapply(file_list, get_k_fx)
+      )
+  )
+)
+
+
+write_csv(test,
+        my_path("R","socio_ecol/","k_estimates.csv")
+        )
+
+```
+
