@@ -1,7 +1,6 @@
 
-
 # This function estimates the percentage change in value relative to the historical time period
-hist_dif <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
+hist_dif_sq <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
   
   print(category)
   
@@ -18,12 +17,33 @@ hist_dif <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
       rename(category = taxon_key)
   }
   
+  # standard_data <- spp_data %>%
+  #   group_by(period, region, category, ssp) %>%
+  #   mutate(
+  #      mean_value_esm_std = mean_value_esm / sum(mean_value_esm, na.rm = TRUE)
+  #     # mean_value_esm_std = mean_value_esm / mean(mean_value_esm, na.rm = TRUE)
+  #     ) %>%
+  #   ungroup()
   
-  spp_data <- spp_data %>% 
+  # tday <- standard_data %>%
+  #   filter(scen == "sq",
+  #          period == "2014_hist") %>%
+  #   select(region:4,hist_sq=mean_value_esm_std)
+  
+  tday <- spp_data %>%
+    filter(scen == "sq",
+           period == "2014_hist") %>%
+    select(region:4,hist_sq=mean_value_esm)
+  
+  # spp_data <- standard_data %>% 
+  spp_data <- spp_data %>%
+    # select(category,everything(),-mean_value_esm,-sd_value_esm) %>%
     select(category,everything(),-sd_value_esm) %>%
-    pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
+    # pivot_wider(names_from = period, values_from = mean_value_esm_std) %>%
+    pivot_wider(names_from = period, values_from = mean_value_esm) %>%
+    left_join(tday) %>%
     mutate(
-      dif_2040 = my_chng(`2014_hist`,`2040_ear`)
+      dif_2040 = my_chng(hist_sq,`2040_ear`)
       # dif_2060 = my_chng(`2014_hist`,`2060_mid`),
       # dif_2100 = my_chng(`2014_hist`,`2100_end`)
     ) %>% 
@@ -31,10 +51,10 @@ hist_dif <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
     #   category:variable,dif_2040
     # ) %>% 
     scenario_names() %>% 
-    filter(!is.na(dif_2040)) %>% 
-    filter(region != "High seas")
+    filter(!is.na(dif_2040))
   # gather("scen","per_change",dif_no_reg:per_reg_fish) %>% 
   
+
   
   if(map == T){
     for(i in 1:2){
@@ -66,17 +86,17 @@ hist_dif <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
           
         )
       )
-      map_name <- paste0("map_",unique(spp_data$category),"_",var,"_",ssps,"_scen_diff.png")
+      map_name <- paste0("map_",unique(spp_data$category),"_",var,"_",ssps,"_scen_diff_sq.png")
       
       if(is.numeric(category) == F){
         ggsave(
-          my_path("R","figures/relative_to_hist/groups/",map_name),
+          my_path("R","figures/relative_to_hist/groups_sq/",map_name),
           map_t,
           height = 4,
           width = 5)
       }else{
         ggsave(
-          my_path("R","figures/relative_to_hist/species/",map_name),
+          my_path("R","figures/relative_to_hist/species_sq/",map_name),
           map_t,
           height = 4,
           width = 5)
@@ -115,18 +135,18 @@ hist_dif <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
         scale_x_discrete(limits = rev(sort(spp_data %>% mutate(region = gsub("_"," ",region)) %>% pull(region) %>% unique())))
       
       
-      bar_name <- paste0("bar_",unique(spp_data$category),"_",var,"_scen_diff_",ssps,".png")
+      bar_name <- paste0("bar_",unique(spp_data$category),"_",var,"_scen_diff_",ssps,"_sq.png")
       
       
       if(is.numeric(category) == F){
         ggsave(
-          my_path("R","figures/relative_to_hist/groups/",bar_name),
+          my_path("R","figures/relative_to_hist/groups_sq/",bar_name),
           last_plot(),
           height = 7,
           width = 13)
       }else{
         ggsave(
-          my_path("R","figures/relative_to_hist/species/",bar_name),
+          my_path("R","figures/relative_to_hist/species_sq/",bar_name),
           last_plot(),
           height = 4,
           width = 7)
@@ -151,9 +171,6 @@ hist_dif <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
       )
       # std_2040_ear = ifelse(std_2040_ear < 0.5, std_2040_ear * -1,std_2040_ear)
     )
-  
-  
-  pal <- wes_palette("Zissou1", 100, type = "continuous")
   
   
   if(bar_abs == T){
@@ -205,13 +222,13 @@ hist_dif <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
       
       if(is.numeric(category) == F){
         ggsave(
-          my_path("R","figures/relative_to_hist/groups/",bar_abs_name),
+          my_path("R","figures/relative_to_hist/groups_sq/",bar_abs_name),
           last_plot(),
           height = 10,
           width = 10)
       }else{
         ggsave(
-          my_path("R","figures/relative_to_hist/species/",bar_abs_name),
+          my_path("R","figures/relative_to_hist/species_sq/",bar_abs_name),
           last_plot(),
           height = 6,
           width = 6)
@@ -230,7 +247,7 @@ hist_dif <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
       point_data <- heat_data %>% 
         filter(ssp == ssps, variable == var) %>%
         mutate(region = gsub("_", " ", region)) %>%
-        gather("time_period","value",`2014_hist`,`2040_ear`) 
+        gather("time_period","value",hist_sq,`2040_ear`) 
       
       # Example: define custom breaks
       my_breaks <- pretty(range(point_data$value, na.rm = TRUE), n = 5)
@@ -266,13 +283,13 @@ hist_dif <- function(category, var, map = T, bar = T, bar_abs = T, points = T){
       
       if(is.numeric(category) == F){
         ggsave(
-          my_path("R","figures/relative_to_hist/groups/",point_name),
+          my_path("R","figures/relative_to_hist/groups_sq/",point_name),
           last_plot(),
           height = 10,
           width = 10)
       }else{
         ggsave(
-          my_path("R","figures/relative_to_hist/species/",point_name),
+          my_path("R","figures/relative_to_hist/species_sq/",point_name),
           last_plot(),
           height = 6,
           width = 6)

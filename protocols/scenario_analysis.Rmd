@@ -362,135 +362,12 @@ spp_fx(600006,"abd")
 ### Per Group analysis
 
 ```{r}
-scen_group_dif_fx <- function(variable = "abd",grupo){
-  
-  
-  selected_group <- spp_groups %>% 
-    filter(group == grupo)
-  
-  
-  if(variable == "abd"){
-    name <- paste0(selected_group$taxon_key,"Abd.RData")
-  }else{
-    name <- paste0(selected_group$taxon_key,variable,".RData")
-  }
-  
-  
-  file_to_read <- paste0(my_path("R","dbem_outputs/Rdata",
-                                 list_files = "paths",
-                                 system = "juliano"),
-                         "/",
-                         name)
-  
-  
-  for(i in 1:length(file_to_read)){
-    
-    # print(i)
-    load(file_to_read[i])
-    
-    # Transform it to df
-    spp_data <- as.data.frame(data) %>% 
-      rowid_to_column("index") %>% 
-      filter(index %in% cmar_grid$index)
-    
-    
-    
-    if(ncol(spp_data) == 251){
-      colnames(spp_data) <- c("index",(seq(1851,2100,1)))
-    }else{
-      colnames(spp_data) <- c("index",(seq(1951,2100,1)))
-    }
-    
-    rm(data) # remove data for computing power
-    
-    
-    
-    
-    partial_data <- spp_data %>% 
-      gather("year","value",`1951`:`2100`) %>% 
-      filter(index %in% cmar_grid$index) %>% 
-      mutate(period = ifelse(year < 2060 & year > 2041,"2060_mid",
-                             ifelse(year < 2040 & year > 2021,"2040_ear",
-                                    ifelse(year < 2100 & year > 2081,"2100_end",
-                                           ifelse(year < 2014 & year > 1995,"2014_hist",
-                                                  NA)
-                                    )
-                             )
-                             
-      )
-      ) %>% 
-      filter(!is.na(period)) %>% 
-      mutate(
-        esm = str_sub(file_to_read[i],65,68),
-        ssp = ifelse(str_sub(file_to_read[i],69,70) == 26,"ssp126","ssp585"),
-        scen = str_sub(file_to_read[i],73,74),
-        group = grupo
-      )
-    
-    
-    
-    # Join data for all three models
-    if(i == 1){
-      complete_output <- partial_data
-    }else{
-      
-      complete_output <- full_join(complete_output,partial_data,
-                                   by = c("index","year","period","esm","ssp","scen","group")
-      ) %>% 
-        mutate_at(
-          .vars = c("value.x","value.y"),
-          .funs = replace_na,0
-        ) %>% 
-        mutate(sum_value = value.x + value.y) %>% 
-        select(index,esm,ssp,scen,group,year,period,value = sum_value)
-      
-    }
-    
-  } # close for loop in i for species
-  
-  
-  final_output <- complete_output %>% 
-    left_join(cmar_grid,
-              by = "index",
-              relationship = "many-to-many") %>% 
-    group_by(scen,period,year,region,esm,group,ssp) %>% 
-    #aggregate all grids
-    summarise(
-      sum_v = sum(value, na.rm = T),
-      .groups = "keep"
-    ) %>% 
-    # Average time periods
-    group_by(scen,period,region,group,esm,ssp) %>% 
-    summarise(
-      mean_value_tp = mean(sum_v, na.rm = T),
-      .groups = "keep"
-    ) %>% 
-    # average per ESM
-    group_by(scen,period,region,group,ssp) %>% 
-    summarise(
-      mean_value_esm = mean(mean_value_tp, na.rm = T),
-      sd_value_esm = sd(mean_value_tp, na.rm =T),
-      .groups = "keep"
-    )
-  # remove cases where all three periods are 0
-  # group_by(group,region,period,ssp) %>% 
-  # filter(any(mean_value_esm != 0)) %>% 
-  # mutate(variable = variable)
-  
-  
-  
-  name <- paste0(grupo,"_",variable,"_period.csv")
-  print(paste(unique(name)))
-  
-  write_csv(final_output,
-            my_path("R","processed/groups/period_data/",name))
-  
-  
-}
 
 
-lapply(unique(spp_groups$group), scen_group_dif_fx, variable = "catch")
-lapply(unique(spp_groups$group), scen_group_dif_fx, variable = "abd")
+lapply(unique(spp_groups$group), agg_abd_group, variable = "catch", ignore_taxa = 600226)
+lapply(unique(spp_groups$group), agg_abd_group, variable = "abd")
+
+agg_abd_group(group_selected = "dorado",variable = "abd")
 
 
 ```
@@ -620,6 +497,94 @@ agg_average_data <- scenarios_data %>%
 
 ## Data exploration
 
+
+### Check outputs
+
+#### Species outputs
+
+```{r chec_spp, eval = F, echo = F}
+
+# Check raw outputs
+for(i in 1:length(etpmc_spp$taxon_key)){
+
+name <- paste0(etpmc_spp$taxon_key[i],"_abd_period.csv")
+  
+    spp_data <- my_path("R","processed/species/period_data/",name,read = T) %>% 
+      rename(category = taxon_key)
+
+spp_data %>% 
+  filter(ssp == "ssp585",
+         region != "High seas",
+         period == "2014_hist") %>% 
+  ggplot() +
+  geom_bar(
+    aes(
+      x = scen,
+      y = mean_value_esm,
+      fill = mean_value_esm
+    ) ,
+    stat = "identity"
+  ) +
+  facet_wrap(~region,
+             scales = "free"
+  )
+  
+
+nameplot <- paste0(etpmc_spp$common_name[i],"_bar.png")
+
+ggsave(
+  my_path("R","figures/relative_to_hist/groups/",nameplot),
+  last_plot(),
+  height = 8,
+  width = 9)
+
+}
+```
+
+#### Groups outputs
+
+```{r chec_spp, eval = F, echo = F}
+
+# Check raw outputs
+for(i in 1:length(spp_groups_list)){
+
+name <- paste0(spp_groups_list[i],"_abd_period.csv")
+  
+    spp_data <- my_path("R","processed/groups/period_data/",name,read = T) %>% 
+      rename(category = group) %>% 
+      mutate(variable = var)
+
+final_output %>% 
+  filter(ssp == "ssp126",
+         region != "High seas",
+         period == "2014_hist") %>% 
+  ggplot() +
+  geom_bar(
+    aes(
+      x = scen,
+      y = mean_value_esm,
+      fill = mean_value_esm
+    ) ,
+    stat = "identity"
+  ) +
+  facet_wrap(~region,
+             scales = "free"
+  )
+  
+
+nameplot <- paste0(spp_groups_list[i],"_bar.png")
+
+ggsave(
+  my_path("R","figures/relative_to_hist/groups/",nameplot),
+  last_plot(),
+  height = 8,
+  width = 9)
+
+}
+
+
+```
+
 ```{r}
 
 
@@ -685,11 +650,12 @@ This section creates maps of change in variable relative to the historical perio
 # MAP
 
 # hist_dif(600006, var = "abd", map = F)
+# hist_dif_sq("dorado", var = "abd")
 # Run plot making
 for(i in 1:2){
   vars <- c("abd","mcp")[i]
   mclapply(etpmc_spp$taxon_key, hist_dif, var = vars, mc.cores = detectCores() - 4)
-  mclapply(etpmc_spp$taxon_key, hist_dif, var = vars, mc.cores = detectCores() - 4)
+  mclapply(etpmc_spp$taxon_key, hist_dif_sq, var = vars, mc.cores = detectCores() - 4)
 }
 
 
@@ -712,7 +678,7 @@ spp_groups_list <- unique(spp_groups$group)
 # Run plot making
 for(i in 1:2){
   vars <- c("abd","catch")[i]
-  mclapply(spp_groups_list, hist_dif, var = vars, mc.cores = detectCores() - 4)
+  mclapply(spp_groups_list, hist_dif_sq, var = vars, mc.cores = detectCores() - 4)
   mclapply(spp_groups_list, hist_dif, var = vars, mc.cores = detectCores() - 4)
 }
 
