@@ -60,12 +60,12 @@ mpa_name <-
   # "Yurupari _Malpelo_Colombia"
   # "PN_IslaCoco_CostaRica"
   "Malpelo_Colombia"
-  # "CoibaCoord_Panama"
-  # "Coiba_Panama"
-  # "PN_IslaCoco_CostaRica"
-  # "AMM_Bicentenario_CostaRica"
-  # "CLomas Sub  Cuenca PacNor"
-  # "Gorgona"
+# "CoibaCoord_Panama"
+# "Coiba_Panama"
+# "PN_IslaCoco_CostaRica"
+# "AMM_Bicentenario_CostaRica"
+# "CLomas Sub  Cuenca PacNor"
+# "Gorgona"
 
 path_mpa <- paste0(data_path,"spatial/cmar_capas/",mpa_name,".shp")
 
@@ -282,8 +282,8 @@ dbem_grid <- my_data("dbem_coords")
 mpas_grid <- bind_rows(
   lapply(list_mpas, read_csv 
          # col_types = col_types
-         )
-  ) %>% 
+  )
+) %>% 
   # Fix minimal negative values when full protection
   mutate(
     fe_prop = ifelse(FE_prop < 0,0,FE_prop)
@@ -307,7 +307,7 @@ mpas_grid %>%
     xlim = c(-95,-77),
     ylim = c(-4,9)
   ) 
-  # facet_wrap(~mpa)
+# facet_wrap(~mpa)
 
 # Save grid with all mpas
 write_csv(
@@ -437,6 +437,87 @@ rfmo_dbem_hs <- rfmo_dbem %>%
 write_csv(rfmo_dbem_hs,
           paste0(data_path,"spatial/iattc_gridded.csv"))
 
+
+```
+
+# Map for report
+
+
+```{r}
+
+# MPAs
+mpa_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))%>% 
+  mpa_names()
+
+#SAU EEZ
+sau_sf <- my_sf("SAU") %>% 
+  filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador")) %>% 
+  mutate(
+    label = gsub("\\(Pacific\\)", "", name),
+    label = ifelse(label == "Galapagos Isl. (Ecuador)","Ecuador\n(Galapagos)",label)
+  )
+
+
+map_regions <-  ggplot() +
+  geom_sf(data = sau_sf, aes(), fill = "grey90", color = "black") +
+  # geom_sf(data = sau_sf, aes(fill = label), color = "black") +
+  geom_sf(data = mpa_sf, aes(fill = region), color = "red", alpha = 0.5) +
+  # geom_sf_label(data = sau_sf, aes(label = label), alpha = 0.5) +
+  geom_label_repel(data = sau_sf,
+                   aes(label = label,
+                       geometry = geometry
+                   ),
+                   stat = "sf_coordinates",
+                   direction = "y",
+                   seed = 5,
+                   max.overlaps = 10,
+                   point.padding = 50,
+                   hjust = "right",
+                   nudge_x = ifelse(sau_sf$label == "Colombia ",1.5,
+                                    ifelse(sau_sf$label == "Ecuador\n(Galapagos)",2,
+                                           ifelse(sau_sf$label == "Panama ",2,
+                                                  1)
+                                    )
+                   ),
+                   nudge_y = ifelse(sau_sf$label == "Panama ",1,
+                                    ifelse(sau_sf$label == "Colombia ",-2,
+                                           ifelse(sau_sf$label == "Galapagos\n(Ecuador)",-2,
+                                                  1)
+                                    )),
+                   alpha = 0.6,
+                   size = 4
+  ) +
+  # geom_sf_label(data = mpa_sf, aes(label = region), alpha = 0.5) +
+  my_land_map() +
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-5,9)
+  ) +
+  scale_fill_manual("Area Marina Protegida",
+                    values = c(
+                      # wes_palette("IsleofDogs1"),
+                      wes_palette("Royal2"),
+                      wes_palette("Darjeeling1")
+                    )
+  )+
+  labs(
+    x = "Longitud",
+    y = "Latitud"
+  ) +
+  my_ggtheme_m("x", leg_pos = "bottom",
+               ax_tx_s = 8,
+               ax_tl_s = 10,
+               leg_tx_s = 6,
+               leg_tl_s = 10) +
+  guides(fill = guide_legend(title.position = "top", title.hjust = 0.5))
+
+
+
+ggsave("../results/test.png",
+       map_regions,
+       width = 10, 
+       height = 10, 
+       dpi = 300)
 
 ```
 
