@@ -678,7 +678,6 @@ spp_groups_list <- unique(spp_groups$group)
 # Run plot making
 for(i in 1:2){
   vars <- c("abd","catch")[i]
-  mclapply(spp_groups_list, hist_dif_sq, var = vars, mc.cores = detectCores() - 4)
   mclapply(spp_groups_list, hist_dif, var = vars, mc.cores = detectCores() - 4)
 }
 
@@ -976,9 +975,9 @@ for(i in 1:2){
   ssps <- c("ssp585","ssp126")[i]
   
   lapply(unique(spp_groups$group), scen_dif_fx,"abd",ssp_selected =ssps,
-         map = F)
-  lapply(unique(spp_groups$group), scen_dif_fx,"catch",ssps,
-         map = F)
+         map = T)
+  # lapply(unique(spp_groups$group), scen_dif_fx,"catch",ssps,
+         # map = F)
   
 }
 
