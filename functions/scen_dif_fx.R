@@ -21,10 +21,10 @@ scen_dif_fx <- function(category, var = "abd", ssp_selected = "ssp585", map = T,
     select(-sd_value_esm) %>% 
     pivot_wider(names_from = scen, values_from = mean_value_esm) %>% 
     mutate(
-      dif_nr = my_chng(sq,nr, limit = 100),
-      dif_rc = my_chng(sq,rc, limit = 100),
-      dif_ri = my_chng(sq,ri, limit = 100),
-      dif_rp = my_chng(sq,rp, limit = 100)
+      dif_nr = my_chng(sq,nr),
+      dif_rc = my_chng(sq,rc),
+      dif_ri = my_chng(sq,ri),
+      dif_rp = my_chng(sq,rp)
     ) %>% 
     select(
       period,category:ssp,region, dif_nr:dif_rp
@@ -34,7 +34,9 @@ scen_dif_fx <- function(category, var = "abd", ssp_selected = "ssp585", map = T,
     scenario_names() %>% 
     filter(!is.na(per_change)) %>% 
     mutate(
-      per_change = ifelse(per_change == "Inf",100,per_change)
+      per_change = ifelse(per_change == "Inf",100,per_change),
+      per_change = ifelse(per_change >= 100,100,per_change),
+      per_change = ifelse(per_change < -100,-100,per_change)
     )
   
   if(map == T){
