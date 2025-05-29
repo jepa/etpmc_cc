@@ -1,0 +1,120 @@
+---
+title: "Analysis of DBEM data for scenarios"
+author: "Juliano Palacios Abrantes"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include = F}
+
+
+library(MyFunctions)
+
+my_lib(c(
+  # For grid estimation and species selection
+  "spatialEco","tidyverse", "geosphere","raster","units","matrixStats","sf","rmapshaper", "igraph",
+  # For collaborative ease
+  "here",
+  "readr",
+  "janitor",
+  # For nitce figures
+  "hrbrthemes",
+  "viridis",
+  "parallel",
+  "readxl",
+  #For standarize data
+  "scales"
+))
+
+# For grid e
+# Fix new updates of sf package
+sf::sf_use_s2(use_s2 = FALSE)
+
+select <- dplyr::select
+
+
+# Change paths to your computer
+
+data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
+
+
+results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios_paper/results"
+```
+
+# Load Data
+
+## Spatial data 
+
+```{r}
+
+# Load SAU SF
+sau_sf <- my_sf("SAU") %>% 
+  filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
+
+# Load CMAR Grid data
+mpas_grid <- read_csv(paste0(data_path,"spatial/gridded/all_mpa_grid_fe.csv")) %>% 
+  rename(mpa_abrev = mpa) %>% 
+  distinct()
+
+cmar_grid <- my_data("dbem_coords") %>% 
+  filter(lat < 10 & lat > -10 & lon > -100 & lon < -70) %>% 
+  left_join(mpas_grid) %>% 
+  left_join(my_data("sau_index")) %>% 
+  mutate(status = ifelse(is.na(status),"non_protected",status),
+         region = ifelse(is.na(mpa_abrev),eez_name,mpa_abrev)
+  ) %>% 
+  filter(!region %in% c("Colombia (Caribbean)","Panama (Caribbean)","Costa Rica (Caribbean)","El Salvador","Nicaragua (Pacific)","Peru","Venezuela"),
+         !is.na(eez_name))
+
+
+
+
+```
+
+## Species data
+
+```{r}
+
+# Load species groups
+spp_groups <-  read_excel("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/etp_spp_grouping.xlsx", 
+                          skip = 1) %>% 
+  filter(group != "mola")
+
+```
+
+# Aggregate all species
+
+```{r}
+
+# List scenarios
+scenarios <- list.files(my_path("R","dbem_outputs/Rdata",system = "juliano"))
+
+# get data
+scenarios_data_abs <- bind_rows(
+lapply(scenarios, agg_esm_fx_abs,category = "Abd")
+)
+
+# Save the esm for uncertainty data
+write_csv(scenarios_data_abs,
+          paste0(results_path,"/processed/all/","all_years_data_catch_esm.csv")
+)
+```
+
+# Aggregate per groups
+
+```{r}
+
+lapply(unique(spp_groups$group), agg_group, variable = "catch", ignore_taxa = 600226)
+lapply(unique(spp_groups$group), agg_group, variable = "abd")
+
+library(parallel)
+
+group_list <- spp_groups$group %>% unique()
+# Aggregate all groups in parallel
+mclapply(group_list, function(grp) {
+  agg_abd_group(group_selected = grp, variable = "catch")
+}, mc.cores = 4)
+
+
+```
+
