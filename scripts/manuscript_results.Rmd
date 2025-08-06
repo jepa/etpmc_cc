@@ -26,7 +26,8 @@ my_lib(c(
   "zoo",
   # For pretty plots
   "wesanderson",
-  "tidytext"
+  "tidytext",
+  "ggh4x" # faceting edditing
 ))
 
 # For grid e
@@ -46,7 +47,171 @@ results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/le
 
 # Aggregated results
 
-## Fig. 3. Relative to historic period (Year)
+## Data load
+
+```{r load_data}
+
+# Load pre created data
+
+scenarios_data_abs <- read_csv(
+  paste0(data_path,"04 raw dbem results/processed/all/","all_years_data_abd_esm.csv")
+)
+
+# Load sau data 
+sau_sf <- my_sf("SAU") %>% 
+  filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
+
+# Load CMAR shapefile
+cmar_sf <- read_sf(paste0(data_path,"01 spatial/cmar_capas/cmar_shp/all_cmar_mpas.shp")) %>% 
+  slice(-4,-5,-9)
+
+```
+
+## Data prep
+
+```{r}
+sq_df <- scenarios_data_abs %>% 
+  filter(scen == "sq") %>% 
+  filter(year < 2014) %>% 
+  group_by(region,esm,ssp) %>%
+  summarise(mean_time = mean(value_region, na.rm = T)) %>% 
+  group_by(region,ssp) %>%
+  summarise(mean_esm = mean(mean_time, na.rm = T))
+
+
+data_df <- scenarios_data_abs %>% 
+  mutate(
+    time_frame = case_when(
+      # year > 1994 & year < 2014 ~ "historic",
+      year < 2015 ~ "historic",
+      year > 2021 & year < 2040 ~ "early_2030",
+      year > 2041 & year < 2060 ~ "mid_2050",
+      TRUE ~ NA_character_
+    )
+  ) %>% 
+  filter(!is.na(time_frame)) %>% 
+  group_by(region,scen,esm,ssp,time_frame) %>%
+  summarise(mean_time = mean(value_region, na.rm = T)) %>% 
+  group_by(region,scen,ssp,time_frame) %>% 
+  pivot_wider(names_from = time_frame, values_from = mean_time) %>% 
+  # left_join(sq_df) %>% 
+  mutate(
+    dif_2030 = my_chng(historic,early_2030),
+    dif_2050 = my_chng(historic,mid_2050),
+    # dif_2040sq = my_chng(mean_esm,early_2050),
+  ) %>% 
+  scenario_names(leng = "eng") %>% 
+  # filter(!is.na(dif_2040)) %>% 
+  # filter(region != "High seas") %>% 
+  summarise(
+    across(
+      c(dif_2030, dif_2050),
+      list(mean_esm = ~mean(.x, na.rm = TRUE),
+           sd_esm = ~sd(.x, na.rm = TRUE)),
+      .names = "{.col}_{.fn}"
+    ),
+    .groups = "drop"
+  ) %>% 
+  pivot_longer(cols = c("dif_2030_mean_esm": "dif_2050_sd_esm"),
+               names_to = "period",
+               values_to = "value") %>% 
+  mutate(
+    stat = ifelse(str_detect(period, "mean"), "mean_esm", "sd_esm"),
+    period = ifelse(str_detect(period, "2030"), "2030", "2050"),
+    ssp = ifelse(ssp == "ssp126", "SSP1-2.6","SSP5-8.5")
+  )
+
+
+```
+
+## Fig 3A. Relative to historic period (period)
+
+```{r}
+
+sq_data <- data_df %>% 
+  filter(scen == "sq") %>% 
+  scenario_names(leng = "eng") %>% 
+  spread(stat,value) %>% 
+  mutate(
+    z_score = mean_esm / sd_esm,
+    confidence_flag = case_when(
+      abs(z_score) > 2 ~ "high",
+      abs(z_score) > 1 ~ "moderate",
+      TRUE ~ "low"
+    )
+  )
+
+# Confidence
+sau_points_sf <-
+  sau_sf %>%
+  rename(region = name) %>% 
+  left_join(sq_data) %>%
+  select(region:scenario,confidence_flag) %>%
+  st_centroid()
+
+# Confidence
+cmar_points_sf <-
+  cmar_sf %>%
+  left_join(sq_data) %>%
+  select(region:scenario,confidence_flag) %>%
+  st_centroid()
+
+
+map <-
+  ggplot() +
+  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(sq_data),
+          aes(fill = mean_esm),
+          color = "grey"
+  ) +
+  geom_sf(data = cmar_sf %>%  left_join(sq_data),
+          aes(fill = mean_esm),
+          color = "black"
+  ) +
+  geom_sf(data = sau_points_sf,
+          aes(shape = confidence_flag)
+  ) +
+  geom_sf(data = cmar_points_sf,
+          aes(shape = confidence_flag)
+  ) +
+  facet_grid(ssp~period) +
+  # For SQ scenario change
+  scale_fill_gradient2("Change in biomass\nrelative to baseline (%)",
+                       limits = c(-15,1),
+                       breaks = seq(-15,1,5)
+  ) +
+  my_land_map() +
+  my_ggtheme_m("Reg",
+               facet_tl_s = 10,
+               ax_tl_s = 8,
+               ax_tx_s = 8,
+               leg_tl_s = 8,
+               leg_tx_s = 8,
+               leg_pos = "right" 
+  ) +
+  # theme(
+  # legend.key.width = unit(3, "line"),
+  # title = element_text(size = 4)
+  # )  +
+  # guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5)
+  # ) +
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-5,9)
+  )
+
+
+ggsave(
+  paste0(results_path,"figures/relative_hist/all/sq_relative_map.png"),
+  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
+  map,
+  height = 7,
+  width = 8
+)
+
+
+```
+
+## Fig 3B. Relative to historic period (Year)
 
 ```{r}
 
@@ -54,8 +219,7 @@ hist_df <- scenarios_data_abs %>%
   filter(scen == "sq",
          # region != "High seas"
   ) %>%
-  # filter(year < 2015) %>%
-  filter(year < 2015 & year > 1994) %>%
+  filter(year < 2015) %>%
   group_by(esm,ssp,scen) %>%
   summarise(mean_time = mean(value_region, na.rm = T),
             .groups = "drop" 
@@ -97,8 +261,7 @@ scenarios_data_abs %>%
   mutate(esm_mean = mean(per_change, na.rm = T)) %>% 
   group_by(scen,ssp,esm) %>%
   mutate(
-    rolling_mean_sem = rollmean(esm_mean, k = 5, fill = NA, align = "right"),
-    ssp = ifelse(ssp == "ssp126", "SSP1-2.6","SSP5-8.5")
+    rolling_mean_sem = rollmean(esm_mean, k = 5, fill = NA, align = "right")
   ) %>%
   # View()
   filter(year > 2015) %>% 
@@ -140,7 +303,7 @@ scenarios_data_abs %>%
   )
 
 ggsave(
-  paste0(results_path,"figures/relative_hist/all/","sq_relative_historic_scen_85.png"),
+  paste0(results_path,"figures/relative_hist/all/","sq_relative_historic_cmar.png"),
   last_plot(),
   height = 3,
   width = 6
@@ -157,72 +320,13 @@ Note that there is two options for presenting this result:
 
 - A second option is to compare each scenario to the historical SQ, as William suggested. In this case, aesthetics for the map should be `aes(fill = dif_2040sq)` and the file name `relative_historic_scen_85.png`
 
-### Data prep
-
-```{r}
-sq_df <- scenarios_data_abs %>% 
-  filter(scen == "sq") %>% 
-  filter(year < 2014) %>% 
-  group_by(region,esm,ssp) %>%
-  summarise(mean_time = mean(value_region, na.rm = T)) %>% 
-  group_by(region,ssp) %>%
-  summarise(mean_esm = mean(mean_time, na.rm = T))
-
-
-data_df <- scenarios_data_abs %>% 
-  mutate(
-    time_frame = case_when(
-      year > 1994 & year < 2015 ~ "historic",
-      year > 2021 & year < 2040 ~ "early_2030",
-      year > 2041 & year < 2060 ~ "mid_2050",
-      TRUE ~ NA_character_
-    )
-  ) %>% 
-  filter(!is.na(time_frame)) %>% 
-  group_by(region,scen,esm,ssp,time_frame) %>%
-  summarise(mean_time = mean(value_region, na.rm = T)) %>% 
-  group_by(region,scen,ssp,time_frame) %>% 
-  pivot_wider(names_from = time_frame, values_from = mean_time) %>% 
-  # left_join(sq_df) %>% 
-  mutate(
-    dif_2030 = my_chng(historic,early_2030),
-    dif_2050 = my_chng(historic,mid_2050),
-    # dif_2040sq = my_chng(mean_esm,early_2050),
-  ) %>% 
-  scenario_names(leng = "eng") %>% 
-  # filter(!is.na(dif_2040)) %>% 
-  # filter(region != "High seas") %>% 
-  summarise(
-    across(
-      c(dif_2030, dif_2050),
-      list(mean_esm = ~mean(.x, na.rm = TRUE),
-           sd_esm = ~sd(.x, na.rm = TRUE)),
-      .names = "{.col}_{.fn}"
-    ),
-    .groups = "drop"
-  ) %>% 
-  pivot_longer(cols = c("dif_2030_mean_esm": "dif_2050_sd_esm"),
-               names_to = "period",
-               values_to = "value") %>% 
-  mutate(
-    stat = ifelse(str_detect(period, "mean"), "mean_esm", "sd_esm"),
-    period = ifelse(str_detect(period, "2030"), "2030", "2050")
-  )
-# 
-
-
-```
-
-### Figure 4 plot
+## Figure 4 plot
 
 ```{r}
 
 data_df %>% 
   filter(scen == "sq") %>% 
   mpa_names() %>% 
-  mutate(
-    ssp = ifelse(ssp == "ssp126", "SSP1-2.6","SSP5-8.5"),
-  ) %>% 
   spread(stat,value) %>% 
   # Z-score is a statistical measure that quantifies the distance between a data point and the mean of a dataset. It's expressed in terms of standard deviations.
   mutate(
@@ -236,10 +340,10 @@ data_df %>%
   ) %>% 
   # View()
   # Check confident n
-  group_by(confidence_flag) %>%
-  mutate(n_conf = round((n()/64)*100)) %>% 
-# View()
-  ggplot() +
+  # group_by(confidence_flag) %>%
+  # mutate(n_conf = round((n()/64)*100)) %>% 
+  View()
+ggplot() +
   geom_bar(
     aes(
       x = reorder(region,mean_esm),
@@ -263,14 +367,14 @@ data_df %>%
     width = 0.5
   ) +
   geom_point(
-             aes(
-               x = reorder(region,mean_esm),
-               y = pos,
-               color = ssp,
-               shape = confidence_flag
-             ),
-             position = "dodge",
-             size = 1
+    aes(
+      x = reorder(region,mean_esm),
+      y = pos,
+      color = ssp,
+      shape = confidence_flag
+    ),
+    position = "dodge",
+    size = 1
   ) +
   facet_wrap(~period,
              scales = "free_x"
@@ -292,8 +396,8 @@ data_df %>%
        y = "Change in biomass relative to baseline (%)")+
   my_ggtheme_p(leg_pos = "right") +
   scale_y_continuous(
-    limits = c(-25,5),
-    breaks = seq(-25,10,5),
+    limits = c(-30,5),
+    breaks = seq(-30,10,5),
     expand = c(0,0)
   ) + 
   theme(
@@ -301,7 +405,7 @@ data_df %>%
   )
 
 ggsave(
-  paste0(results_path,"figures/relative_hist/all/sq_relative_historic.png"),
+  paste0(results_path,"figures/relative_hist/all/sq_relative_historic_regional.png"),
   last_plot(),,
   height = 6,
   width = 8
@@ -309,28 +413,30 @@ ggsave(
 
 
 # confidence_flag
-# high	6/64
-# low	39/64	= 61%
-# moderate	19/64 = 30%
+# high	59 %
+# low	17%
+# moderate	23%
+
+
 
 ```
 
-## Fig. 5 Relative to SQ (Delta Delta)
+## Fig. 5A Relative to SQ (Delta Delta)
 
 Note that this step requires the preivous one and the usage of `dif_2040sq` or `dif_2040` will impact the results.
 
 ```{r}
 
 data_df_sq <- data_df %>% 
-  select(region:ssp,dif_2040) %>%
-  # select(region:ssp,dif_2040=dif_2040sq) %>% # For sq sq
-  pivot_wider(names_from = scen, values_from = dif_2040) %>% 
+  filter(stat == "mean_esm") %>% 
+  pivot_wider(names_from = scen, values_from = value) %>% 
   gather("scen","value",nr:rp) %>% 
   mutate(dif_per = value-sq) %>% 
   scenario_names(leng = "eng") %>% 
-  filter(region != "High seas",
-         ssp == "ssp126")
-
+  filter(
+    # ssp == "ssp126"
+    ssp == "ssp585"
+  )
 
 map <-
   ggplot() +
@@ -342,42 +448,436 @@ map <-
           aes(fill = dif_per),
           color = "black"
   ) +
-  facet_wrap(~scenario,
-             ncol=4) +
+  facet_grid(period~scenario) +
   # For SQ scenario change
-  scale_fill_gradient2("Differnce in Biomass changes by 2030\nRlative to Status Quo (%)",
-                       limits = c(-6,12),
-                       breaks = seq(-6,12,4)
+  scale_fill_gradient2("Differnce in biomass change rlative to status quo (%)",
+                       # limits = c(-2,10),
+                       # breaks = seq(-2,10,2)
+                       limits = c(-2,2), # for ssp-585
+                       breaks = seq(-2,2,1) # for ssp-585
   ) +
-  # For SQ SQ change
-  # scale_fill_gradient2("Cambios en la biomasa en 2050\nrelativo al valor historico",
-  #                      limits = c(-21,36),
-  #                      labels = c("Muy inferior", "Inferior", "Sin Cambio", "Superior","Muy Superior"),
-  #                      breaks = c(-20, -10,0,15,36)
-  # ) +
   my_ggtheme_m("Reg",
-               facet_tl_s = 20,
-               ax_tl_s = 10,
-               ax_tx_s = 10,
-               leg_tl_s = 10,
-               leg_tx_s = 10) +
+               facet_tl_s = 10,
+               ax_tl_s = 8,
+               ax_tx_s = 8,
+               leg_tl_s = 8,
+               leg_tx_s = 8) +
   theme(
     legend.key.width = unit(3, "line"),
-    title = element_text(size = 6)
-    # legend.text = element_text(angle = 45, vjust = 1, hjust =1)
+    title = element_text(size = 4)
   )  +
-  guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))  
-
+  guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))
 
 
 ggsave(
-  # paste0(results_path,"/relative_scen/all/","relative_sq_scen_26.png"),
-  paste0(results_path,"/figures/relative_scen/all/","relative_sq_sq_85.png"),
+  paste0(results_path,"figures/relative_scen/all/ssp585_sq_relative_map.png"),
+  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
   map,
   height = 6,
-  width = 15
+  width = 10
 )
 ```
+
+
+## Fig. 5B Relative to SQ (Delta Delta)
+
+Note that this step requires the preivous one and the usage of `dif_2040sq` or `dif_2040` will impact the results.
+
+```{r}
+
+data_df_sq <- data_df %>% 
+  pivot_wider(names_from = scen, values_from = value) %>% 
+  gather("scen","value",nr:rp) %>% 
+  mutate(dif_per = value-sq
+  ) %>% 
+  scenario_names(leng = "eng") %>% 
+  mpa_names() %>% 
+  select(region:stat,scenario,dif_per) %>% 
+  spread(stat,dif_per)
+
+
+data_df_sq %>% 
+  ggplot() +
+  geom_bar(
+    aes(
+      x = reorder(region,desc(region)),
+      y = mean_esm,
+      fill = ssp
+    ),
+    stat = "identity",
+    position = "dodge"
+  ) +
+  geom_errorbar(
+    aes(
+      x = reorder(region,desc(region)),
+      ymin = mean_esm - sd_esm,
+      ymax = mean_esm + sd_esm,
+      color = ssp
+    ),
+    position = "dodge",
+    stat = "identity",
+    linetype = "longdash",
+    alpha = 0.5,
+    width = 0.5
+  ) +
+  geom_vline(
+    xintercept = 0,
+    linetype = "dashed",
+    color = "grey"
+  ) +
+  # geom_point(
+  #            aes(
+  #              x = reorder(region,mean_esm),
+  #              y = pos,
+  #              color = ssp,
+  #              shape = confidence_flag
+  #            ),
+  #            position = "dodge",
+  #            size = 1
+  # ) +
+  facet_grid2(
+    period ~ scenario,
+    scales = "free_x"
+  )+
+  scale_fill_manual("Climate change\nscenario",
+                    values = c(wes_palette("Zissou1",type = "discrete")[1],
+                               wes_palette("Zissou1",type = "discrete")[5]
+                    )
+                    
+  ) +
+  scale_color_manual("Climate change\nscenario",
+                     values = c(wes_palette("Zissou1",type = "discrete")[1],
+                                wes_palette("Zissou1",type = "discrete")[5]
+                     )
+  ) +
+  scale_shape_discrete("Confidence level") +
+  coord_flip() +
+  labs(x="",
+       y = "Difference in biomass change relative to status quo (%)")+
+  my_ggtheme_p(
+    leg_pos = "right",
+    facet_tx_s = 13,
+    ax_tl_s = 14,
+    ax_tx_s = 12,
+    leg_tl_s = 14,
+    leg_tx_s = 12
+  ) +
+  scale_y_continuous(
+    expand = c(0,0)
+  )  
+
+ggsave(
+  paste0(results_path,"figures/relative_scen/all/sq_relative_barplot.png"),
+  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
+  last_plot(),
+  height = 7,
+  width = 14
+)
+
+```
+
+
+```{r}
+data_df_sq %>% 
+  select(-sd_esm) %>% 
+  filter(
+    scenario %in% c("Regulations for conservation","Regulations for fishing")
+  ) %>% 
+  spread(scenario,mean_esm) %>% 
+  mutate(
+    flag_larger = ifelse(
+      `Regulations for conservation` > `Regulations for fishing`,
+      "Conservation",s
+      "Fishing"
+    ),
+    # how much highwer
+    dif_per = abs(`Regulations for conservation` - `Regulations for fishing`),
+  ) %>% 
+  View()
+```
+
+# Exploration
+
+## Fig. Protected v.s. not protected
+
+```{r}
+
+
+gridded_data <- read_csv(paste0(data_path,"04 raw dbem results/processed/all/all_years_data_abd_esm_gridded.csv"))
+
+grid_path <- paste0(data_path,"01 spatial/gridded/all_mpa_grid_fe.csv")
+
+mpas_grid <- read_csv(grid_path) %>% 
+  rename(mpa_abrev = mpa) %>% 
+  distinct()
+
+cmar_grid <- my_data("dbem_coords") %>% 
+  filter(lat < 10 & lat > -10 & lon > -100 & lon < -70) %>% 
+  left_join(mpas_grid) %>% 
+  left_join(my_data("sau_index")) %>% 
+  mutate(status = ifelse(is.na(status),"non_protected",status),
+         region = ifelse(is.na(mpa_abrev),eez_name,mpa_abrev)
+  ) %>% 
+  filter(!region %in% c("Colombia (Caribbean)","Panama (Caribbean)","Costa Rica (Caribbean)","El Salvador","Nicaragua (Pacific)","Peru","Venezuela"),
+         !is.na(eez_name))
+
+gridded_df <- gridded_data %>% 
+  left_join(cmar_grid) %>% 
+  # group_by(year,status,region,scen,ssp,esm) %>%
+  # summarise(sum = sum(value_region, na.rm = T),
+  #           .groups = "drop"
+  # ) %>%  
+  mutate(
+    time_frame = case_when(
+      # year > 1994 & year < 2014 ~ "historic",
+      year < 2015 ~ "historic",
+      year > 2021 & year < 2040 ~ "early_2030",
+      year > 2041 & year < 2060 ~ "mid_2050",
+      TRUE ~ NA_character_
+    )
+  ) %>% 
+  filter(!is.na(time_frame)) %>% 
+  group_by(status,region,scen,esm,ssp,time_frame,index) %>%
+  summarise(mean_time = mean(value_region, na.rm = T)) %>% 
+  group_by(status,region,scen,ssp,time_frame,index) %>%
+  summarise(mean_time = mean(mean_time, na.rm = T)) %>% 
+  # group_by(status,region,scen,ssp,time_frame,index) %>%
+  # summarise(mean_time = mean(mean_time, na.rm = T))
+  # group_by(status,region,scen,ssp,time_frame) %>% 
+  pivot_wider(names_from = time_frame, values_from = mean_time) %>% 
+  # left_join(sq_df) %>% 
+  mutate(
+    dif_2030 = my_chng(historic,early_2030),
+    dif_2050 = my_chng(historic,mid_2050)
+  ) %>% 
+  scenario_names(leng = "eng")
+  # filter(!is.na(dif_2040)) %>% 
+  # filter(region != "High seas") %>% 
+  # summarise(
+  #   across(
+  #     c(dif_2030, dif_2050),
+  #     list(mean_esm = ~mean(.x, na.rm = TRUE),
+  #          sd_esm = ~sd(.x, na.rm = TRUE)),
+  #     .names = "{.col}_{.fn}"
+  #   ),
+  #   .groups = "drop"
+  # )# 
+  # pivot_longer(cols = c("dif_2030_mean_esm": "dif_2050_sd_esm"),
+  #              names_to = "period",
+  #              values_to = "value") %>% 
+  # mutate(
+    # stat = ifelse(str_detect(period, "mean"), "mean_esm", "sd_esm"),
+    # period = ifelse(str_detect(period, "2030"), "2030", "2050"),
+    # ssp = ifelse(ssp == "ssp126", "SSP1-2.6","SSP5-8.5")
+  # )
+
+
+
+gridded_data_df_sq <- gridded_df %>% 
+  select(status,region,scen,ssp,index,dif_2030,dif_2050) %>% 
+  pivot_longer(
+    cols = c("dif_2030","dif_2050"),
+    names_to = "period",
+    values_to = "value"
+  ) %>% 
+  pivot_wider(names_from = scen, values_from = value) %>% 
+  gather("scen","value",nr:ri) %>% 
+  mutate(dif_per = value-sq) %>% 
+  scenario_names(leng = "eng")
+
+```
+
+```{r}
+
+gridded_data_df_sq %>% 
+  # filter(scen == "sq") %>% 
+    mutate(
+      eez = ifelse(str_detect(region,"Panama"),"Panama",
+                         ifelse(str_detect(region,"Colombia"),"Colombia",
+                                ifelse(str_detect(region,"Cuenca"),"Colombia",
+                                       ifelse(str_detect(region,"Gorgona"),"Colombia",
+                                ifelse(str_detect(region,"Costa"),"Costa Rica",
+                                       ifelse(str_detect(region,"Ecuador"),"Ecuador","High seas"
+                                       )
+                                )
+                         )
+                                )
+                         )
+      )
+  ) %>%
+  filter(eez != "High seas") %>%
+  # View()
+ggplot() +
+  geom_boxplot(
+    aes(
+      x = eez,
+      y = dif_per,
+      fill = scenario
+    ),
+    position = "dodge"
+  ) +
+  # facet_wrap2(
+  #   ~ ssp,
+  #   ncol = 1,
+  #   scales = "free_x"
+  # )
+  facet_grid(
+    ssp ~ status
+  ) +
+  theme_classic()+
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  ) +
+  geom_hline(
+    yintercept = 0,
+    linetype = "dashed",
+    color = "grey"
+  )  +
+  scale_fill_viridis_d("Management scenario")
+
+
+ggsave(
+  paste0(results_path,"figures/relative_scen/grid/sq_relative_boxplot.png"),
+  last_plot(),
+  height = 7,
+  width = 14
+)
+```
+
+### Differences between protection
+
+```{r}
+
+scenarios <- read_csv(paste0(data_path,"01 spatial/gridded/all_mpa_grid_fe.csv")) 
+
+gridded_data_df_sq %>% 
+  filter(status == "protected") %>% 
+  left_join(scenarios,
+            by ="index") %>%
+  ggplot() +
+  geom_point(
+    aes(
+      x = value,
+      y = fe_prop
+    ),
+    position = "dodge",
+    size = 1
+  ) 
+  
+  
+```
+
+
+## Fig. Groups
+
+### Data prep
+
+```{r}
+list_groups <- list.files(paste0(data_path,"04 raw dbem results/processed/groups/"),full.names = T)
+list_groups <- list_groups[grep("abd", list_groups)]
+
+
+
+scenarios_data_groups <- 
+  bind_rows(
+    lapply(list_groups, read_csv)
+  )
+
+group_df<- scenarios_data_groups %>% 
+  select(-sd_value_esm) %>% 
+  pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
+  mutate(
+    dif_2030 = my_chng(`2014_hist`,`2030_ear`),
+    dif_2050 = my_chng(`2014_hist`,`2050_mid`)
+  ) %>% 
+  gather("period","diff_change",`dif_2030`:`dif_2050`) %>% 
+  select(scen,region,ssp,group,period,diff_change) %>% 
+  pivot_wider(names_from = scen, values_from = diff_change) %>% 
+  gather("scenario","value",nr:rp) %>% 
+  mutate(dif_per = value-sq) %>% 
+  mpa_names() %>% 
+  select(region:period,scen = scenario,dif_per) %>% 
+  scenario_names(leng = "eng") %>% 
+  mutate(
+    group = case_when(
+      group == "atunes" ~ "Tuna",
+      group == "dorado" ~ "Mahi-mahi",
+      group == "invertebrados" ~ "Invertebrates",
+      group == "jureles" ~ "Mackerels",
+      group == "meros" ~ "Snappers",
+      group == "others" ~ "Others",
+      group == "pequeños_pelagicos" ~ "Small pelagics",
+      group == "picudos" ~ "Billfishes",
+      group == "tiburones" ~ "Sharks",
+      TRUE ~ NA_character_
+    )
+  )
+
+# unique(group_df$group)
+```
+
+
+```{r}
+
+group_df %>% 
+  filter(ssp =="ssp585",
+         period == "dif_2050") %>% 
+  # View()
+  ggplot() +
+  geom_bar(
+    aes(
+      x = reorder(region,desc(region)),
+      y = dif_per,
+      fill = scenario
+    ),
+    stat = "identity",
+    position = "dodge"
+  ) +
+  geom_vline(
+    xintercept = 0,
+    linetype = "dashed",
+    color = "grey"
+  ) +
+  facet_wrap2(
+    ~ group,
+    ncol = 3,
+    scales = "free_x"
+  )+
+  scale_fill_viridis_d("Management scenario") +
+  coord_flip() +
+  labs(x="",
+       y = "Difference in biomass change relative to status quo (%)")+
+  my_ggtheme_p(
+    leg_pos = "right",
+    facet_tx_s = 13,
+    ax_tl_s = 14,
+    ax_tx_s = 12,
+    leg_tl_s = 14,
+    leg_tx_s = 12
+  ) +
+  scale_y_continuous(
+    expand = c(0,0)
+  )  + 
+  theme(
+    panel.spacing = unit(2, "lines")
+  )
+
+
+ggsave(
+  # paste0(results_path,"figures/relative_scen/groups/sq_relative_barplot_126_2030.png"),
+  # paste0(results_path,"figures/relative_scen/groups/sq_relative_barplot_126_2050.png"),
+  # paste0(results_path,"figures/relative_scen/groups/sq_relative_barplot_585_2030.png"),
+  paste0(results_path,"figures/relative_scen/groups/sq_relative_barplot_585_2050.png"),
+  last_plot(),
+  height =10,
+  width = 12
+)
+
+```
+
+
+
+
 
 
 
@@ -450,228 +950,3 @@ map_fx(
 
 ```
 
-
-##Absolute values
-
-```{r load_data}
-
-# Load pre created data
-
-scenarios_data_abs <- read_csv(
-  paste0(data_path,"dbem/processed/all_spp/","all_years_data_abd_esm.csv")
-)
-
-
-# Load sau data 
-sau_sf <- my_sf("SAU") %>% 
-  filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
-
-# Load CMAR shapefile
-cmar_sf <- read_sf(paste0(data_path,"01 spatial/cmar_capas/cmar_shp/all_cmar_mpas.shp")) %>% 
-  slice(-4,-5,-9)
-
-```
-
-### In the CMAR region as a whole
-
-```{r}
-
-scenarios_data_abs %>% 
-  mutate(year = as.numeric(year)) %>%
-  filter(
-    # ssp == "ssp585",
-    region != "High seas") %>%
-  group_by(year,scen,ssp) %>%
-  summarise(
-    value_cmar = mean(value_region, na.rm = T),
-    .groups = "drop"
-  ) %>%
-  group_by(scen,ssp) %>%
-  mutate(
-    rolling_mean = rollmean(value_cmar, k = 5, fill = NA, align = "right")
-  ) %>% 
-  # Standarize values in each region
-  group_by(scen) %>%
-  mutate(value_region_std = rescale(value_cmar, to = c(0, 1))) %>%
-  scenario_names(leng = "eng") %>%
-  # mpa_names() %>% 
-  filter(year > 2000) %>% 
-  # View()
-  ggplot() +
-  geom_line(
-    aes(
-      x = year,
-      y = value_region_std,
-      color = scenario,
-      linetype = ssp
-    )
-  ) +
-  geom_vline(xintercept = 2060, linetype = "dashed", color = "grey")+
-  scale_y_continuous("Biomass level proyected for the CMAR\n(Standarized)",
-                     # limits = c(0,1),
-                     # labels = c("Mínima","Baja", "Moderada", "Alta", "Mayor","Máxima"),
-                     # breaks = seq(0,1,0.2)
-  ) +
-  xlab("Año") +
-  my_ggtheme_p(leg_pos = "bottom",
-               leg_tx_s = 8,
-               leg_tl_s = 9,
-               ax_tx_s = 8,
-               ax_tl_s = 9,
-               x_hjust = 0.5) +
-  scale_color_viridis_d("Management Scenario") +
-  guides(
-    color = guide_legend(title.position = "top", title.hjust = 0.5, nrow = 2),
-    linetype = guide_legend(title.position = "top", title.hjust = 0.5, nrow = 2)
-  )
-
-ggsave(
-  paste0(results_path,"figures/absolute/","cmar_abs_trends.png"),
-  last_plot(),
-  height = 4,
-  width = 7
-)
-
-```
-
-### In each AMP (region)
-
-```{r}
-
-scenarios_data_abs %>% 
-  mutate(year = as.numeric(year)) %>%
-  filter(
-    ssp == "ssp585",
-    region != "High seas") %>%
-  group_by(region,year,scen,ssp) %>%
-  summarise(
-    value_region = mean(value_region, na.rm = T),
-    .groups = "drop"
-  ) %>%
-  # Standarize values in each region
-  group_by(region) %>%
-  mutate(value_region_std = rescale(value_region, to = c(0, 1))) %>%
-  mutate(
-    region = gsub("\\(Pacific\\)", "ZEE", region),
-    region = ifelse(region == "Galapagos Isl. (Ecuador)","Ecuador ZEE\n(Galapagos)",
-                    ifelse(region == "Ecuador","Ecuador ZEE",
-                           region)
-    )
-  ) %>%
-  scenario_names(leng = "eng") %>%
-  mpa_names() %>% 
-  filter(year > 2000) %>% 
-  # View()
-  ggplot() +
-  geom_line(
-    aes(
-      x = year,
-      y = value_region_std,
-      color = scenario
-      # linetype = ssp
-    )
-  ) +
-  scale_y_continuous("Biomass level proyected for the CMAR\n(Standarized)",
-                     limits = c(0,1),
-                     # labels = c("Menor","Baja", "Moderada", "Alta", "Mayor","Máxima"),
-                     breaks = seq(0,1,0.2)
-  ) +
-  xlab("Year") +
-  facet_wrap(~region,
-             # scales = "free_y",
-             nrow = 4) +
-  my_ggtheme_p(leg_pos = "bottom",
-               leg_tx_s = 12,
-               leg_tl_s = 14,
-               ax_tx_s = 12,
-               ax_tl_s = 14,
-               x_hjust = 0.5) +
-  scale_color_viridis_d("Management scenario") +
-  guides(
-    color = guide_legend(title.position = "top", title.hjust = 0.5, nrow = 1),
-    linetype = guide_legend(title.position = "top", title.hjust = 0.5, nrow = 1)
-  )
-
-
-ggsave(
-  paste0(results_path,"/figures/absolute/","scenarios_abs_trends.png"),
-  last_plot(),
-  height = 8,
-  width = 16
-)
-
-```
-
-### Relative to historic period in each AMP (Year)
-
-```{r}
-
-hist_df <- scenarios_data_abs %>% 
-  # filter(scen == "sq") %>%
-  # filter(year < 2015) %>% 
-  filter(year < 2015 & year > 1994) %>% 
-  group_by(esm,ssp,scen,region) %>%
-  summarise(mean_time = mean(value_region, na.rm = T)) %>% 
-  group_by(ssp,scen,region) %>%
-  summarise(mean_esm = mean(mean_time, na.rm = T))
-# select(-sq)
-
-
-scenarios_data_abs %>% 
-  mutate(year = as.numeric(year)) %>%
-  filter(
-    region != "High seas") %>%
-  group_by(year,scen,ssp,region) %>%
-  summarise(
-    value_cmar = mean(value_region, na.rm = T),
-    .groups = "drop"
-  ) %>%
-  left_join(hist_df) %>% 
-  mutate(
-    per_change = my_chng(mean_esm,value_cmar)
-  ) %>% 
-  # View()
-  filter(year > 2015) %>% 
-  scenario_names(leng = "eng") %>% 
-  mpa_names() %>%
-  ggplot() +
-  geom_line(
-    aes(
-      x = year,
-      y = per_change,
-      color = scenario,
-      linetype = ssp
-    )
-  ) +
-  geom_vline(xintercept = 2060, linetype = "dashed", color = "grey")+
-  scale_y_continuous("Change in biomass relative to baseline (%)",
-                     # limits = c(0,1),
-                     # labels = c("Mínima","Baja", "Moderada", "Alta", "Mayor","Máxima"),
-                     # breaks = seq(0,1,0.2)
-  ) +
-  xlab("Year") +
-  my_ggtheme_p(leg_pos = "bottom",
-               leg_tx_s = 10,
-               leg_tl_s = 11,
-               ax_tx_s = 10,
-               ax_tl_s = 11,
-               x_hjust = 0.5) +
-  scale_color_viridis_d("Management Scenario") +
-  guides(
-    color = guide_legend(title.position = "top", title.hjust = 0.5, nrow = 2),
-    linetype = guide_legend(title.position = "top", title.hjust = 0.5, nrow = 2)
-  ) +
-  facet_wrap(~region,
-             ncol = 4) 
-
-
-ggsave(
-  paste0(results_path,"figures/relative_hist/all/","group_lineal_relative_historic_scen_85.png"),
-  # paste0(results_path,"/figures/relative_hist/all/","relative_historic_sq_85.png"),
-  last_plot(),
-  height = 7,
-  width = 15
-)
-
-
-```
