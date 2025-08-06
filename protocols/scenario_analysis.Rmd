@@ -23,7 +23,9 @@ my_lib(c(
   "hrbrthemes",
   "viridis",
   "parallel",
-  "readxl"
+  "readxl",
+  #For standarize data
+  "scales"
 ))
 
 # For grid e
@@ -506,38 +508,38 @@ agg_average_data <- scenarios_data %>%
 
 # Check raw outputs
 for(i in 1:length(etpmc_spp$taxon_key)){
-
-name <- paste0(etpmc_spp$taxon_key[i],"_abd_period.csv")
   
-    spp_data <- my_path("R","processed/species/period_data/",name,read = T) %>% 
-      rename(category = taxon_key)
-
-spp_data %>% 
-  filter(ssp == "ssp585",
-         region != "High seas",
-         period == "2014_hist") %>% 
-  ggplot() +
-  geom_bar(
-    aes(
-      x = scen,
-      y = mean_value_esm,
-      fill = mean_value_esm
-    ) ,
-    stat = "identity"
-  ) +
-  facet_wrap(~region,
-             scales = "free"
-  )
+  name <- paste0(etpmc_spp$taxon_key[i],"_abd_period.csv")
   
-
-nameplot <- paste0(etpmc_spp$common_name[i],"_bar.png")
-
-ggsave(
-  my_path("R","figures/relative_to_hist/groups/",nameplot),
-  last_plot(),
-  height = 8,
-  width = 9)
-
+  spp_data <- my_path("R","processed/species/period_data/",name,read = T) %>% 
+    rename(category = taxon_key)
+  
+  spp_data %>% 
+    filter(ssp == "ssp585",
+           region != "High seas",
+           period == "2014_hist") %>% 
+    ggplot() +
+    geom_bar(
+      aes(
+        x = scen,
+        y = mean_value_esm,
+        fill = mean_value_esm
+      ) ,
+      stat = "identity"
+    ) +
+    facet_wrap(~region,
+               scales = "free"
+    )
+  
+  
+  nameplot <- paste0(etpmc_spp$common_name[i],"_bar.png")
+  
+  ggsave(
+    my_path("R","figures/relative_to_hist/groups/",nameplot),
+    last_plot(),
+    height = 8,
+    width = 9)
+  
 }
 ```
 
@@ -547,39 +549,39 @@ ggsave(
 
 # Check raw outputs
 for(i in 1:length(spp_groups_list)){
-
-name <- paste0(spp_groups_list[i],"_abd_period.csv")
   
-    spp_data <- my_path("R","processed/groups/period_data/",name,read = T) %>% 
-      rename(category = group) %>% 
-      mutate(variable = var)
-
-final_output %>% 
-  filter(ssp == "ssp126",
-         region != "High seas",
-         period == "2014_hist") %>% 
-  ggplot() +
-  geom_bar(
-    aes(
-      x = scen,
-      y = mean_value_esm,
-      fill = mean_value_esm
-    ) ,
-    stat = "identity"
-  ) +
-  facet_wrap(~region,
-             scales = "free"
-  )
+  name <- paste0(spp_groups_list[i],"_abd_period.csv")
   
-
-nameplot <- paste0(spp_groups_list[i],"_bar.png")
-
-ggsave(
-  my_path("R","figures/relative_to_hist/groups/",nameplot),
-  last_plot(),
-  height = 8,
-  width = 9)
-
+  spp_data <- my_path("R","processed/groups/period_data/",name,read = T) %>% 
+    rename(category = group) %>% 
+    mutate(variable = var)
+  
+  final_output %>% 
+    filter(ssp == "ssp126",
+           region != "High seas",
+           period == "2014_hist") %>% 
+    ggplot() +
+    geom_bar(
+      aes(
+        x = scen,
+        y = mean_value_esm,
+        fill = mean_value_esm
+      ) ,
+      stat = "identity"
+    ) +
+    facet_wrap(~region,
+               scales = "free"
+    )
+  
+  
+  nameplot <- paste0(spp_groups_list[i],"_bar.png")
+  
+  ggsave(
+    my_path("R","figures/relative_to_hist/groups/",nameplot),
+    last_plot(),
+    height = 8,
+    width = 9)
+  
 }
 
 
@@ -587,22 +589,36 @@ ggsave(
 
 ```{r}
 
-
 all_abd_data <- my_path("R","processed/all/period_data/",name = 'all_period_data_abd.csv',read = T)
 
+
+all_abd_data <- read.csv(paste0(data_path,"04 raw dbem results/processed/all/all_years_data_abd_esm.csv"))
+
 change_all_abd_data <- all_abd_data %>% 
-    select(category,everything(),-sd_value_esm) %>%
-    pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
-    mutate(
-      dif_2040 = my_chng(`2014_hist`,`2040_ear`),
-      dif_2060 = my_chng(`2014_hist`,`2060_mid`),
-      dif_2100 = my_chng(`2014_hist`,`2100_end`)
-    ) %>% 
-    # select(
-    #   category:ssp,dif_2040
-    # ) %>% 
-    scenario_names() %>% 
-    filter(!is.na(dif_2040))
+  mutate(
+    period = ifelse(year < 2060 & year > 2041,"2050_mid",
+                    ifelse(year < 2040 & year > 2021,"2030_ear",
+                           ifelse(year < 2014 & year > 1995,"2014_hist",
+                                  NA)
+                    )
+    )
+  ) %>%
+  group_by(region,period,ssp,scen) %>%
+  summarise(
+    mean_value_esm = mean(value_region,na.rm = T),
+    .groups = "drop"
+  ) %>%  
+  filter(!is.na(period)) %>% 
+  pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
+  mutate(
+    dif_2040 = round(my_chng(`2014_hist`,`2030_ear`),2),
+    dif_2060 = round(my_chng(`2014_hist`,`2050_mid`),2)
+  ) %>% 
+  # select(
+  #   category:ssp,dif_2040
+  # ) %>% 
+  scenario_names() %>% 
+  filter(!is.na(dif_2040))
 
 ```
 
@@ -617,7 +633,7 @@ sapply(list.files(here("functions/"),full.names = T), source)
 dbem_spp <- my_data("sau_species")
 
 # species list
-etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/EtpSppList10.txt", quote="\"", comment.char="") %>% 
+etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/00 species/dbem_spp/EtpSppList10.txt", quote="\"", comment.char="") %>% 
   rename(taxon_key = V1) %>% 
   left_join(dbem_spp) %>% 
   filter(!taxon_key %in% c(600216, 600218,690032))
@@ -626,15 +642,17 @@ etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My 
 sau_sf <- my_sf("SAU") %>% 
   filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
 
-cmar_sf <- read_sf(paste0(data_path,"spatial/cmar_capas/all_cmar_mpas.shp"))
+cmar_sf <- read_sf(paste0(data_path,"01 spatial/cmar_capas/cmar_shp/all_cmar_mpas.shp"))
 
-spp_groups <-  read_excel("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/etp_spp_grouping.xlsx", 
+spp_groups <-  read_excel("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/00 species/dbem_spp/dbem_spp_list.xlsx", 
                           skip = 1) %>% 
   filter(group != "mola",
          taxon_key != 600226)
 
 
 ```
+
+
 
 #### Change relative to historical time period (`relative_to_hist`)
 
@@ -695,24 +713,24 @@ groups_list <- groups_list[grep("abd", groups_list)]
 
 groups_df <- bind_rows(
   lapply(groups_list, read_csv)
-  ) 
+) 
 
 per_chng_groups_period <- groups_df %>% 
-    select(-sd_value_esm) %>% 
-    pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
-    mutate(
-      per_change = my_chng(`2014_hist`,`2040_ear`, limit = 50)
-    ) %>% 
-    select(
-      scen,region, group, ssp,per_change
-    ) %>% 
-    # gather("scen","per_change",dif_nr:dif_rp) %>% 
-    filter(!is.na(per_change)) %>%
-    scenario_names() %>% 
-    mutate(
+  select(-sd_value_esm) %>% 
+  pivot_wider(names_from = period, values_from = mean_value_esm) %>% 
+  mutate(
+    per_change = my_chng(`2014_hist`,`2040_ear`, limit = 50)
+  ) %>% 
+  select(
+    scen,region, group, ssp,per_change
+  ) %>% 
+  # gather("scen","per_change",dif_nr:dif_rp) %>% 
+  filter(!is.na(per_change)) %>%
+  scenario_names() %>% 
+  mutate(
     #   per_change = ifelse(per_change == "Inf",100,per_change),
-      scenario = gsub(" ","\n" ,scenario)
-    )
+    scenario = gsub(" ","\n" ,scenario)
+  )
 
 
 ```
@@ -722,33 +740,33 @@ per_chng_groups_period <- groups_df %>%
 ```{r}
 
 facet_map <- ggplot(per_chng_groups_period) +
-      geom_sf(data = sau_sf %>% select(region = name) %>% left_join(per_chng_groups_period),
-              aes(fill = per_change),
-              color = "grey"
-      ) +
-      geom_sf(data = cmar_sf %>%  left_join(per_chng_groups_period),
-              aes(fill = per_change),
-              color = "black"
-      ) +
-      facet_grid(group~scenario) +
-      # facet_wrap(~scenario) +
-      scale_fill_gradient2("Percentage change relative to the SQ scenario by 2040") +
-      # ggtitle(etpmc_spp %>% filter(taxon_key == taxon) %>% pull(common_name)) +
-      # ggtitle(paste(category,var)) +
-      my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 4,leg_tl_s = 4,leg_tx_s = 4) +
-      theme(legend.text = element_text(size = 6),
-            legend.title = element_text(size = 6),
-            legend.key.height = unit(0.2, "line"),
-            title = element_text(size = 6)
-            ) +
-        guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))  
+  geom_sf(data = sau_sf %>% select(region = name) %>% left_join(per_chng_groups_period),
+          aes(fill = per_change),
+          color = "grey"
+  ) +
+  geom_sf(data = cmar_sf %>%  left_join(per_chng_groups_period),
+          aes(fill = per_change),
+          color = "black"
+  ) +
+  facet_grid(group~scenario) +
+  # facet_wrap(~scenario) +
+  scale_fill_gradient2("Percentage change relative to the SQ scenario by 2040") +
+  # ggtitle(etpmc_spp %>% filter(taxon_key == taxon) %>% pull(common_name)) +
+  # ggtitle(paste(category,var)) +
+  my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 4,leg_tl_s = 4,leg_tx_s = 4) +
+  theme(legend.text = element_text(size = 6),
+        legend.title = element_text(size = 6),
+        legend.key.height = unit(0.2, "line"),
+        title = element_text(size = 6)
+  ) +
+  guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))  
 
 
 ggsave(
-        my_path("R","figures/relative_to_hist/groups/","x_groups_facet_map_time.png"),
-        facet_map,
-        height = 7,
-        width = 5)
+  my_path("R","figures/relative_to_hist/groups/","x_groups_facet_map_time.png"),
+  facet_map,
+  height = 7,
+  width = 5)
 
 ```
 
@@ -797,7 +815,7 @@ This section creates maps of change in variable relative to the historical perio
 ```{r}
 
 
-data_paths <- my_path("R","processed/all/period_data/",list_files = "paths")
+data_paths <- my_path("R","processed/all/period_data/",list_files = "paths",fn = T)
 
 agg_data <- bind_rows(lapply(data_paths, read_csv))
 
@@ -889,20 +907,20 @@ delta_delta <- spp_data %>%
          ssp == ssp_selected) %>% 
   select(region,scen,dif_2040) %>% 
   pivot_wider(names_from = scen, values_from = dif_2040) %>% 
-    mutate(
-      dif_nr = my_chng(sq,nr, limit = 100),
-      dif_rc = my_chng(sq,rc, limit = 100),
-      dif_ri = my_chng(sq,ri, limit = 100),
-      dif_rp = my_chng(sq,rp, limit = 100)
-    ) %>% 
+  mutate(
+    dif_nr = my_chng(sq,nr, limit = 100),
+    dif_rc = my_chng(sq,rc, limit = 100),
+    dif_ri = my_chng(sq,ri, limit = 100),
+    dif_rp = my_chng(sq,rp, limit = 100)
+  ) %>% 
   gather("scen","per_change",dif_nr:dif_rp) %>% 
-    # filter(period == "2040_ear") %>% 
-    scenario_names() %>% 
-    filter(!is.na(per_change)) %>% 
-    mutate(
-      per_change = ifelse(per_change == "Inf",100,per_change),
-      region = gsub("_"," ",region)
-    )
+  # filter(period == "2040_ear") %>% 
+  scenario_names() %>% 
+  filter(!is.na(per_change)) %>% 
+  mutate(
+    per_change = ifelse(per_change == "Inf",100,per_change),
+    region = gsub("_"," ",region)
+  )
 
 
 delta_delta %>% 
@@ -927,10 +945,10 @@ delta_delta %>%
 names <- paste0("bar_delta_all_",category_selected,"_",ssp_selected,".png")
 
 ggsave(
-        my_path("R","figures/relative_to_hist/delta_delta/",names),
-        last_plot(),
-        height = 5,
-        width = 7)
+  my_path("R","figures/relative_to_hist/delta_delta/",names),
+  last_plot(),
+  height = 5,
+  width = 7)
 
 ```
 
@@ -977,7 +995,7 @@ for(i in 1:2){
   lapply(unique(spp_groups$group), scen_dif_fx,"abd",ssp_selected =ssps,
          map = T)
   # lapply(unique(spp_groups$group), scen_dif_fx,"catch",ssps,
-         # map = F)
+  # map = F)
   
 }
 
@@ -998,58 +1016,58 @@ groups_list <- groups_list[grep("abd", groups_list)]
 
 groups_df <- bind_rows(
   lapply(groups_list, read_csv)
-  ) %>% 
+) %>% 
   filter(ssp == "ssp585")
 
 per_chng_groups_df <- groups_df %>% 
-    select(-sd_value_esm) %>% 
-    pivot_wider(names_from = scen, values_from = mean_value_esm) %>% 
-    mutate(
-      dif_nr = my_chng(sq,nr, limit = 100),
-      dif_rc = my_chng(sq,rc, limit = 100),
-      dif_ri = my_chng(sq,ri, limit = 100),
-      dif_rp = my_chng(sq,rp, limit = 100)
-    ) %>% 
-    select(
-      period,region, group, dif_nr:dif_rp
-    ) %>% 
-    gather("scen","per_change",dif_nr:dif_rp) %>% 
-    filter(period == "2040_ear") %>% 
-    scenario_names() %>% 
-    filter(!is.na(per_change)) %>% 
-    mutate(
-      per_change = ifelse(per_change == "Inf",100,per_change),
-      scenario = gsub(" ","\n" ,scenario)
-    )
+  select(-sd_value_esm) %>% 
+  pivot_wider(names_from = scen, values_from = mean_value_esm) %>% 
+  mutate(
+    dif_nr = my_chng(sq,nr, limit = 100),
+    dif_rc = my_chng(sq,rc, limit = 100),
+    dif_ri = my_chng(sq,ri, limit = 100),
+    dif_rp = my_chng(sq,rp, limit = 100)
+  ) %>% 
+  select(
+    period,region, group, dif_nr:dif_rp
+  ) %>% 
+  gather("scen","per_change",dif_nr:dif_rp) %>% 
+  filter(period == "2040_ear") %>% 
+  scenario_names() %>% 
+  filter(!is.na(per_change)) %>% 
+  mutate(
+    per_change = ifelse(per_change == "Inf",100,per_change),
+    scenario = gsub(" ","\n" ,scenario)
+  )
 
 facet_map <- ggplot(per_chng_groups_df) +
-      geom_sf(data = sau_sf %>% select(region = name) %>% left_join(per_chng_groups_df),
-              aes(fill = per_change),
-              color = "grey"
-      ) +
-      geom_sf(data = cmar_sf %>%  left_join(per_chng_groups_df),
-              aes(fill = per_change),
-              color = "black"
-      ) +
-      facet_grid(group~scenario) +
-      # facet_wrap(~scenario) +
-      scale_fill_gradient2("Percentage change relative to the SQ scenario by 2040") +
-      # ggtitle(etpmc_spp %>% filter(taxon_key == taxon) %>% pull(common_name)) +
-      # ggtitle(paste(category,var)) +
-      my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 4,leg_tl_s = 4,leg_tx_s = 4) +
-      theme(legend.text = element_text(size = 6),
-            legend.title = element_text(size = 6),
-            legend.key.height = unit(0.2, "line"),
-            title = element_text(size = 6)
-            ) +
-        guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))  
+  geom_sf(data = sau_sf %>% select(region = name) %>% left_join(per_chng_groups_df),
+          aes(fill = per_change),
+          color = "grey"
+  ) +
+  geom_sf(data = cmar_sf %>%  left_join(per_chng_groups_df),
+          aes(fill = per_change),
+          color = "black"
+  ) +
+  facet_grid(group~scenario) +
+  # facet_wrap(~scenario) +
+  scale_fill_gradient2("Percentage change relative to the SQ scenario by 2040") +
+  # ggtitle(etpmc_spp %>% filter(taxon_key == taxon) %>% pull(common_name)) +
+  # ggtitle(paste(category,var)) +
+  my_ggtheme_m("Reg",facet_tl_s = 6,ax_tl_s = 6,ax_tx_s = 4,leg_tl_s = 4,leg_tx_s = 4) +
+  theme(legend.text = element_text(size = 6),
+        legend.title = element_text(size = 6),
+        legend.key.height = unit(0.2, "line"),
+        title = element_text(size = 6)
+  ) +
+  guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))  
 
 
 ggsave(
-        my_path("R","figures/scen_diff/groups/","x_groups_facet.png"),
-        facet_map,
-        height = 7,
-        width = 5)
+  my_path("R","figures/scen_diff/groups/","x_groups_facet.png"),
+  facet_map,
+  height = 7,
+  width = 5)
 
 ```
 
