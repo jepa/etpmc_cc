@@ -1,0 +1,98 @@
+---
+title: "pred_dbem"
+author: "Juliano Palacios Abrantes"
+date: "2023-10-24"
+output: html_document
+---
+
+
+```{r setup, include = F}
+
+
+library(MyFunctions)
+
+my_lib(c(
+  "readr",
+  "janitor",
+  "parallel",
+  "readxl",
+  "tidyverse"
+))
+
+# For grid e
+# Fix new updates of sf package
+sf::sf_use_s2(use_s2 = FALSE)
+
+select <- dplyr::select
+
+
+# Change paths to your computer
+
+data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/"
+
+
+results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios_paper/results"
+```
+
+# Load Data
+
+## Spatial data
+
+```{r}
+
+# Load SAU SF
+sau_sf <- my_sf("SAU") %>% 
+  filter(name %in% c("Costa Rica (Pacific)","Colombia (Pacific)","Panama (Pacific)","Galapagos Isl. (Ecuador)", "Ecuador"))
+
+# Load CMAR Grid data
+mpas_grid <- read_csv(paste0(data_path,"01 spatial/gridded/all_mpa_grid_fe.csv")) %>% 
+  rename(mpa_abrev = mpa) %>% 
+  distinct()
+
+cmar_grid <- my_data("dbem_coords") %>% 
+  filter(lat < 10 & lat > -10 & lon > -100 & lon < -70) %>% 
+  left_join(mpas_grid) %>% 
+  left_join(my_data("sau_index")) %>% 
+  mutate(status = ifelse(is.na(status),"non_protected",status),
+         region = ifelse(is.na(mpa_abrev),eez_name,mpa_abrev)
+  ) %>% 
+  filter(!region %in% c("Colombia (Caribbean)","Panama (Caribbean)","Costa Rica (Caribbean)","El Salvador","Nicaragua (Pacific)","Peru","Venezuela"),
+         !is.na(eez_name))
+
+
+```
+
+# Aggregated values by all species
+
+```{r get_raw_data, eval = T, echo = F}
+
+# List scenarios
+scenarios <- list.files(my_path("G",
+                                "etpmc_cc/Results/dbem_outputs/R",
+                                list_files = "path",
+                                fn = T,
+                                system = "juliano")
+                        )
+
+# get data for each region
+scenarios_data_abs <- bind_rows(
+lapply(scenarios, agg_esm_fx_abs,category = "Abd")
+)
+
+# Save the esm for uncertainty data
+write_csv(scenarios_data_abs,
+          paste0(results_path,"/COMPARTIR CON CONSULTOR DE APP/all/year_data/","all_years_data_abd_esm.csv")
+)
+
+
+# Get data for each grid-cells
+scenarios_data_abs <- bind_rows(
+lapply(scenarios, agg_esm_fx_abs,category = "Abd", output = "grid")
+)
+
+# Save the esm for uncertainty data
+write_csv(scenarios_data_abs,
+paste0(data_path,"04 raw dbem results/processed/all/all_years_data_abd_esm_gridded.csv")
+)
+```
+
