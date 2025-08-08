@@ -5,6 +5,11 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
+# Objective 
+
+This sceript is used to get the data for Renato's analysis. It will calculate the proportion of species in each EEZ and the percentage change over time. It will also get the life history data for the species.
+
+It is not used in the main manuscript
 
 ```{r setup, include = F}
 
@@ -73,6 +78,7 @@ ggplot(cmar_grid) +
     )
   )
 ```
+
 # Proportion estimates
 
 
