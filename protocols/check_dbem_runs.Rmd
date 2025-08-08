@@ -5,6 +5,8 @@ date: "`r Sys.Date()`"
 output: pdf_document
 ---
 
+This script is used to check if all species ran in the DBEM model. It will compare the original species list with the runs available in the results folder. It is only used for testing.
+
 ```{r setup, include = F}
 
 # source(here::here('./functions/function_list.R')) #I took these from mpa_c_toe
