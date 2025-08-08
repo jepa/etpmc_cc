@@ -5,13 +5,14 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
+This script is used to produce the data and figures for the aggregated results of the scenarios paper. It includes the relative changes in biomass for different scenarios and time periods, as well as comparisons between protected and non-protected areas.
+
+
 ```{r setup, include = F}
 
 # Load functions
-lapply(
-  list.files(here::here("functions"), full.names = T),
-  source
-)
+source("/Users/jepa88/GitHub/etpmc_cc/functions/mpa_names_fx.R")
+source("/Users/jepa88/GitHub/etpmc_cc/functions/scenario_names_fx.R")
 
 
 library(MyFunctions)
@@ -342,7 +343,7 @@ data_df %>%
   # Check confident n
   # group_by(confidence_flag) %>%
   # mutate(n_conf = round((n()/64)*100)) %>% 
-  View()
+  # View()
 ggplot() +
   geom_bar(
     aes(
@@ -587,7 +588,7 @@ data_df_sq %>%
   mutate(
     flag_larger = ifelse(
       `Regulations for conservation` > `Regulations for fishing`,
-      "Conservation",s
+      "Conservation",
       "Fishing"
     ),
     # how much highwer
