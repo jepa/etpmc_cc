@@ -37,7 +37,7 @@ data_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfe
 
 # Pre-Analysis
 
-This script's objective is prepare the spatial and species data for the project. For the species, we want to kow what information we already have for modelling. For the spatial component we want to re-grid all shapefiles used in the project to match the DBEM while identifying which gird cells are Protected by an MPA, which are surrounding an MPA, and which are absent. 
+This script's objective is prepare the spatial and species data for the project. For the species, we want to know what information we already have for modelling. We will then merge these with those identified by the workshop participants. For the spatial component we want to re-grid all shapefiles used in the project to match the DBEM while identifying which gird cells are Protected by an MPA, which are surrounding an MPA, and which are absent. 
 
 # Species explortion
 
@@ -86,7 +86,4 @@ dbem_species %>%
 
 
 ```
-
-# Create species list
-
 
