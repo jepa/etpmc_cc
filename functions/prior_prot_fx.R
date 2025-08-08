@@ -1,4 +1,5 @@
 # Deal with duplicates, prioritize 'protected' status if there are multiple statuses for the same index
+# Used on scenarios_building.Rmd
 
 prior_prot <- function(data){
   
