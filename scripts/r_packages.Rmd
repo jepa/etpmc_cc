@@ -1,0 +1,48 @@
+---
+title: "R packages table for supplements"
+author: "Juliano Palacios Abrantes"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/03 results/scenarios_paper/"
+
+```
+
+```{r}
+
+
+# Unique package names from your list
+pkgs <- c(
+  "tidyverse","sf","here","scales","zoo","wesanderson","tidytext","ggh4x",
+  "readxl","st","janitor","spatialEco","geosphere","raster","units","matrixStats",
+  "rmapshaper","igraph","rnaturalearth","readr","parallel","viridis"
+) %>% unique()
+
+# Create table of citations
+cit_table <- data.frame(
+  Package = pkgs,
+  Citation = sapply(pkgs, function(pkg) {
+    cit <- try(citation(pkg), silent = TRUE)
+    if (inherits(cit, "try-error")) {
+      return("Package not installed or no citation found")
+    }
+    # collapse multiple authors/entries into one string
+    paste(format(cit, style = "text"), collapse = " ")
+  }),
+  stringsAsFactors = FALSE,
+  row.names = NULL
+)
+
+
+# cit_table
+writexl::write_xlsx(cit_table,
+          "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/manuscripts/scenarios_paper/supplements_files/r_packages_tbl.xlsx"
+                 )
+
+```
+
