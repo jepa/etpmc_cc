@@ -18,9 +18,9 @@ scenario_names <- function(data, leng = "spa"){
   data_clean <- data %>% 
     mutate(
       scenario = ifelse(str_detect(scen,"nr"),"Regulations not implemented",
-                        ifelse(str_detect(scen,"rc|pc"),"Regulations for conservation",
+                        ifelse(str_detect(scen,"rc|pc"),"Regulations for conservation only",
                                ifelse(str_detect(scen,"ri"),"Regulations implemented",
-                                      ifelse(str_detect(scen,"rp|pp"),"Regulations for fishing",
+                                      ifelse(str_detect(scen,"rp|pp"),"Regulations for fishing only",
                                              ifelse(str_detect(scen,"sq"),"Status quo",scen)
                                       )
                                )
