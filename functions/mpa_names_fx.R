@@ -6,7 +6,7 @@ mpa_names <- function(data){
       region = ifelse(str_detect(region,"Galapagos_"),"RMG",
                       ifelse(str_detect(region,"Hermandad"),"RMH",
                              ifelse(str_detect(region,"Yurupari _Malpelo_Colombia"),"DNMIYM",
-                                    ifelse(str_detect(region,"IslaCoco"),"PNC",
+                                    ifelse(str_detect(region,"IslaCoco"),"PNIC",
                                            ifelse(str_detect(region,"AMM"),"AMMB",
                                                   ifelse(str_detect(region,"Gorgona"),"PNNG",
                                                          ifelse(str_detect(region,"CLomas"),"DCLS",
