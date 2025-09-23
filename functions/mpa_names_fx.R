@@ -3,23 +3,30 @@ mpa_names <- function(data){
   
   data_clean <- data %>% 
     mutate(
-      region = ifelse(str_detect(region,"Galapagos_"),"Galapagos",
-                         ifelse(str_detect(region,"Hermandad"),"Hermandad",
-                                ifelse(str_detect(region,"Yurupari _Malpelo_Colombia"),"Yuripari-Malpelo",
-                                       ifelse(str_detect(region,"IslaCoco"),"Isla del Coco",
-                                              ifelse(str_detect(region,"AMM"),"Bicentenario",
-                                                     ifelse(str_detect(region,"CLomas"),"Colinas y lomas submarinas",
-                                                            ifelse(str_detect(region,"CoibaCoord"),"Cordillera Coiba",
-                                                                   ifelse(str_detect(region,"Coiba_Panama"),"Coiba",
-                                                            ifelse(str_detect(region,"Malpelo"),"Malpelo",region)
-                                                     )
-                                                            )
-                                                     )
-                                              )
-                                       )
-                                )
-                         )
-      )
+      region = ifelse(str_detect(region,"Galapagos_"),"RMG",
+                      ifelse(str_detect(region,"Hermandad"),"RMH",
+                             ifelse(str_detect(region,"Yurupari _Malpelo_Colombia"),"DNMIYM",
+                                    ifelse(str_detect(region,"IslaCoco"),"PNC",
+                                           ifelse(str_detect(region,"AMM"),"AMMB",
+                                                  ifelse(str_detect(region,"Gorgona"),"PNNG",
+                                                         ifelse(str_detect(region,"CLomas"),"DCLS",
+                                                                ifelse(str_detect(region,"CoibaCoord"),"ARMCC",
+                                                                       ifelse(str_detect(region,"Coiba_Panama"),"PNC",
+                                                                              ifelse(region == "Ecuador","Ecuador (Continental EEZ)",
+                                                                                     ifelse(str_detect(region,"Malpelo"),"SFFM",
+                                                                                            region)
+                                                                              )
+                                                                       )
+                                                                )
+                                                         )
+                                                  )
+                                           )
+                                    )
+                             )
+                      )
+      ),
+      region = sub("(Pacific)", "EEZ", region),
+      region = ifelse(region == "Galapagos Isl. (Ecuador)", "Ecuador (Insular EEZ)", region)
     )
   
   return(data_clean)
