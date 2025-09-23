@@ -245,8 +245,7 @@ data_df %>%
   # View()
   pivot_wider(
     names_from = stat,
-    values_from = value,
-    values_fn = list(value = mean) # or = first, max, etc.
+    values_from = value # or = first, max, etc.
   ) %>% 
   # Z-score is a statistical measure that quantifies the distance between a data point and the mean of a dataset. It's expressed in terms of standard deviations.
   mutate(
@@ -342,7 +341,7 @@ ggsave(
 ```
 
 
-## Fig. 4 Relative to SQ bar (Delta Delta)
+## Fig. 4 Relative to SQ (Delta Delta)
 
 Note that this step requires the preivous one and the usage of `dif_2040sq` or `dif_2040` will impact the results.
 
@@ -354,10 +353,14 @@ data_df_sq <- data_df %>%
   mutate(dif_per = value-sq
   ) %>% 
   scenario_names(leng = "eng") %>% 
+  # View()
   mpa_names() %>% 
-  select(region:stat,scenario,dif_per) %>% 
-  spread(stat,dif_per)
-
+  # View()
+  select(region,ssp,period,scenario,dif_per,stat) %>% 
+  pivot_wider(
+    names_from = stat,
+    values_from = dif_per
+  )
 
 data_df_sq %>% 
   ggplot() +
@@ -430,11 +433,10 @@ data_df_sq %>%
   )  
 
 ggsave(
-  paste0(results_path,"figures/relative_scen/all/sq_relative_barplot.png"),
-  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
+  paste0(results_path,"/figures/relative_scen/all/","sq_relative_barplot.png"),
   last_plot(),
-  height = 7,
-  width = 14
+  height = 9,
+  width = 16
 )
 
 ```
