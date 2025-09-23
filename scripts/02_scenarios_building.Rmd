@@ -774,8 +774,8 @@ scenario_pannel <-
   sq_dbem_grid %>% mutate(scen = "Status quo (SQ)"),
   nr_dbem_grid %>% mutate(scen = "Regulations not implemented (RN)"),
   ri_dbem_grid %>% mutate(scen = "Regulations implemented (RI)"),
-  rpp_dbem_grid %>% mutate(scen = "Regulations for fishing (RF)"),
-  rpc_dbem_grid %>% mutate(scen = "Regulations for conservation (RC)")
+  rpp_dbem_grid %>% mutate(scen = "Regulations for fishing only (RF)"),
+  rpc_dbem_grid %>% mutate(scen = "Regulations for conservation only (RC)")
 ) %>% 
   # View()
   ggplot() +
@@ -789,9 +789,9 @@ scenario_pannel <-
   ) +
   scale_fill_viridis_c("F mort/F msy") +
   scale_color_viridis_c("F mort/F msy") +
-  geom_sf(data = sau_sf, aes(), fill = "transparent", color = "grey30")  +
+  geom_sf(data = sau_sf, aes(), fill = "transparent", color = "red")  +
   geom_sf(data = combined_sf, aes(), fill = "transparent", color = "black")  +
-  my_land_map()+ 
+  MyFunctions::my_land_map(country_selection = NULL) +
   my_ggtheme_m("Reg",facet_tl_s = 8,ax_tl_s = 6,ax_tx_s = 4,leg_tl_s = 4,leg_tx_s = 4) +
   labs(x = "Latitude",
        y = "Longitude") +
@@ -802,7 +802,7 @@ scenario_pannel <-
   facet_wrap(~scen)
 
 ggsave(
-  paste0(data_path,"../manuscripts/scenarios_paper/results/scenarios/scenario_pannel.png"),
+  paste0(data_path,"/03 results/scenarios_paper/supplements/scenario_pannel.png"),
   scenario_pannel,
   width = 7,
   height = 5)

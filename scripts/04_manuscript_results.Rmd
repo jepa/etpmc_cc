@@ -435,8 +435,8 @@ data_df_sq %>%
 ggsave(
   paste0(results_path,"/figures/relative_scen/all/","sq_relative_barplot.png"),
   last_plot(),
-  height = 9,
-  width = 16
+  height = 7,
+  width = 14
 )
 
 ```
