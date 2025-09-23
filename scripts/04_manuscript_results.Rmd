@@ -125,94 +125,8 @@ data_df <- scenarios_data_abs %>%
 
 ```
 
-## Fig 3A. Relative to historic period (period)
 
-```{r}
-
-sq_data <- data_df %>% 
-  filter(scen == "sq") %>% 
-  scenario_names(leng = "eng") %>% 
-  spread(stat,value) %>% 
-  mutate(
-    z_score = mean_esm / sd_esm,
-    confidence_flag = case_when(
-      abs(z_score) > 2 ~ "high",
-      abs(z_score) > 1 ~ "moderate",
-      TRUE ~ "low"
-    )
-  )
-
-# Confidence
-sau_points_sf <-
-  sau_sf %>%
-  rename(region = name) %>% 
-  left_join(sq_data) %>%
-  select(region:scenario,confidence_flag) %>%
-  st_centroid()
-
-# Confidence
-cmar_points_sf <-
-  cmar_sf %>%
-  left_join(sq_data) %>%
-  select(region:scenario,confidence_flag) %>%
-  st_centroid()
-
-
-map <-
-  ggplot() +
-  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(sq_data),
-          aes(fill = mean_esm),
-          color = "grey"
-  ) +
-  geom_sf(data = cmar_sf %>%  left_join(sq_data),
-          aes(fill = mean_esm),
-          color = "black"
-  ) +
-  geom_sf(data = sau_points_sf,
-          aes(shape = confidence_flag)
-  ) +
-  geom_sf(data = cmar_points_sf,
-          aes(shape = confidence_flag)
-  ) +
-  facet_grid(ssp~period) +
-  # For SQ scenario change
-  scale_fill_gradient2("Change in biomass\nrelative to baseline (%)",
-                       limits = c(-15,1),
-                       breaks = seq(-15,1,5)
-  ) +
-  my_land_map() +
-  my_ggtheme_m("Reg",
-               facet_tl_s = 10,
-               ax_tl_s = 8,
-               ax_tx_s = 8,
-               leg_tl_s = 8,
-               leg_tx_s = 8,
-               leg_pos = "right" 
-  ) +
-  # theme(
-  # legend.key.width = unit(3, "line"),
-  # title = element_text(size = 4)
-  # )  +
-  # guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5)
-  # ) +
-  coord_sf(
-    xlim = c(-95,-77),
-    ylim = c(-5,9)
-  )
-
-
-ggsave(
-  paste0(results_path,"figures/relative_hist/all/sq_relative_map.png"),
-  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
-  map,
-  height = 7,
-  width = 8
-)
-
-
-```
-
-## Fig 3B. Relative to historic period (Year)
+## Fig. 2, Relative to historic period (Year)
 
 ```{r}
 
@@ -264,8 +178,9 @@ scenarios_data_abs %>%
   mutate(
     rolling_mean_sem = rollmean(esm_mean, k = 5, fill = NA, align = "right")
   ) %>%
-  # View()
   filter(year > 2015) %>% 
+  # View()
+  # write_csv(.,paste0(data_path,"03 results/dbem/all_species/","percentage_change_by_year.csv"))
   ggplot() +
   geom_line(
     aes(
@@ -313,7 +228,7 @@ ggsave(
 
 ```
 
-## Fig. 4. Relative to historic period (Delta)
+## Fig. 3. Relative to historic period bar plot (Delta)
 
 Note that there is two options for presenting this result:
 
@@ -321,14 +236,18 @@ Note that there is two options for presenting this result:
 
 - A second option is to compare each scenario to the historical SQ, as William suggested. In this case, aesthetics for the map should be `aes(fill = dif_2040sq)` and the file name `relative_historic_scen_85.png`
 
-## Figure 4 plot
-
 ```{r}
 
 data_df %>% 
-  filter(scen == "sq") %>% 
+  filter(scen == "sq",
+         region != "High seas") %>% 
   mpa_names() %>% 
-  spread(stat,value) %>% 
+  # View()
+  pivot_wider(
+    names_from = stat,
+    values_from = value,
+    values_fn = list(value = mean) # or = first, max, etc.
+  ) %>% 
   # Z-score is a statistical measure that quantifies the distance between a data point and the mean of a dataset. It's expressed in terms of standard deviations.
   mutate(
     z_score = mean_esm / sd_esm,
@@ -422,65 +341,8 @@ ggsave(
 
 ```
 
-## Fig. 5A Relative to SQ (Delta Delta)
 
-Note that this step requires the preivous one and the usage of `dif_2040sq` or `dif_2040` will impact the results.
-
-```{r}
-
-data_df_sq <- data_df %>% 
-  filter(stat == "mean_esm") %>% 
-  pivot_wider(names_from = scen, values_from = value) %>% 
-  gather("scen","value",nr:rp) %>% 
-  mutate(dif_per = value-sq) %>% 
-  scenario_names(leng = "eng") %>% 
-  filter(
-    # ssp == "ssp126"
-    ssp == "ssp585"
-  )
-
-map <-
-  ggplot() +
-  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(data_df_sq),
-          aes(fill = dif_per),
-          color = "grey"
-  ) +
-  geom_sf(data = cmar_sf %>%  left_join(data_df_sq),
-          aes(fill = dif_per),
-          color = "black"
-  ) +
-  facet_grid(period~scenario) +
-  # For SQ scenario change
-  scale_fill_gradient2("Differnce in biomass change rlative to status quo (%)",
-                       # limits = c(-2,10),
-                       # breaks = seq(-2,10,2)
-                       limits = c(-2,2), # for ssp-585
-                       breaks = seq(-2,2,1) # for ssp-585
-  ) +
-  my_ggtheme_m("Reg",
-               facet_tl_s = 10,
-               ax_tl_s = 8,
-               ax_tx_s = 8,
-               leg_tl_s = 8,
-               leg_tx_s = 8) +
-  theme(
-    legend.key.width = unit(3, "line"),
-    title = element_text(size = 4)
-  )  +
-  guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))
-
-
-ggsave(
-  paste0(results_path,"figures/relative_scen/all/ssp585_sq_relative_map.png"),
-  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
-  map,
-  height = 6,
-  width = 10
-)
-```
-
-
-## Fig. 5B Relative to SQ (Delta Delta)
+## Fig. 4 Relative to SQ bar (Delta Delta)
 
 Note that this step requires the preivous one and the usage of `dif_2040sq` or `dif_2040` will impact the results.
 
@@ -951,3 +813,146 @@ map_fx(
 
 ```
 
+
+## Fig 3A. Relative to historic period (period)
+
+```{r}
+
+sq_data <- data_df %>% 
+  filter(scen == "sq") %>% 
+  scenario_names(leng = "eng") %>% 
+  spread(stat,value) %>% 
+  mutate(
+    z_score = mean_esm / sd_esm,
+    confidence_flag = case_when(
+      abs(z_score) > 2 ~ "high",
+      abs(z_score) > 1 ~ "moderate",
+      TRUE ~ "low"
+    )
+  )
+
+# Confidence
+sau_points_sf <-
+  sau_sf %>%
+  rename(region = name) %>% 
+  left_join(sq_data) %>%
+  select(region:scenario,confidence_flag) %>%
+  st_centroid()
+
+# Confidence
+cmar_points_sf <-
+  cmar_sf %>%
+  left_join(sq_data) %>%
+  select(region:scenario,confidence_flag) %>%
+  st_centroid()
+
+
+map <-
+  ggplot() +
+  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(sq_data),
+          aes(fill = mean_esm),
+          color = "grey"
+  ) +
+  geom_sf(data = cmar_sf %>%  left_join(sq_data),
+          aes(fill = mean_esm),
+          color = "black"
+  ) +
+  geom_sf(data = sau_points_sf,
+          aes(shape = confidence_flag)
+  ) +
+  geom_sf(data = cmar_points_sf,
+          aes(shape = confidence_flag)
+  ) +
+  facet_grid(ssp~period) +
+  # For SQ scenario change
+  scale_fill_gradient2("Change in biomass\nrelative to baseline (%)",
+                       limits = c(-15,1),
+                       breaks = seq(-15,1,5)
+  ) +
+  my_land_map() +
+  my_ggtheme_m("Reg",
+               facet_tl_s = 10,
+               ax_tl_s = 8,
+               ax_tx_s = 8,
+               leg_tl_s = 8,
+               leg_tx_s = 8,
+               leg_pos = "right" 
+  ) +
+  # theme(
+  # legend.key.width = unit(3, "line"),
+  # title = element_text(size = 4)
+  # )  +
+  # guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5)
+  # ) +
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-5,9)
+  )
+
+
+ggsave(
+  paste0(results_path,"figures/relative_hist/all/aaaaasq_relative_map.png"),
+  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
+  map,
+  height = 7,
+  width = 8
+)
+
+
+```
+## Fig. 5A Relative to SQ (Delta Delta)
+
+Note that this step requires the preivous one and the usage of `dif_2040sq` or `dif_2040` will impact the results.
+
+```{r}
+
+data_df_sq <- data_df %>% 
+  filter(stat == "mean_esm") %>% 
+  pivot_wider(names_from = scen, values_from = value) %>% 
+  gather("scen","value",nr:rp) %>% 
+  mutate(dif_per = value-sq) %>% 
+  scenario_names(leng = "eng") %>% 
+  filter(
+    # ssp == "ssp126"
+    ssp == "ssp585"
+  )
+
+map <-
+  ggplot() +
+  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(data_df_sq),
+          aes(fill = dif_per),
+          color = "grey"
+  ) +
+  geom_sf(data = cmar_sf %>%  left_join(data_df_sq),
+          aes(fill = dif_per),
+          color = "black"
+  ) +
+  facet_grid(period~scenario) +
+  # For SQ scenario change
+  scale_fill_gradient2("Differnce in biomass change rlative to status quo (%)",
+                       # limits = c(-2,10),
+                       # breaks = seq(-2,10,2)
+                       limits = c(-2,2), # for ssp-585
+                       breaks = seq(-2,2,1) # for ssp-585
+  ) +
+  my_ggtheme_m("Reg",
+               facet_tl_s = 10,
+               ax_tl_s = 8,
+               ax_tx_s = 8,
+               leg_tl_s = 8,
+               leg_tx_s = 8) +
+  theme(
+    legend.key.width = unit(3, "line"),
+    title = element_text(size = 4)
+  )  +
+  guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))
+
+
+ggsave(
+  paste0(results_path,"figures/relative_scen/all/ssp585_sq_relative_map.png"),
+  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
+  map,
+  height = 6,
+  width = 10
+)
+```
