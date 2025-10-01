@@ -56,7 +56,16 @@ results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/le
 
 scenarios_data_abs <- read_csv(
   paste0(data_path,"04 raw dbem results/processed/all/","all_years_data_abd_esm.csv")
-)
+) %>% 
+  filter(esm != "mpis") %>% 
+  bind_rows(
+    mpismiss %>% mutate(year = as.numeric(year),
+                        scen = ifelse(scen == "pp","rp",
+                                      ifelse(scen == "pc","rc",scen
+                                                    ))
+    )
+  )
+
 
 # Load sau data 
 sau_sf <- my_sf("SAU") %>% 
@@ -360,6 +369,9 @@ data_df_sq <- data_df %>%
   pivot_wider(
     names_from = stat,
     values_from = dif_per
+  ) %>% 
+  filter(
+    region != "High seas"
   )
 
 data_df_sq %>% 
@@ -462,6 +474,77 @@ data_df_sq %>%
 ```
 
 # Exploration
+
+## Galapagos
+
+[*Nicolas*] It is striking that for the GMR area, conservation measures only result in positive biomass changes, fisheries only also in + biomass changes, but when both are applied, there are negative effects on biomass... 
+
+
+[*Response*] Thank you for this comment Nicolas, looking more into the data made me realize the actual patter happening. What is been seeing is that, in all cases, biomass in the Rules Implemented scenario is higher than in any other scenario, however, since climate change will have string impacts on the region, drops in the RI scenario will be larger, because it started with a larger biomass. Thoes that make sense? Basically, rules implemeneted increase biomass in the region but climate change impacts is regardless so the % reduction is larger, even thou the biomass continue to be higher. 
+
+
+
+```{r}
+
+data_df %>% 
+  filter(
+    region %in% c("Galapagos Isl. (Ecuador)","Galapagos_Ecuador"),
+    scen %in% c("rc","rp","ri"),
+  ) %>% View()
+
+
+data_gal <- scenarios_data_abs %>% 
+  filter(
+    region %in% c("Galapagos Isl. (Ecuador)","Galapagos_Ecuador")
+  ) %>% 
+  mutate(
+    time_frame = case_when(
+      # year > 1994 & year < 2014 ~ "historic",
+      year < 2015 ~ "historic",
+      year > 2021 & year < 2040 ~ "early_2030",
+      year > 2041 & year < 2060 ~ "mid_2050",
+      TRUE ~ NA_character_
+    )
+  ) %>% 
+  filter(!is.na(time_frame)) %>% 
+  group_by(region,scen,esm,ssp,time_frame) %>%
+  summarise(mean_time = mean(value_region, na.rm = T)) %>% 
+  group_by(region,scen,ssp,time_frame) %>%
+  pivot_wider(names_from = scen, values_from = mean_time) %>%
+  # Uncomment To understand who has more biomass in all cases
+  # group_by(region, esm, ssp, time_frame) %>%
+  # arrange(desc(mean_time), .by_group = TRUE) %>%
+  # mutate(rank = row_number()) %>%
+  # ungroup() %>% 
+  # filter(rank == 1)
+  # ----------- #
+
+  # left_join(sq_df) %>% 
+  mutate(
+    dif_2030 = my_chng(historic,early_2030),
+    dif_2050 = my_chng(historic,mid_2050),
+    # dif_2040sq = my_chng(mean_esm,early_2050),
+  )
+  summarise(
+    across(
+      c(dif_2030, dif_2050),
+      list(mean_esm = ~mean(.x, na.rm = TRUE),
+           sd_esm = ~sd(.x, na.rm = TRUE)),
+      .names = "{.col}_{.fn}"
+    ),
+    .groups = "drop"
+  ) %>% 
+  pivot_longer(cols = c("dif_2030_mean_esm": "dif_2050_sd_esm"),
+               names_to = "period",
+               values_to = "value") %>% 
+  mutate(
+    stat = ifelse(str_detect(period, "mean"), "mean_esm", "sd_esm"),
+    period = ifelse(str_detect(period, "2030"), "2030", "2050"),
+    ssp = ifelse(ssp == "ssp126", "SSP1-2.6","SSP5-8.5")
+  )
+
+```
+
 
 ## Fig. Protected v.s. not protected
 
@@ -958,3 +1041,5 @@ ggsave(
   width = 10
 )
 ```
+
+
