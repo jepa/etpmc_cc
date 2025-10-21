@@ -20,7 +20,7 @@ results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/le
 pkgs <- c(
   "tidyverse","sf","here","scales","zoo","wesanderson","tidytext","ggh4x",
   "readxl","st","janitor","spatialEco","geosphere","raster","units","matrixStats",
-  "rmapshaper","igraph","rnaturalearth","readr","parallel","viridis"
+  "rmapshaper","igraph","rnaturalearth","readr","parallel","viridis","lmPerm"
 ) %>% unique()
 
 # Create table of citations

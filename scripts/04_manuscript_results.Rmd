@@ -28,7 +28,11 @@ my_lib(c(
   # For pretty plots
   "wesanderson",
   "tidytext",
-  "ggh4x" # faceting edditing
+  "ggh4x", # faceting edditing
+  # Statistics
+  "lme4",
+  "lmerTest",
+  "broom.mixed"
 ))
 
 # For grid e
@@ -57,14 +61,7 @@ results_path <- "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/le
 scenarios_data_abs <- read_csv(
   paste0(data_path,"04 raw dbem results/processed/all/","all_years_data_abd_esm.csv")
 ) %>% 
-  filter(esm != "mpis") %>% 
-  bind_rows(
-    mpismiss %>% mutate(year = as.numeric(year),
-                        scen = ifelse(scen == "pp","rp",
-                                      ifelse(scen == "pc","rc",scen
-                                                    ))
-    )
-  )
+  filter(region != "High seas")
 
 
 # Load sau data 
@@ -107,7 +104,7 @@ data_df <- scenarios_data_abs %>%
   # left_join(sq_df) %>% 
   mutate(
     dif_2030 = my_chng(historic,early_2030),
-    dif_2050 = my_chng(historic,mid_2050),
+    dif_2050 = my_chng(historic,mid_2050)
     # dif_2040sq = my_chng(mean_esm,early_2050),
   ) %>% 
   scenario_names(leng = "eng") %>% 
@@ -141,7 +138,7 @@ data_df <- scenarios_data_abs %>%
 
 hist_df <- scenarios_data_abs %>%
   filter(scen == "sq",
-         # region != "High seas"
+         region != "High seas"
   ) %>%
   filter(year < 2015) %>%
   group_by(esm,ssp,scen) %>%
@@ -153,7 +150,7 @@ hist_df <- scenarios_data_abs %>%
 esm_mean <- scenarios_data_abs %>% 
   mutate(year = as.numeric(year)) %>%
   filter(
-    # region != "High seas",
+    region != "High seas",
     scen == "sq") %>%
   group_by(year,esm,ssp,scen) %>%
   summarise(future_time = mean(value_region, na.rm = T),
@@ -169,7 +166,7 @@ esm_mean <- scenarios_data_abs %>%
 scenarios_data_abs %>% 
   mutate(year = as.numeric(year)) %>%
   filter(
-    # region != "High seas",
+    region != "High seas",
     scen == "sq") %>%
   group_by(year,esm,ssp,scen) %>%
   summarise(future_time = mean(value_region, na.rm = T),
@@ -210,9 +207,9 @@ scenarios_data_abs %>%
   geom_vline(xintercept = 2060, linetype = "dashed", color = "grey")+
   scale_linetype("Earth system model") +
   scale_y_continuous("Change in biomass relative to baseline (%)",
-                     limits = c(-60,10),
-                     labels = seq(-60,10,10),
-                     breaks = seq(-60,10,10)
+                     limits = c(-70,10),
+                     labels = seq(-70,10,10),
+                     breaks = seq(-70,10,10)
   ) +
   xlab("Year") +
   my_ggtheme_p(leg_pos = "right",
@@ -268,9 +265,9 @@ data_df %>%
   ) %>% 
   # View()
   # Check confident n
-  # group_by(confidence_flag) %>%
-  # mutate(n_conf = round((n()/64)*100)) %>% 
-  # View()
+  group_by(confidence_flag) %>%
+  mutate(n_conf = round((n()/64)*100)) %>%
+  View()
 ggplot() +
   geom_bar(
     aes(
@@ -475,28 +472,104 @@ data_df_sq %>%
 
 # Exploration
 
-## Galapagos
+## Level of Biomass
 
-[*Nicolas*] It is striking that for the GMR area, conservation measures only result in positive biomass changes, fisheries only also in + biomass changes, but when both are applied, there are negative effects on biomass... 
-
-
-[*Response*] Thank you for this comment Nicolas, looking more into the data made me realize the actual patter happening. What is been seeing is that, in all cases, biomass in the Rules Implemented scenario is higher than in any other scenario, however, since climate change will have string impacts on the region, drops in the RI scenario will be larger, because it started with a larger biomass. Thoes that make sense? Basically, rules implemeneted increase biomass in the region but climate change impacts is regardless so the % reduction is larger, even thou the biomass continue to be higher. 
-
-
+### Absolute ranking
 
 ```{r}
 
-data_df %>% 
-  filter(
-    region %in% c("Galapagos Isl. (Ecuador)","Galapagos_Ecuador"),
-    scen %in% c("rc","rp","ri"),
-  ) %>% View()
-
-
-data_gal <- scenarios_data_abs %>% 
-  filter(
-    region %in% c("Galapagos Isl. (Ecuador)","Galapagos_Ecuador")
+abs_rank <- scenarios_data_abs %>% 
+  # filter(
+    # region %in% c("Galapagos Isl. (Ecuador)","Galapagos_Ecuador")
+  # ) %>% 
+  mutate(
+    time_frame = case_when(
+      # year > 1994 & year < 2014 ~ "historic",
+      year < 2015 ~ "2014",
+      year > 2021 & year < 2040 ~ "2030",
+      year > 2041 & year < 2060 ~ "2050",
+      TRUE ~ NA_character_
+    )
   ) %>% 
+  filter(!is.na(time_frame)) %>% 
+  group_by(region,scen,esm,ssp,time_frame) %>%
+  summarise(mean_time = mean(value_region, na.rm = T)) %>% 
+  # mean ESMS
+  group_by(region,scen,ssp,time_frame) %>%
+  summarise(mean_esm = mean(mean_time, na.rm = T)) %>% 
+  group_by(region, ssp, time_frame) %>%
+  arrange(desc(mean_esm), .by_group = TRUE) %>%
+  mutate(rank = row_number()) %>%
+  ungroup() %>% 
+  mutate(
+    labels = case_when(
+      rank == 1 ~ 5,
+      rank == 2 ~ 4,
+      rank == 3 ~ 3,
+      rank == 4 ~ 2,
+      rank == 5 ~ 1
+    )
+  ) 
+
+abs_rank %>% 
+  scenario_names(leng = "eng") %>%
+  mpa_names() %>%
+  ggplot() +
+  geom_bar(
+    aes(
+      x = reorder(scen,labels),
+      y = as.character(labels),
+      fill = time_frame
+    ), stat = "identity",
+    position = "dodge"
+  ) +
+  scale_y_discrete(
+    labels = c("5" = "1",
+               "4" = "2",
+               "3" = "3",
+               "2" = "4",
+               "1" = "5")
+  ) +
+  # facet_wrap(ssp~region, 
+  #            nrow = 5) +
+  facet_wrap(ssp ~ region, nrow = 5,
+           labeller = labeller(
+             ssp = function(x) "",
+             region = label_value
+           ),
+           strip.position = "top") +
+  labs(
+    x = "Management Scenario",
+    y = "Biomass ranking across scenarios (1 = highest biomass)"
+  ) +
+  my_ggtheme_p(
+    leg_pos = "right",
+    leg_tx_s = 10,
+    leg_tl_s = 11,
+    ax_tx_s = 10,
+    ax_tl_s = 11,
+    # axx_tx_ang = 90,
+    facet_tx_s = 12,
+    x_hjust = 0.5
+  ) +
+  scale_fill_viridis_d("Time frame")
+
+
+ggsave(
+  paste0(results_path,"/supplements/","biomass_ranking.png"),
+  last_plot(),
+  height = 7,
+  width = 14
+)
+
+
+```
+
+### Minus delta
+
+```{r}
+
+minus_delta <- scenarios_data_abs %>% 
   mutate(
     time_frame = case_when(
       # year > 1994 & year < 2014 ~ "historic",
@@ -509,7 +582,66 @@ data_gal <- scenarios_data_abs %>%
   filter(!is.na(time_frame)) %>% 
   group_by(region,scen,esm,ssp,time_frame) %>%
   summarise(mean_time = mean(value_region, na.rm = T)) %>% 
-  group_by(region,scen,ssp,time_frame) %>%
+  group_by(region,scen,ssp,time_frame) %>% 
+  pivot_wider(names_from = time_frame, values_from = mean_time) %>% 
+  # left_join(sq_df) %>% 
+  mutate(
+    dif_2030 = early_2030,historic,
+    dif_2050 = mid_2050,historic
+  )
+  scenario_names(leng = "eng") %>% 
+  # filter(!is.na(dif_2040)) %>% 
+  # filter(region != "High seas") %>% 
+  summarise(
+    across(
+      c(dif_2030, dif_2050),
+      list(mean_esm = ~mean(.x, na.rm = TRUE),
+           sd_esm = ~sd(.x, na.rm = TRUE)),
+      .names = "{.col}_{.fn}"
+    ),
+    .groups = "drop"
+  ) %>% 
+  pivot_longer(cols = c("dif_2030_mean_esm": "dif_2050_sd_esm"),
+               names_to = "period",
+               values_to = "value") %>% 
+  mutate(
+    stat = ifelse(str_detect(period, "mean"), "mean_esm", "sd_esm"),
+    period = ifelse(str_detect(period, "2030"), "2030", "2050"),
+    ssp = ifelse(ssp == "ssp126", "SSP1-2.6","SSP5-8.5")
+  )
+
+
+```
+
+
+## Galapagos
+
+```{r}
+
+data_df %>% 
+  filter(
+    region %in% c("Galapagos Isl. (Ecuador)","Galapagos_Ecuador"),
+    scen %in% c("rc","rp","ri"),
+  ) %>% View()
+
+
+data_gal <- scenarios_data_abs %>% 
+  # filter(
+    # region %in% c("Galapagos Isl. (Ecuador)","Galapagos_Ecuador")
+  # ) %>% 
+  mutate(
+    time_frame = case_when(
+      # year > 1994 & year < 2014 ~ "historic",
+      year < 2015 ~ "historic",
+      year > 2021 & year < 2040 ~ "early_2030",
+      year > 2041 & year < 2060 ~ "mid_2050",
+      TRUE ~ NA_character_
+    )
+  ) %>% 
+  filter(!is.na(time_frame)) %>% 
+  group_by(region,scen,esm,ssp,time_frame) %>%
+  summarise(mean_time = mean(value_region, na.rm = T)) %>% 
+  # group_by(region,scen,ssp,time_frame) %>%
   pivot_wider(names_from = scen, values_from = mean_time) %>%
   # Uncomment To understand who has more biomass in all cases
   # group_by(region, esm, ssp, time_frame) %>%
@@ -824,9 +956,248 @@ ggsave(
 ```
 
 
+## Statistical analysis
+
+### non-normal Spearman
+
+```{r}
+
+stats_data <- cmar_sf %>% #cmar_sf_size
+  mutate(area_m2 = st_area(geometry),
+         area_km2 = as.numeric(st_area(geometry)) / 1e6,
+         centroid = st_centroid(geometry),        # compute centroid
+    lon = st_coordinates(centroid)[,1],     # extract longitude
+    lat = st_coordinates(centroid)[,2]) %>% 
+  as.data.frame() %>% 
+  select(region,area_km2,lat) %>%
+  left_join(data_df) %>% 
+  filter(stat == "mean_esm",
+         scen == "sq") 
 
 
 
+# Distribution of per change
+shapiro.test(stats_data$value)
+
+#  For Area
+
+area_stats <- stats_data %>%
+  group_by(scen, period, ssp) %>%
+  summarise(
+    cor_test = list(cor.test(value, area_km2, method = "spearman")),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    rho = map_dbl(cor_test, ~ .$estimate),     # Spearman rho
+    p.value = map_dbl(cor_test, ~ .$p.value)  # p-value
+  ) %>%
+  select(scen, period, ssp, rho, p.value)
+
+# plot
+
+stats_data %>% 
+  mpa_names() %>%
+  ggplot(aes(
+      x = area_km2,
+      y = value,
+      color = region
+    )) +
+  geom_point(size = 2, alpha = 0.7) +
+  geom_smooth(method = "loess", se = TRUE, color = "black") +  # non-parametric trend line
+  facet_grid(ssp ~ period, scales = "free_x") +
+  labs(
+    x = "Area (km²)",
+    y = "Biomass change relative to baseline (%)",
+    color = "Region"
+  ) +
+  geom_text(
+    data = area_stats,
+    aes(
+      x = min(stats_data$area_km2),
+      y = max(stats_data$value),
+      label = paste0("ρ = ", round(rho, 2), ", P = ", round(p.value, 3))
+    ),
+    inherit.aes = FALSE,
+    hjust = 0,
+    vjust = 1,
+    size = 3
+  ) +
+  my_ggtheme_p(leg_pos = "right",
+               ax_tl_s = 10,
+               leg_tl_s = 10,
+               leg_tx_s = 10
+               
+              )
+
+
+
+ggsave(
+  paste0(results_path,"figures/relative_hist/all/sq_area_statistics.png"),
+  last_plot(),
+  height = 4,
+  width = 8
+)
+
+# For Latitud
+latitude_stats <- stats_data %>%
+  group_by(scen, period, ssp) %>%
+  summarise(
+    cor_test = list(cor.test(value, lat, method = "spearman")),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    rho = map_dbl(cor_test, ~ .$estimate),     # Spearman rho
+    p.value = map_dbl(cor_test, ~ .$p.value)  # p-value
+  ) %>%
+  select(scen, period, ssp, rho, p.value)
+
+# plot
+stats_data %>% 
+  mpa_names() %>% 
+  ggplot(aes(
+      y = lat,
+      x = value,
+      color = region
+    )) +
+  geom_point(size = 2, alpha = 0.7) +
+  geom_smooth(method = "loess", se = TRUE, color = "black") +  # non-parametric trend line
+  facet_grid(ssp ~ period, scales = "free_x") +
+  labs(
+    y = "Latitud",
+    x = "Biomass change relative to baseline (%)",
+    color = "Region"
+  ) +
+  geom_text(
+    data = latitude_stats,
+    aes(
+      y = 20,
+      x = min(stats_data$value),
+      label = paste0("ρ = ", round(rho, 2), ", P = ", round(p.value, 3))
+    ),
+    inherit.aes = FALSE,
+    hjust = 0,
+    vjust = 1,
+    size = 3
+  ) +
+  my_ggtheme_p(leg_pos = "right",
+               ax_tl_s = 10,
+               leg_tl_s = 10,
+               leg_tx_s = 10
+               
+              )
+
+ggsave(
+  paste0(results_path,"figures/relative_hist/all/sq_lat_statistics.png"),
+  last_plot(),
+  height = 4,
+  width = 8
+)
+
+
+# For fishing
+fe_stats <- stats_data %>%
+  group_by(scen, period, ssp) %>%
+  summarise(
+    cor_test = list(cor.test(value, fe, method = "spearman")),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    rho = map_dbl(cor_test, ~ .$estimate),     # Spearman rho
+    p.value = map_dbl(cor_test, ~ .$p.value)  # p-value
+  ) %>%
+  select(scen, period, ssp, rho, p.value)
+
+# plot
+stats_data %>% 
+  mpa_names() %>% 
+  ggplot(aes(
+      y = fe,
+      x = value,
+      color = region
+    )) +
+  geom_point(size = 2, alpha = 0.7) +
+  geom_smooth(method = "loess", se = TRUE, color = "black") +  # non-parametric trend line
+  facet_grid(ssp ~ period, scales = "free_x") +
+  labs(
+    y = "Fishing effort within MPAs",
+    x = "Biomass change relative to baseline (%)",
+    color = "Region"
+  ) +
+  geom_text(
+    data = fe_stats,
+    aes(
+      y = 4,
+      x = min(stats_data$value),
+      label = paste0("ρ = ", round(rho, 2), ", P = ", round(p.value, 3))
+    ),
+    inherit.aes = FALSE,
+    hjust = 0,
+    vjust = 1,
+    size = 3
+  ) +
+  my_ggtheme_p(leg_pos = "right",
+               ax_tl_s = 10,
+               leg_tl_s = 10,
+               leg_tx_s = 10
+               
+              )
+
+ggsave(
+  paste0(results_path,"figures/relative_hist/all/sq_lat_statistics.png"),
+  last_plot(),
+  height = 4,
+  width = 8
+)
+
+
+ 
+```
+
+### Area, latitude and fishing
+
+```{r}
+
+cmar_sq <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/compute_canada/mpa_sq.txt", quote="\"", comment.char="") %>% 
+  mutate(
+    index = row_number()
+  )
+
+
+cmar_fe <-
+  read.csv("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/gridded/all_mpa_grid_fe.csv") %>% 
+  filter(status == "protected") %>%
+    left_join(cmar_sq, by ="index") %>% 
+  group_by(region = mpa) %>% 
+    # View()
+  summarise(
+    fe = mean(V1, na.rm = T)
+  )
+  
+
+
+stats_data <- cmar_sf %>% #cmar_sf_size
+  mutate(area_m2 = st_area(geometry),
+         area_km2 = as.numeric(st_area(geometry)) / 1e6,
+         centroid = st_centroid(geometry),        # compute centroid
+    lon = st_coordinates(centroid)[,1],     # extract longitude
+    lat = st_coordinates(centroid)[,2]) %>% 
+  as.data.frame() %>% 
+  select(region,area_km2,lat) %>%
+  left_join(data_df) %>% 
+  filter(stat == "mean_esm",
+         scen == "sq") %>% 
+  left_join(cmar_fe)
+
+
+# library(lmPerm)
+
+mod_perm <- lmp(value ~ area_km2 + lat + fe, data = stats_data)
+summary(mod_perm)
+
+
+
+
+```
 
 
 
@@ -998,8 +1369,10 @@ data_df_sq <- data_df %>%
   mutate(dif_per = value-sq) %>% 
   scenario_names(leng = "eng") %>% 
   filter(
-    # ssp == "ssp126"
-    ssp == "ssp585"
+    # ssp == "SSP1-2.6"
+    # ssp == "SSP5-8.5"
+    period == 2030
+    # period == 2050
   )
 
 map <-
@@ -1012,13 +1385,13 @@ map <-
           aes(fill = dif_per),
           color = "black"
   ) +
-  facet_grid(period~scenario) +
+  facet_grid(ssp~scenario) +
   # For SQ scenario change
   scale_fill_gradient2("Differnce in biomass change rlative to status quo (%)",
                        # limits = c(-2,10),
                        # breaks = seq(-2,10,2)
-                       limits = c(-2,2), # for ssp-585
-                       breaks = seq(-2,2,1) # for ssp-585
+                       # limits = c(-6,6), # for ssp-585
+                       # breaks = seq(-2,2,1) # for ssp-585
   ) +
   my_ggtheme_m("Reg",
                facet_tl_s = 10,
@@ -1034,8 +1407,10 @@ map <-
 
 
 ggsave(
-  paste0(results_path,"figures/relative_scen/all/ssp585_sq_relative_map.png"),
+  # paste0(results_path,"figures/relative_scen/all/ssp585_sq_relative_map.png"),
   # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
+  paste0(results_path,"figures/relative_scen/all/2030_sq_relative_map.png"),
+  # paste0(results_path,"figures/relative_scen/all/2050_sq_relative_map.png"),
   map,
   height = 6,
   width = 10
@@ -1043,3 +1418,172 @@ ggsave(
 ```
 
 
+
+### Normal
+
+### Size info
+
+```{r}
+
+library(broom) # for tidy lm outputs
+library(ggpubr) #for stat_regline_equation
+
+
+
+# Add a new column with the area in km² (or m² depending on CRS)
+cmar_sf_size <- cmar_sf %>%
+  mutate(area_m2 = st_area(geometry),
+         area_km2 = as.numeric(st_area(geometry)) / 1e6,
+         centroid = st_centroid(geometry),        # compute centroid
+    lon = st_coordinates(centroid)[,1],     # extract longitude
+    lat = st_coordinates(centroid)[,2]) %>% 
+  as.data.frame() %>% 
+  select(region,area_km2,lat) %>%
+  left_join(data_df) %>% 
+  filter(stat == "mean_esm",
+         scen == "sq") 
+
+
+# Check for co-linearity between latitutde and size
+# Keep unique region values to avoid repeated rows
+unique_regions <- cmar_sf_size %>%
+  select(region, area_km2, lat) %>%
+  distinct()
+
+# Correlation Pearson's
+cor(unique_regions$lat, unique_regions$area_km2) # -0.6401246
+
+
+# Latitude plot
+cmar_sf_size %>% 
+  ggplot(aes(
+      y = lat,
+      x = value,
+      color = region
+    )) +
+  geom_point(
+    size = 2,
+    alpha = 0.7
+  ) +
+  geom_smooth(data = cmar_sf_size,
+              aes(
+                y = lat,
+                x = value,
+                color = region
+              ),
+              method = "lm",
+              se = T, 
+              color = "black") +  # lm line
+  facet_grid(ssp~period,
+             scales = "free_x")  +
+  labs(
+    y = "Latitud",
+    x = "Biomass change relative to baseline (%)",
+    color = "Region"
+  ) +
+  # Show stats
+  geom_text(
+    data = size_stats,
+    aes(y = 10,
+        x = min(cmar_sf_size$value),
+        label = paste0("P = ",round(p.value,2),", R² = ", round(r.squared*100, 2))),
+    inherit.aes = FALSE,
+    hjust = 0,
+    vjust = 1,
+    size = 3
+  ) +
+  theme_minimal()
+
+
+# Size plot
+
+size_stats <- cmar_sf_size %>% 
+  group_by(scen, period, ssp) %>%
+  do(model = lm(value ~ area_km2, data = .)) %>%
+  mutate(glance = list(broom::glance(model))) %>%
+  tidyr::unnest(glance) %>% 
+  select(scen, period, ssp, r.squared, adj.r.squared, p.value)
+
+cmar_sf_size %>% 
+  ggplot(aes(
+      x = area_km2,
+      y = value,
+      color = region
+    )) +
+  geom_point(
+    size = 2,
+    alpha = 0.7
+  ) +
+  geom_smooth(data = cmar_sf_size,
+              aes(
+                x = area_km2,
+                y = value,
+                color = region
+              ),
+              method = "lm",
+              se = T, 
+              color = "black") +  # lm line
+  facet_grid(ssp~period,
+             scales = "free_x")  +
+  labs(
+    x = "Area (Km2)",
+    y = "Biomass change relative to baseline (%)",
+    color = "Region"
+  ) +
+  # Show stats
+  geom_text(
+    data = size_stats,
+    aes(x = min(cmar_sf_size$area_km2),
+        y = max(cmar_sf_size$value),
+        label = paste0("P = ",round(p.value,2),", R² = ", round(r.squared*100, 2))),
+    inherit.aes = FALSE,
+    hjust = 0,
+    vjust = 1,
+    size = 3
+  ) +
+  theme_minimal()
+
+```
+
+### Linear mixed model
+
+```{r}
+library(lme4)      # for mixed models
+library(lmerTest)  # for p-values
+library(broom.mixed) # tidy results
+
+# ssp_test <- "SSP1-2.6"
+ssp_test <- "SSP5-8.5"
+
+mod_rc <- lm(value ~ area_km2 + lat, data = cmar_sf_size %>% 
+               filter(period == "2050", ssp == ssp_test))
+
+
+lmmod_rc <- lm(value ~ area_km2, data = cmar_sf_size %>% filter(ssp == ssp_test))
+summary(lmmod_rc)
+
+mod_rc <- lmer(value ~ area_km2 + lat, data = cmar_sf_size %>% filter(period == "2050",ssp == ssp_test))
+summary(mod_rc)
+
+
+# NOTE you need to modify cmar_sf_size data in previous chunk to allow for asll scenarios to be tested
+
+
+
+mod_nr <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size %>% filter(scen == "nr",
+                                                                                     ssp == ssp_test))
+summary(mod_nr)
+
+mod_ri <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size %>% filter(scen == "ri",
+                                                                                     ssp == ssp_test))
+summary(mod_ri)
+mod_rp <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size%>% filter(scen == "rp",
+                                                                                    ssp == ssp_test))
+summary(mod_rp)
+mod_sq <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size %>% filter(scen == "sq",
+                                                                                     ssp == ssp_test))
+summary(mod_sq)
+
+
+
+```
