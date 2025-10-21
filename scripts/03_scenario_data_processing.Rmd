@@ -76,12 +76,20 @@ scenarios <- list.files(my_path("G",
 
 # get data for each region
 scenarios_data_abs <- bind_rows(
-lapply(scenarios, agg_esm_fx_abs,category = "Abd")
+  lapply(scenarios, agg_esm_fx_abs,category = "Abd")
 )
+
+
+scenarios_data_abs %>% 
+  group_by(scen,esm,ssp) %>%
+  tally()
+
+
+
 
 # Save the esm for uncertainty data
 write_csv(scenarios_data_abs,
-          paste0(results_path,"/COMPARTIR CON CONSULTOR DE APP/all/year_data/","all_years_data_abd_esm.csv")
+          paste0(data_path,"/04 raw dbem results/processed/all/","all_years_data_abd_esmb.csv")
 )
 
 
