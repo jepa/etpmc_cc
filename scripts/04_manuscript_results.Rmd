@@ -32,7 +32,9 @@ my_lib(c(
   # Statistics
   "lme4",
   "lmerTest",
-  "broom.mixed"
+  "broom.mixed",
+  "lmPerm",
+  "lmtest"
 ))
 
 # For grid e
@@ -1155,6 +1157,8 @@ ggsave(
 
 ### Area, latitude and fishing
 
+#### Data for stats
+
 ```{r}
 
 cmar_sq <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/compute_canada/mpa_sq.txt", quote="\"", comment.char="") %>% 
@@ -1172,8 +1176,6 @@ cmar_fe <-
   summarise(
     fe = mean(V1, na.rm = T)
   )
-  
-
 
 stats_data <- cmar_sf %>% #cmar_sf_size
   mutate(area_m2 = st_area(geometry),
@@ -1187,18 +1189,285 @@ stats_data <- cmar_sf %>% #cmar_sf_size
   filter(stat == "mean_esm",
          scen == "sq") %>% 
   left_join(cmar_fe)
+```
 
+#### Permutation-based linear model
 
-# library(lmPerm)
+```{r}
+
+# Test for  Evidence of linearity between variables
+
+car::crPlots(mod_perm)
+
+# Latitude, approximately linear relationship with the response, with the LOESS smooth closely matching the fitted linear trend. 
+# Both area_km2 and fe noticeable curvature, suggesting potential nonlinearity in their effects.
 
 mod_perm <- lmp(value ~ area_km2 + lat + fe, data = stats_data)
 summary(mod_perm)
 
 
+# Evidence of independence between observations 
 
+dwtest(mod_perm)
+
+# Durbin-Watson test
+# 
+# data:  mod_perm
+# DW = 1.675, p-value = 0.09703
+# alternative hypothesis: true autocorrelation is greater than 0
+
+# The test suggests no significant autocorrelation in the residuals (p > 0.05).
 
 ```
 
+# GAM option
+
+Because of non-linearity in area_km2 and fe
+
+```{r}
+
+library(mgcv)
+mod_gam <- gam(value ~ s(area_km2) + s(lat) + s(fe),
+               data = stats_data)
+summary(mod_gam)
+
+# Family: gaussian 
+# Link function: identity 
+# 
+# Formula:
+# value ~ s(area_km2) + s(lat) + s(fe)
+# 
+# Parametric coefficients:
+#             Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)  -6.0914     0.2094  -29.09 1.61e-12 ***
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# Approximate significance of smooth terms:
+#               edf Ref.df      F  p-value    
+# s(area_km2) 3.342  3.821  6.082 0.009299 ** 
+# s(lat)      2.628  3.039 12.255 0.000612 ***
+# s(fe)       1.000  1.000  3.999 0.068688 .  
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# 
+# R-sq.(adj) =  0.916   Deviance explained = 94.7%
+# GCV = 1.4576  Scale est. = 0.87672   n = 20
+
+# Interpretation:
+# Area_km2 and lat have significant non-linear effects on the response variable (p < 0.01).
+# fe has a marginally significant effect (p ~ 0.069), suggesting a potential linear relationship.
+# The model explains a very high proportion of variance in the response (Adj. R² = 0.916).
+
+test_df <- stats_data %>%
+  filter(
+    ssp == "SSP1-2.6",
+    period == "2050"
+  )
+
+summary(gam(value ~ s(area_km2) + s(lat) + fe, data = test_df))
+```
+Based on this result we fit a GAM where fe is linear and area_km2 and lat are smooth terms
+
+```{r}
+
+# Gam fro 1.26 at 2030
+
+# List of SSPs and periods
+ssps <- c("SSP1-2.6", "SSP5-8.5")
+periods <- c("2030", "2050")
+
+# Function to fit GAM and tidy results
+fit_gam <- function(data, ssp_val, period_val) {
+  # Correct filtering using .data
+  df <- data %>% filter(.data$ssp == ssp_val, .data$period == period_val)
+  
+  mod <- gam(value ~ s(area_km2, k = 3) + s(lat, k = 3) + fe, data = df) #Note k = 3 bnecause os small data
+  
+  # Parametric terms
+  param_tbl <- tidy(mod, parametric = TRUE) %>%
+    mutate(term_type = "parametric")
+  
+  # Smooth terms
+  smooth_tbl <- tidy(mod, parametric = FALSE) %>%
+    mutate(term_type = "smooth")
+  
+  # Combine and add SSP/period info
+  bind_rows(param_tbl, smooth_tbl) %>%
+    mutate(SSP = ssp_val, period = period_val)
+}
+
+results_table <- expand.grid(ssp_val = ssps, period_val = periods) %>%
+  pmap_dfr(~ fit_gam(stats_data, ..1, ..2)) %>% 
+  mutate(
+    significant = ifelse(p.value < 0.05, "yes", "no")
+  )
+
+
+# View results
+results_table
+```
+
+# GAM including scenarios and period
+
+```{r}
+# library(mgcv)
+
+mod_spline <- gam(
+  value ~ s(area_km2, k = 3) + s(fe, k = 3) + lat + ssp + period,
+  data = stats_data,
+  method = "REML"
+)
+
+summary(mod_spline)
+plot(mod_spline, pages = 1)
+```
+
+# GAM INCLUDING EVERYTHING
+
+```{r}
+
+cmar_grid <-
+  read.csv("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/gridded/all_mpa_grid_fe.csv") %>% 
+  select(-fe_prop)
+
+
+management_scen <- list.files("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/compute_canada/", full.names = T)
+
+fe_data <- bind_cols(
+lapply(management_scen, read.table, quote="\"", comment.char="")
+)
+
+colnames(fe_data) <- c("nr","ri","rpc","rpp","sq")
+
+fe_data <-
+  fe_data %>% 
+  rowid_to_column("index") %>% 
+  right_join(cmar_grid, by = "index") %>% 
+  pivot_longer(
+    cols = c("nr","ri","rpc","rpp","sq"),
+    names_to = "scen",
+    values_to = "fe_prop"
+  ) %>% 
+  group_by(region = mpa,scen) %>%
+  # View()
+  summarise(
+    fe = mean(fe_prop, na.rm = T)
+  ) %>% 
+  #Change names to match 
+  mutate(
+    scen = case_when(
+      scen == "nr" ~ "nr",
+      scen == "ri" ~ "ri",
+      scen == "rpc" ~ "rc",
+      scen == "rpp" ~ "rp",
+      scen == "sq" ~ "sq"
+    )
+  )
+
+
+stats_data <- cmar_sf %>% #cmar_sf_size
+  mutate(area_m2 = st_area(geometry),
+         area_km2 = as.numeric(st_area(geometry)) / 1e6,
+         centroid = st_centroid(geometry),        # compute centroid
+    lon = st_coordinates(centroid)[,1],     # extract longitude
+    lat = st_coordinates(centroid)[,2]) %>% 
+  as.data.frame() %>% 
+  select(region,area_km2,lat) %>%
+  left_join(data_df) %>%
+  filter(stat == "mean_esm") %>% 
+  left_join(fe_data, by = c("region", "scen"))
+
+# write_csv(stats_data, paste0(results_path,"stats_data.csv"))
+
+```
+
+
+
+```{r}
+
+
+mod_spline <- gam(
+  value ~ lat + s(area_km2) + ssp + scen  + period,
+  data = stats_data
+)
+
+summary(mod_spline)
+# plot(mod_spline, pages = 1)
+
+```
+
+```{r}
+
+# Linear and smooth terms
+tidy_linear <- tidy(mod_spline, parametric = TRUE)
+tidy_smooth <- tidy(mod_spline, parametric = FALSE)
+
+# Combine for a full table
+tidy_full <- bind_rows(tidy_linear, tidy_smooth)
+tidy_full
+
+
+library(sjPlot)
+
+# Table for linear terms
+tab_model(mod_spline, show.se = TRUE, show.stat = TRUE, show.p = TRUE)
+```
+
+
+```{r}
+# Add predictions
+stats_data$pred <- predict(mod_spline)
+
+ggplot(stats_data, aes(x = pred, y = value)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  labs(x = "Predicted", y = "Observed", title = "GAM: Observed vs Predicted")
+
+library(gratia)
+library(patchwork)  
+
+# Example for scenario effect
+coef_scen <- coef(mod_spline)[grep("scen", names(coef(mod_spline)))]
+df <- data.frame(scenario = names(coef_scen), estimate = coef_scen)
+ggplot(df, aes(x = scenario, y = estimate)) +
+    geom_col(fill = "steelblue") +
+    labs(y = "Effect on value", x = "Scenario")
+
+
+
+# 1. Smooth term plot for area_km2
+p1 <- draw(mod_spline, select = "s(area_km2)") +
+      ggtitle("Effect of Area (km²) on Value") +
+      theme_minimal()
+
+# 2. Categorical/linear effects plot (ssp, scen, period, lat)
+# Extract parametric coefficients
+coefs <- summary(mod_spline)$p.table
+# Keep only predictors of interest
+coefs_df <- as.data.frame(coefs)
+coefs_df$term <- rownames(coefs_df)
+coefs_df <- coefs_df[!grepl("(Intercept)", coefs_df$term), ]
+# Plot estimates
+p2 <- ggplot(coefs_df, aes(x = reorder(term, Estimate), y = Estimate)) +
+      geom_point(size = 3, color = "steelblue") +
+      geom_errorbar(aes(ymin = Estimate - `Std. Error`, ymax = Estimate + `Std. Error`), width = 0.2) +
+      coord_flip() +
+      labs(y = "Estimated Effect", x = "", title = "Linear Effects") +
+      theme_minimal()
+
+# 3. Observed vs Predicted plot
+stats_data$pred <- predict(mod_spline)
+p3 <- ggplot(stats_data, aes(x = pred, y = value)) +
+      geom_point(alpha = 0.5) +
+      geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+      labs(x = "Predicted Value", y = "Observed Value", title = "Observed vs Predicted") +
+      theme_minimal()
+
+# Combine panels
+p3 / p2 / p1 + plot_layout(nrow = 3)
+
+```
 
 
 # Old code
