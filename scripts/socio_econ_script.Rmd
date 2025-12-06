@@ -252,7 +252,7 @@ ggplot() +
 ```{r get_salmon_lif_history}
 
 # Get life history data
-etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/species/EtpSppList10.txt", quote="\"", comment.char="") %>% 
+etpmc_spp <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/00 species/dbem_spp/EtpSppList10.txt", quote="\"", comment.char="") %>% 
   rename(taxon_key = V1)
 
 
@@ -276,13 +276,54 @@ for(i in 1:43){
   
 }
 
+
 final %>% 
   filter(X1 %in% c("IntrinsicR","Linf","VBonK","LwA","LwB")) %>% 
   select("variable" = X1,
          "value" = X2,
          taxon_key) %>% 
   filter(variable == "IntrinsicR") %>% 
-  write_csv(my_path("R","socio_ecol/","life_history_etp_spp.csv"))
+  left_join(my_data("dbem_species")) %>%
+  View()
+  write_csv("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/05 econ/life_history_etp_spp.csv")
+
+  
+  # Updates of estimate
+  
+get_k <- function(x){
+
+xx <- popgrowth(x) %>% 
+  select(Species,r2,K,M)
+ 
+return(xx) 
+}
+
+k_estimates_df <- bind_rows(
+  lapply(etpmc_spp %>% 
+           left_join(
+             my_data("dbem_species")) %>% 
+           pull(taxon_name)
+           , get_k
+  )
+)
+
+
+k_estimates_df %>% 
+  group_by(Species) %>%
+  summarise(
+    mean_k = mean(K, na.rm = T),
+    # sd_k = sd(K, na.rm = T),
+    mean_m = mean(M, na.rm = T),
+    # sd_m = sd(M, na.rm = T),
+  ) %>% 
+  mutate(
+    r_jensen = mean_k*1.5,
+    r_m = mean_m*2,
+    r_final = ifelse(r_jensen > 0 & r_m != "NaN",(r_jensen + r_m)/2,
+                    ifelse(r_jensen > 0,r_jensen,r_m)
+    )
+  ) %>% 
+  View()
 
 ```
 
