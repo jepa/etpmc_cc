@@ -1382,6 +1382,71 @@ stats_data <- cmar_sf %>% #cmar_sf_size
 
 ```
 
+## Check for normality
+
+```{r}
+
+# ggplot2 histogram
+ggplot(stats_data, aes(x = value)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Histogram of Value", x = "Value", y = "Frequency") +
+  theme_minimal() +
+  facet_grid(ssp ~ period)
+
+# shapiro test per period and ssp
+stats_data %>%
+  group_by(ssp, period) %>%
+  summarise(
+    shapiro_result = list(shapiro.test(value)),
+    W = shapiro_result[[1]]$statistic,
+    p_value = shapiro_result[[1]]$p.value
+  ) %>%
+  select(ssp, period, W, p_value)
+
+# SSP1-2.6	2030	0.9852526	0.7824097	
+# SSP1-2.6	2050	0.9786990	0.4984939	
+# SSP5-8.5	2030	0.9821579	0.6458377	
+# SSP5-8.5	2050	0.9752006	0.3714282	
+
+# Interpretation:
+# In all cases, the p-values are greater than 0.05, indicating that we fail to reject the null hypothesis of normality.
+
+
+# 1. Compute Shapiro statistics
+stats_summary <- stats_data %>%
+  group_by(ssp, period,scen) %>%
+  summarise(
+    shapiro = list(shapiro.test(value)),
+    W = shapiro[[1]]$statistic,
+    p = shapiro[[1]]$p.value,
+    .groups = "drop"
+  ) %>%
+  mutate(
+    facet_label = str_glue("{scen}, {ssp}, {period}\nW = {round(W, 3)}, p = {round(p, 3)}")
+  )
+
+# 2. Join back to original data and plot with facet labels
+stats_data %>%
+  left_join(stats_summary, by = c("ssp", "period")) %>% 
+  ggplot(aes(x = value)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+  facet_wrap(~ facet_label, ncol = 4) +
+  labs(
+    # title = "Histogram of Value with Shapiro-Wilk Statistics",
+       x = "Value", y = "Frequency") +
+  # theme_minimal()
+  my_ggtheme_p()
+
+ggsave(
+  paste0(results_path,"figures/relative_hist/all/shapiro_histograms.png"),
+  last_plot(),
+  height = 8,
+  width = 10
+)
+
+
+
+```
 
 
 ```{r}
