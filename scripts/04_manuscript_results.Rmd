@@ -30,11 +30,9 @@ my_lib(c(
   "tidytext",
   "ggh4x", # faceting edditing
   # Statistics
-  "lme4",
-  "lmerTest",
-  "broom.mixed",
-  "lmPerm",
-  "lmtest"
+  "mgcv",
+  "patchwork",
+  "gratia"
 ))
 
 # For grid e
@@ -960,370 +958,22 @@ ggsave(
 
 ## Statistical analysis
 
-### non-normal Spearman
-
-```{r}
-
-stats_data <- cmar_sf %>% #cmar_sf_size
-  mutate(area_m2 = st_area(geometry),
-         area_km2 = as.numeric(st_area(geometry)) / 1e6,
-         centroid = st_centroid(geometry),        # compute centroid
-    lon = st_coordinates(centroid)[,1],     # extract longitude
-    lat = st_coordinates(centroid)[,2]) %>% 
-  as.data.frame() %>% 
-  select(region,area_km2,lat) %>%
-  left_join(data_df) %>% 
-  filter(stat == "mean_esm",
-         scen == "sq") 
-
-
-
-# Distribution of per change
-shapiro.test(stats_data$value)
-
-#  For Area
-
-area_stats <- stats_data %>%
-  group_by(scen, period, ssp) %>%
-  summarise(
-    cor_test = list(cor.test(value, area_km2, method = "spearman")),
-    .groups = "drop"
-  ) %>%
-  mutate(
-    rho = map_dbl(cor_test, ~ .$estimate),     # Spearman rho
-    p.value = map_dbl(cor_test, ~ .$p.value)  # p-value
-  ) %>%
-  select(scen, period, ssp, rho, p.value)
-
-# plot
-
-stats_data %>% 
-  mpa_names() %>%
-  ggplot(aes(
-      x = area_km2,
-      y = value,
-      color = region
-    )) +
-  geom_point(size = 2, alpha = 0.7) +
-  geom_smooth(method = "loess", se = TRUE, color = "black") +  # non-parametric trend line
-  facet_grid(ssp ~ period, scales = "free_x") +
-  labs(
-    x = "Area (km²)",
-    y = "Biomass change relative to baseline (%)",
-    color = "Region"
-  ) +
-  geom_text(
-    data = area_stats,
-    aes(
-      x = min(stats_data$area_km2),
-      y = max(stats_data$value),
-      label = paste0("ρ = ", round(rho, 2), ", P = ", round(p.value, 3))
-    ),
-    inherit.aes = FALSE,
-    hjust = 0,
-    vjust = 1,
-    size = 3
-  ) +
-  my_ggtheme_p(leg_pos = "right",
-               ax_tl_s = 10,
-               leg_tl_s = 10,
-               leg_tx_s = 10
-               
-              )
-
-
-
-ggsave(
-  paste0(results_path,"figures/relative_hist/all/sq_area_statistics.png"),
-  last_plot(),
-  height = 4,
-  width = 8
-)
-
-# For Latitud
-latitude_stats <- stats_data %>%
-  group_by(scen, period, ssp) %>%
-  summarise(
-    cor_test = list(cor.test(value, lat, method = "spearman")),
-    .groups = "drop"
-  ) %>%
-  mutate(
-    rho = map_dbl(cor_test, ~ .$estimate),     # Spearman rho
-    p.value = map_dbl(cor_test, ~ .$p.value)  # p-value
-  ) %>%
-  select(scen, period, ssp, rho, p.value)
-
-# plot
-stats_data %>% 
-  mpa_names() %>% 
-  ggplot(aes(
-      y = lat,
-      x = value,
-      color = region
-    )) +
-  geom_point(size = 2, alpha = 0.7) +
-  geom_smooth(method = "loess", se = TRUE, color = "black") +  # non-parametric trend line
-  facet_grid(ssp ~ period, scales = "free_x") +
-  labs(
-    y = "Latitud",
-    x = "Biomass change relative to baseline (%)",
-    color = "Region"
-  ) +
-  geom_text(
-    data = latitude_stats,
-    aes(
-      y = 20,
-      x = min(stats_data$value),
-      label = paste0("ρ = ", round(rho, 2), ", P = ", round(p.value, 3))
-    ),
-    inherit.aes = FALSE,
-    hjust = 0,
-    vjust = 1,
-    size = 3
-  ) +
-  my_ggtheme_p(leg_pos = "right",
-               ax_tl_s = 10,
-               leg_tl_s = 10,
-               leg_tx_s = 10
-               
-              )
-
-ggsave(
-  paste0(results_path,"figures/relative_hist/all/sq_lat_statistics.png"),
-  last_plot(),
-  height = 4,
-  width = 8
-)
-
-
-# For fishing
-fe_stats <- stats_data %>%
-  group_by(scen, period, ssp) %>%
-  summarise(
-    cor_test = list(cor.test(value, fe, method = "spearman")),
-    .groups = "drop"
-  ) %>%
-  mutate(
-    rho = map_dbl(cor_test, ~ .$estimate),     # Spearman rho
-    p.value = map_dbl(cor_test, ~ .$p.value)  # p-value
-  ) %>%
-  select(scen, period, ssp, rho, p.value)
-
-# plot
-stats_data %>% 
-  mpa_names() %>% 
-  ggplot(aes(
-      y = fe,
-      x = value,
-      color = region
-    )) +
-  geom_point(size = 2, alpha = 0.7) +
-  geom_smooth(method = "loess", se = TRUE, color = "black") +  # non-parametric trend line
-  facet_grid(ssp ~ period, scales = "free_x") +
-  labs(
-    y = "Fishing effort within MPAs",
-    x = "Biomass change relative to baseline (%)",
-    color = "Region"
-  ) +
-  geom_text(
-    data = fe_stats,
-    aes(
-      y = 4,
-      x = min(stats_data$value),
-      label = paste0("ρ = ", round(rho, 2), ", P = ", round(p.value, 3))
-    ),
-    inherit.aes = FALSE,
-    hjust = 0,
-    vjust = 1,
-    size = 3
-  ) +
-  my_ggtheme_p(leg_pos = "right",
-               ax_tl_s = 10,
-               leg_tl_s = 10,
-               leg_tx_s = 10
-               
-              )
-
-ggsave(
-  paste0(results_path,"figures/relative_hist/all/sq_lat_statistics.png"),
-  last_plot(),
-  height = 4,
-  width = 8
-)
-
-
- 
-```
-
-### Area, latitude and fishing
-
-#### Data for stats
-
-```{r}
-
-cmar_sq <- read.table("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/compute_canada/mpa_sq.txt", quote="\"", comment.char="") %>% 
-  mutate(
-    index = row_number()
-  )
-
-
-cmar_fe <-
-  read.csv("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/gridded/all_mpa_grid_fe.csv") %>% 
-  filter(status == "protected") %>%
-    left_join(cmar_sq, by ="index") %>% 
-  group_by(region = mpa) %>% 
-    # View()
-  summarise(
-    fe = mean(V1, na.rm = T)
-  )
-
-stats_data <- cmar_sf %>% #cmar_sf_size
-  mutate(area_m2 = st_area(geometry),
-         area_km2 = as.numeric(st_area(geometry)) / 1e6,
-         centroid = st_centroid(geometry),        # compute centroid
-    lon = st_coordinates(centroid)[,1],     # extract longitude
-    lat = st_coordinates(centroid)[,2]) %>% 
-  as.data.frame() %>% 
-  select(region,area_km2,lat) %>%
-  left_join(data_df) %>% 
-  filter(stat == "mean_esm",
-         scen == "sq") %>% 
-  left_join(cmar_fe)
-```
 
 #### Permutation-based linear model
 
 ```{r}
 
-# Test for  Evidence of linearity between variables
-
-car::crPlots(mod_perm)
-
-# Latitude, approximately linear relationship with the response, with the LOESS smooth closely matching the fitted linear trend. 
-# Both area_km2 and fe noticeable curvature, suggesting potential nonlinearity in their effects.
-
-mod_perm <- lmp(value ~ area_km2 + lat + fe, data = stats_data)
-summary(mod_perm)
-
-
-# Evidence of independence between observations 
-
-dwtest(mod_perm)
-
-# Durbin-Watson test
-# 
-# data:  mod_perm
-# DW = 1.675, p-value = 0.09703
-# alternative hypothesis: true autocorrelation is greater than 0
-
-# The test suggests no significant autocorrelation in the residuals (p > 0.05).
+stats_data %>% 
+  gather("variable","test",area_km2,lat,fe) %>% 
+ggplot(
+       aes(value, test)) +
+  geom_point() +
+  geom_smooth(method = "loess") +
+  facet_wrap(ssp ~ variable +scen, scales = "free")
 
 ```
 
-# GAM option
-
-Because of non-linearity in area_km2 and fe
-
-```{r}
-
-library(mgcv)
-mod_gam <- gam(value ~ s(area_km2) + s(lat) + s(fe),
-               data = stats_data)
-summary(mod_gam)
-
-# Family: gaussian 
-# Link function: identity 
-# 
-# Formula:
-# value ~ s(area_km2) + s(lat) + s(fe)
-# 
-# Parametric coefficients:
-#             Estimate Std. Error t value Pr(>|t|)    
-# (Intercept)  -6.0914     0.2094  -29.09 1.61e-12 ***
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-# 
-# Approximate significance of smooth terms:
-#               edf Ref.df      F  p-value    
-# s(area_km2) 3.342  3.821  6.082 0.009299 ** 
-# s(lat)      2.628  3.039 12.255 0.000612 ***
-# s(fe)       1.000  1.000  3.999 0.068688 .  
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-# 
-# R-sq.(adj) =  0.916   Deviance explained = 94.7%
-# GCV = 1.4576  Scale est. = 0.87672   n = 20
-
-# Interpretation:
-# Area_km2 and lat have significant non-linear effects on the response variable (p < 0.01).
-# fe has a marginally significant effect (p ~ 0.069), suggesting a potential linear relationship.
-# The model explains a very high proportion of variance in the response (Adj. R² = 0.916).
-
-test_df <- stats_data %>%
-  filter(
-    ssp == "SSP1-2.6",
-    period == "2050"
-  )
-
-summary(gam(value ~ s(area_km2) + s(lat) + fe, data = test_df))
-```
-Based on this result we fit a GAM where fe is linear and area_km2 and lat are smooth terms
-
-```{r}
-
-# Gam fro 1.26 at 2030
-
-# List of SSPs and periods
-ssps <- c("SSP1-2.6", "SSP5-8.5")
-periods <- c("2030", "2050")
-
-# Function to fit GAM and tidy results
-fit_gam <- function(data, ssp_val, period_val) {
-  # Correct filtering using .data
-  df <- data %>% filter(.data$ssp == ssp_val, .data$period == period_val)
-  
-  mod <- gam(value ~ s(area_km2, k = 3) + s(lat, k = 3) + fe, data = df) #Note k = 3 bnecause os small data
-  
-  # Parametric terms
-  param_tbl <- tidy(mod, parametric = TRUE) %>%
-    mutate(term_type = "parametric")
-  
-  # Smooth terms
-  smooth_tbl <- tidy(mod, parametric = FALSE) %>%
-    mutate(term_type = "smooth")
-  
-  # Combine and add SSP/period info
-  bind_rows(param_tbl, smooth_tbl) %>%
-    mutate(SSP = ssp_val, period = period_val)
-}
-
-results_table <- expand.grid(ssp_val = ssps, period_val = periods) %>%
-  pmap_dfr(~ fit_gam(stats_data, ..1, ..2)) %>% 
-  mutate(
-    significant = ifelse(p.value < 0.05, "yes", "no")
-  )
-
-
-# View results
-results_table
-```
-
-# GAM including scenarios and period
-
-```{r}
-# library(mgcv)
-
-mod_spline <- gam(
-  value ~ s(area_km2, k = 3) + s(fe, k = 3) + lat + ssp + period,
-  data = stats_data,
-  method = "REML"
-)
-
-summary(mod_spline)
-plot(mod_spline, pages = 1)
-```
-
-# GAM INCLUDING EVERYTHING
+# GAM
 
 ```{r}
 
@@ -1449,6 +1099,29 @@ ggsave(
 ```
 
 
+## Check linearlity
+
+Previous analysis suggests that we have non-linearity in the data, mostly on area and maybe latitude. So I'll test that to pass it to the final GAM as a smooth (s()) term.
+
+Result: ONly area should be smoothed.
+
+
+<!-- we compared nested GAMs with linear and spline terms using an annova test. Introducing a smooth for area_km2 substantially improved model fit (ΔDeviance = 447.1, F = 23.05, p < 2 × 10⁻¹⁶), while smoothing latitude did not improve fit (F = 1.94, p = 0.15). -->
+
+
+
+
+```{r}
+m1 <- gam(value ~ lat + area_km2 + ssp + scen + period, data = stats_data)
+
+m2 <- gam(value ~ lat + s(area_km2) + ssp + scen + period, data = stats_data)
+
+m3 <- gam(value ~ s(lat) + s(area_km2) + ssp + scen + period, data = stats_data)
+
+anova(m1, m2, m3,test = "F")
+```
+## Model
+
 ```{r}
 
 
@@ -1460,7 +1133,10 @@ mod_spline <- gam(
 summary(mod_spline)
 # plot(mod_spline, pages = 1)
 
+
 ```
+
+## Model output
 
 ```{r}
 
@@ -1479,6 +1155,7 @@ library(sjPlot)
 tab_model(mod_spline, show.se = TRUE, show.stat = TRUE, show.p = TRUE)
 ```
 
+## Model diagnostics
 
 ```{r}
 # Add predictions
@@ -1488,9 +1165,6 @@ ggplot(stats_data, aes(x = pred, y = value)) +
   geom_point(alpha = 0.5) +
   geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
   labs(x = "Predicted", y = "Observed", title = "GAM: Observed vs Predicted")
-
-library(gratia)
-library(patchwork)  
 
 # Example for scenario effect
 coef_scen <- coef(mod_spline)[grep("scen", names(coef(mod_spline)))]
@@ -1531,6 +1205,13 @@ p3 <- ggplot(stats_data, aes(x = pred, y = value)) +
 
 # Combine panels
 p3 / p2 / p1 + plot_layout(nrow = 3)
+
+ggsave(
+  paste0(results_path,"figures/relative_hist/all/gam_diagnostics.png"),
+  last_plot(),
+  height = 12,
+  width = 8
+)
 
 ```
 
