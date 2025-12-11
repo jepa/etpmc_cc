@@ -1177,8 +1177,9 @@ ggplot(df, aes(x = scenario, y = estimate)) +
 
 # 1. Smooth term plot for area_km2
 p1 <- draw(mod_spline, select = "s(area_km2)") +
-      ggtitle("Effect of Area (km²) on Value") +
-      theme_minimal()
+      # ggtitle("Effect of Area (km²) on Value") +
+  ggtitle("C") +
+      my_ggtheme_p()
 
 # 2. Categorical/linear effects plot (ssp, scen, period, lat)
 # Extract parametric coefficients
@@ -1192,16 +1193,18 @@ p2 <- ggplot(coefs_df, aes(x = reorder(term, Estimate), y = Estimate)) +
       geom_point(size = 3, color = "steelblue") +
       geom_errorbar(aes(ymin = Estimate - `Std. Error`, ymax = Estimate + `Std. Error`), width = 0.2) +
       coord_flip() +
-      labs(y = "Estimated Effect", x = "", title = "Linear Effects") +
-      theme_minimal()
+      # labs(y = "Estimated Effect", x = "", title = "Linear Effects") +
+  labs(y = "Estimated Effect", x = "", title = "B") +
+      my_ggtheme_p()
 
 # 3. Observed vs Predicted plot
 stats_data$pred <- predict(mod_spline)
 p3 <- ggplot(stats_data, aes(x = pred, y = value)) +
       geom_point(alpha = 0.5) +
       geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
-      labs(x = "Predicted Value", y = "Observed Value", title = "Observed vs Predicted") +
-      theme_minimal()
+      # labs(x = "Predicted Value", y = "Observed Value", title = "Observed vs Predicted") +
+  labs(x = "Predicted Value", y = "Observed Value", title = "A") +
+      my_ggtheme_p()
 
 # Combine panels
 p3 / p2 / p1 + plot_layout(nrow = 3)
@@ -1209,11 +1212,15 @@ p3 / p2 / p1 + plot_layout(nrow = 3)
 ggsave(
   paste0(results_path,"figures/relative_hist/all/gam_diagnostics.png"),
   last_plot(),
-  height = 12,
+  height = 6,
   width = 8
 )
 
+# Figure caption: 
+
 ```
+
+
 
 
 # Old code
