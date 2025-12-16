@@ -32,7 +32,8 @@ my_lib(c(
   # Statistics
   "mgcv",
   "patchwork",
-  "gratia"
+  "gratia",
+  "sjPlot"
 ))
 
 # For grid e
@@ -267,7 +268,7 @@ data_df %>%
   # Check confident n
   group_by(confidence_flag) %>%
   mutate(n_conf = round((n()/64)*100)) %>%
-  View()
+  # View()
 ggplot() +
   geom_bar(
     aes(
@@ -348,6 +349,68 @@ ggsave(
 
 
 ## Fig. 4 Relative to SQ (Delta Delta)
+
+Note that this step requires the preivous one and the usage of `dif_2040sq` or `dif_2040` will impact the results.
+
+```{r}
+
+data_df_sq <- data_df %>% 
+  filter(stat == "mean_esm") %>% 
+  pivot_wider(names_from = scen, values_from = value) %>% 
+  gather("scen","value",nr:rp) %>% 
+  mutate(dif_per = value-sq) %>% 
+  scenario_names(leng = "eng") %>% 
+  filter(
+    # ssp == "SSP1-2.6"
+    # ssp == "SSP5-8.5"
+    period == 2030
+    # period == 2050
+  )
+
+map <-
+  ggplot() +
+  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(data_df_sq),
+          aes(fill = dif_per),
+          color = "grey"
+  ) +
+  geom_sf(data = cmar_sf %>%  left_join(data_df_sq),
+          aes(fill = dif_per),
+          color = "black"
+  ) +
+  facet_grid(ssp~scenario) +
+  # For SQ scenario change
+  scale_fill_gradient2("Differnce in biomass change rlative to status quo (%)",
+                       # limits = c(-2,10),
+                       # breaks = seq(-2,10,2)
+                       # limits = c(-6,6), # for ssp-585
+                       # breaks = seq(-2,2,1) # for ssp-585
+  ) +
+  my_ggtheme_m("Reg",
+               facet_tl_s = 10,
+               ax_tl_s = 8,
+               ax_tx_s = 8,
+               leg_tl_s = 8,
+               leg_tx_s = 8) +
+  theme(
+    legend.key.width = unit(3, "line"),
+    title = element_text(size = 4)
+  )  +
+  guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))
+
+
+ggsave(
+  # paste0(results_path,"figures/relative_scen/all/ssp585_sq_relative_map.png"),
+  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
+  paste0(results_path,"figures/relative_scen/all/x2030_sq_relative_map.png"),
+  # paste0(results_path,"figures/relative_scen/all/2050_sq_relative_map.png"),
+  map,
+  height = 6,
+  width = 10
+)
+```
+
+
+## Fig. S4 Relative to SQ (Delta Delta) bar plots
 
 Note that this step requires the preivous one and the usage of `dif_2040sq` or `dif_2040` will impact the results.
 
@@ -468,6 +531,586 @@ data_df_sq %>%
     dif_per = abs(`Regulations for conservation` - `Regulations for fishing`),
   ) %>% 
   View()
+```
+
+
+## GAM
+
+```{r}
+
+cmar_grid <-
+  read.csv("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/gridded/all_mpa_grid_fe.csv") %>% 
+  select(-fe_prop)
+
+
+management_scen <- list.files("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/compute_canada/", full.names = T)
+
+fe_data <- bind_cols(
+lapply(management_scen, read.table, quote="\"", comment.char="")
+)
+
+colnames(fe_data) <- c("nr","ri","rpc","rpp","sq")
+
+# write data for dataverse
+write_csv(fe_data %>% rowid_to_column("index"),
+          "~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/gridded/fe_data_scen.csv")
+
+
+fe_data <-
+  fe_data %>% 
+  rowid_to_column("index") %>% 
+  right_join(cmar_grid, by = "index") %>% 
+  pivot_longer(
+    cols = c("nr","ri","rpc","rpp","sq"),
+    names_to = "scen",
+    values_to = "fe_prop"
+  ) %>% 
+  group_by(region = mpa,scen) %>%
+  # View()
+  summarise(
+    fe = mean(fe_prop, na.rm = T)
+  ) %>% 
+  #Change names to match 
+  mutate(
+    scen = case_when(
+      scen == "nr" ~ "nr",
+      scen == "ri" ~ "ri",
+      scen == "rpc" ~ "rc",
+      scen == "rpp" ~ "rp",
+      scen == "sq" ~ "sq"
+    )
+  )
+
+
+stats_data <- cmar_sf %>% #cmar_sf_size
+  mutate(area_m2 = st_area(geometry),
+         area_km2 = as.numeric(st_area(geometry)) / 1e6,
+         centroid = st_centroid(geometry),        # compute centroid
+    lon = st_coordinates(centroid)[,1],     # extract longitude
+    lat = st_coordinates(centroid)[,2]) %>% 
+  as.data.frame() %>% 
+  select(region,area_km2,lat) %>%
+  left_join(data_df) %>%
+  filter(stat == "mean_esm") %>% 
+  left_join(fe_data, by = c("region", "scen"))
+
+# write_csv(stats_data, paste0(results_path,"stats_data.csv"))
+
+```
+
+## Check for normality
+
+```{r}
+
+# ggplot2 histogram
+ggplot(stats_data, aes(x = value)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Histogram of Value", x = "Value", y = "Frequency") +
+  theme_minimal() +
+  facet_grid(ssp ~ period)
+
+# shapiro test per period and ssp
+stats_data %>%
+  group_by(ssp, period) %>%
+  summarise(
+    shapiro_result = list(shapiro.test(value)),
+    W = shapiro_result[[1]]$statistic,
+    p_value = shapiro_result[[1]]$p.value
+  ) %>%
+  select(ssp, period, W, p_value)
+
+# SSP1-2.6	2030	0.9852526	0.7824097	
+# SSP1-2.6	2050	0.9786990	0.4984939	
+# SSP5-8.5	2030	0.9821579	0.6458377	
+# SSP5-8.5	2050	0.9752006	0.3714282	
+
+# Interpretation:
+# In all cases, the p-values are greater than 0.05, indicating that we fail to reject the null hypothesis of normality.
+
+
+# 1. Compute Shapiro statistics
+stats_summary <- stats_data %>%
+  group_by(ssp, period,scen) %>%
+  summarise(
+    shapiro = list(shapiro.test(value)),
+    W = shapiro[[1]]$statistic,
+    p = shapiro[[1]]$p.value,
+    .groups = "drop"
+  ) %>%
+  mutate(
+    facet_label = str_glue("{scen}, {ssp}, {period}\nW = {round(W, 3)}, p = {round(p, 3)}")
+  )
+
+# 2. Join back to original data and plot with facet labels
+stats_data %>%
+  left_join(stats_summary, by = c("ssp", "period")) %>% 
+  ggplot(aes(x = value)) +
+  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
+  facet_wrap(~ facet_label, ncol = 4) +
+  labs(
+    # title = "Histogram of Value with Shapiro-Wilk Statistics",
+       x = "Value", y = "Frequency") +
+  # theme_minimal()
+  my_ggtheme_p()
+
+ggsave(
+  paste0(results_path,"figures/relative_hist/all/shapiro_histograms.png"),
+  last_plot(),
+  height = 8,
+  width = 10
+)
+
+
+
+```
+
+
+## Check linearlity
+
+Previous analysis suggests that we have non-linearity in the data, mostly on area and maybe latitude. So I'll test that to pass it to the final GAM as a smooth (s()) term.
+
+Result: ONly area should be smoothed.
+
+
+<!-- we compared nested GAMs with linear and spline terms using an annova test. Introducing a smooth for area_km2 substantially improved model fit (ΔDeviance = 447.1, F = 23.05, p < 2 × 10⁻¹⁶), while smoothing latitude did not improve fit (F = 1.94, p = 0.15). -->
+
+
+```{r}
+m1 <- gam(value ~ lat + area_km2 + ssp + scen + period, data = stats_data)
+
+m2 <- gam(value ~ lat + s(area_km2) + ssp + scen + period, data = stats_data)
+
+m3 <- gam(value ~ s(lat) + s(area_km2) + ssp + scen + period, data = stats_data)
+
+anova(m1, m2, m3,test = "F")
+```
+## Model
+
+```{r}
+
+
+mod_spline <- gam(
+  value ~ lat + s(area_km2) + ssp + scen  + period,
+  data = stats_data
+)
+
+summary(mod_spline)
+# plot(mod_spline, pages = 1)
+
+
+```
+
+## Model output
+
+```{r}
+
+# Linear and smooth terms
+tidy_linear <- tidy(mod_spline, parametric = TRUE)
+tidy_smooth <- tidy(mod_spline, parametric = FALSE)
+
+# Combine for a full table
+tidy_full <- bind_rows(tidy_linear, tidy_smooth)
+tidy_full
+
+# Table for linear terms
+tab_model(mod_spline, show.se = TRUE, show.stat = TRUE, show.p = TRUE)
+```
+
+## Model diagnostics
+
+```{r}
+# Add predictions
+stats_data$pred <- predict(mod_spline)
+
+ggplot(stats_data, aes(x = pred, y = value)) +
+  geom_point(alpha = 0.5) +
+  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+  labs(x = "Predicted", y = "Observed", title = "GAM: Observed vs Predicted")
+
+# Example for scenario effect
+coef_scen <- coef(mod_spline)[grep("scen", names(coef(mod_spline)))]
+df <- data.frame(scenario = names(coef_scen), estimate = coef_scen)
+ggplot(df, aes(x = scenario, y = estimate)) +
+    geom_col(fill = "steelblue") +
+    labs(y = "Effect on value", x = "Scenario")
+
+
+
+# 1. Smooth term plot for area_km2
+p1 <- draw(mod_spline, select = "s(area_km2)") +
+      # ggtitle("Effect of Area (km²) on Value") +
+  ggtitle("C") +
+      my_ggtheme_p()
+
+# 2. Categorical/linear effects plot (ssp, scen, period, lat)
+# Extract parametric coefficients
+coefs <- summary(mod_spline)$p.table
+# Keep only predictors of interest
+coefs_df <- as.data.frame(coefs)
+coefs_df$term <- rownames(coefs_df)
+coefs_df <- coefs_df[!grepl("(Intercept)", coefs_df$term), ]
+# Plot estimates
+p2 <- ggplot(coefs_df, aes(x = reorder(term, Estimate), y = Estimate)) +
+      geom_point(size = 3, color = "steelblue") +
+      geom_errorbar(aes(ymin = Estimate - `Std. Error`, ymax = Estimate + `Std. Error`), width = 0.2) +
+      coord_flip() +
+      # labs(y = "Estimated Effect", x = "", title = "Linear Effects") +
+  labs(y = "Estimated Effect", x = "", title = "B") +
+      my_ggtheme_p()
+
+# 3. Observed vs Predicted plot
+stats_data$pred <- predict(mod_spline)
+p3 <- ggplot(stats_data, aes(x = pred, y = value)) +
+      geom_point(alpha = 0.5) +
+      geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
+      # labs(x = "Predicted Value", y = "Observed Value", title = "Observed vs Predicted") +
+  labs(x = "Predicted Value", y = "Observed Value", title = "A") +
+      my_ggtheme_p()
+
+# Combine panels
+p3 / p2 / p1 + plot_layout(nrow = 3)
+
+ggsave(
+  paste0(results_path,"figures/relative_hist/all/gam_diagnostics.png"),
+  last_plot(),
+  height = 6,
+  width = 8
+)
+
+# Figure caption: 
+
+```
+
+# Old code
+
+## Relativce to SQ historical
+
+```{r}
+
+sq_data <- data_df %>% 
+  filter(scen == "sq") %>% 
+  scenario_names(leng = "eng") %>% 
+  spread(stat,value) %>% 
+  mutate(
+    z_score = mean_esm / sd_esm,
+    confidence_flag = case_when(
+      abs(z_score) > 2 ~ "high",
+      abs(z_score) > 1 ~ "moderate",
+      TRUE ~ "low"
+    )
+  )
+
+# Confidence
+sau_points_sf <-
+  sau_sf %>%
+  rename(region = name) %>% 
+  left_join(sq_data) %>%
+  select(region:scenario,confidence_flag) %>%
+  st_centroid()
+
+# Confidence
+cmar_points_sf <-
+  cmar_sf %>%
+  left_join(sq_data) %>%
+  select(region:scenario,confidence_flag) %>%
+  st_centroid()
+
+
+map <-
+  ggplot() +
+  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(sq_data),
+          aes(fill = mean_esm),
+          color = "grey"
+  ) +
+  geom_sf(data = cmar_sf %>%  left_join(sq_data),
+          aes(fill = mean_esm),
+          color = "black"
+  ) +
+  geom_sf(data = sau_points_sf,
+          aes(shape = confidence_flag)
+  ) +
+  geom_sf(data = cmar_points_sf,
+          aes(shape = confidence_flag)
+  ) +
+  facet_grid(ssp~period) +
+  # For SQ scenario change
+  scale_fill_gradient2("Change in biomass\nrelative to baseline (%)",
+                       limits = c(-15,1),
+                       breaks = seq(-15,1,5)
+  ) +
+  my_land_map() +
+  my_ggtheme_m("Reg",
+               facet_tl_s = 10,
+               ax_tl_s = 8,
+               ax_tx_s = 8,
+               leg_tl_s = 8,
+               leg_tx_s = 8,
+               leg_pos = "right" 
+  ) +
+  # theme(
+  # legend.key.width = unit(3, "line"),
+  # title = element_text(size = 4)
+  # )  +
+  # guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5)
+  # ) +
+  coord_sf(
+    xlim = c(-95,-77),
+    ylim = c(-5,9)
+  )
+
+
+ggsave(
+  # paste0(results_path,"figures/relative_hist/all/aaaaasq_relative_map.png"),
+  paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
+  map,
+  height = 7,
+  width = 8
+)
+
+
+```
+
+**NOTE:** The code below is not inlcuded in the final version of the manuscript and has no relation with the final product.
+
+
+```{r}
+#plot function
+map_fx <- function(data, period_selected, ssp_selected){
+  
+  data_plot <- data %>% 
+    filter(ssp == ssp_selected,
+           period == period_selected)
+  
+  min_n <- round(min(data_plot$perchange,na.rm = T))-1
+  max_n <- round(max(data_plot$perchange,na.rm = T))+1
+  mid_n <- 0
+  breaks_n <- pretty(c(min_n, max_n), n = 5)
+  
+  
+  plot_name <- paste0(results_path,"figures/relative_hist/all/",period_selected,"_relative_historic_",ssp_selected,".png")
+  # ----------- #
+  
+  map <-
+    ggplot() +
+    geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(data_plot),
+            aes(fill = perchange),
+            color = "grey"
+    ) +
+    geom_sf(data = cmar_sf %>%  left_join(data_plot),
+            aes(fill = perchange),
+            color = "black"
+    ) +
+    facet_wrap(~scenario) +
+    scale_fill_gradient2("Change in biomass by 2050\nrelative to baseline (%)",
+                         limits = c(min_n,max_n),
+                         breaks = breaks_n
+    ) +
+    theme(
+      title = element_text(size = 4),
+      legend.background = element_rect(color = "grey",linewidth = 0.5,linetype = "solid"
+      )
+    )  +
+    my_ggtheme_m("Reg",
+                 facet_tl_s = 10,
+                 ax_tl_s = 10,
+                 ax_tx_s = 10,
+                 leg_tl_s = 2,
+                 leg_tx_s = 1,
+                 leg_pos = c(0.83, 0.25)) +
+    guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5, title.vjust = 0.5))  
+  
+  
+  
+  ggsave(
+    plot_name,
+    map,
+    height = 6,
+    width = 8
+  )
+  
+}
+
+# DO NOT MODIFY
+map_fx(
+  data = data_df,
+  ssp_selected =  "ssp585",
+  period_selected = "dif_2050"
+)
+
+```
+
+
+
+
+
+
+### Normal
+
+### Size info
+
+```{r}
+
+library(broom) # for tidy lm outputs
+library(ggpubr) #for stat_regline_equation
+
+
+
+# Add a new column with the area in km² (or m² depending on CRS)
+cmar_sf_size <- cmar_sf %>%
+  mutate(area_m2 = st_area(geometry),
+         area_km2 = as.numeric(st_area(geometry)) / 1e6,
+         centroid = st_centroid(geometry),        # compute centroid
+    lon = st_coordinates(centroid)[,1],     # extract longitude
+    lat = st_coordinates(centroid)[,2]) %>% 
+  as.data.frame() %>% 
+  select(region,area_km2,lat) %>%
+  left_join(data_df) %>% 
+  filter(stat == "mean_esm",
+         scen == "sq") 
+
+
+# Check for co-linearity between latitutde and size
+# Keep unique region values to avoid repeated rows
+unique_regions <- cmar_sf_size %>%
+  select(region, area_km2, lat) %>%
+  distinct()
+
+# Correlation Pearson's
+cor(unique_regions$lat, unique_regions$area_km2) # -0.6401246
+
+
+# Latitude plot
+cmar_sf_size %>% 
+  ggplot(aes(
+      y = lat,
+      x = value,
+      color = region
+    )) +
+  geom_point(
+    size = 2,
+    alpha = 0.7
+  ) +
+  geom_smooth(data = cmar_sf_size,
+              aes(
+                y = lat,
+                x = value,
+                color = region
+              ),
+              method = "lm",
+              se = T, 
+              color = "black") +  # lm line
+  facet_grid(ssp~period,
+             scales = "free_x")  +
+  labs(
+    y = "Latitud",
+    x = "Biomass change relative to baseline (%)",
+    color = "Region"
+  ) +
+  # Show stats
+  geom_text(
+    data = size_stats,
+    aes(y = 10,
+        x = min(cmar_sf_size$value),
+        label = paste0("P = ",round(p.value,2),", R² = ", round(r.squared*100, 2))),
+    inherit.aes = FALSE,
+    hjust = 0,
+    vjust = 1,
+    size = 3
+  ) +
+  theme_minimal()
+
+
+# Size plot
+
+size_stats <- cmar_sf_size %>% 
+  group_by(scen, period, ssp) %>%
+  do(model = lm(value ~ area_km2, data = .)) %>%
+  mutate(glance = list(broom::glance(model))) %>%
+  tidyr::unnest(glance) %>% 
+  select(scen, period, ssp, r.squared, adj.r.squared, p.value)
+
+cmar_sf_size %>% 
+  ggplot(aes(
+      x = area_km2,
+      y = value,
+      color = region
+    )) +
+  geom_point(
+    size = 2,
+    alpha = 0.7
+  ) +
+  geom_smooth(data = cmar_sf_size,
+              aes(
+                x = area_km2,
+                y = value,
+                color = region
+              ),
+              method = "lm",
+              se = T, 
+              color = "black") +  # lm line
+  facet_grid(ssp~period,
+             scales = "free_x")  +
+  labs(
+    x = "Area (Km2)",
+    y = "Biomass change relative to baseline (%)",
+    color = "Region"
+  ) +
+  # Show stats
+  geom_text(
+    data = size_stats,
+    aes(x = min(cmar_sf_size$area_km2),
+        y = max(cmar_sf_size$value),
+        label = paste0("P = ",round(p.value,2),", R² = ", round(r.squared*100, 2))),
+    inherit.aes = FALSE,
+    hjust = 0,
+    vjust = 1,
+    size = 3
+  ) +
+  theme_minimal()
+
+```
+
+### Linear mixed model
+
+```{r}
+library(lme4)      # for mixed models
+library(lmerTest)  # for p-values
+library(broom.mixed) # tidy results
+
+# ssp_test <- "SSP1-2.6"
+ssp_test <- "SSP5-8.5"
+
+mod_rc <- lm(value ~ area_km2 + lat, data = cmar_sf_size %>% 
+               filter(period == "2050", ssp == ssp_test))
+
+
+lmmod_rc <- lm(value ~ area_km2, data = cmar_sf_size %>% filter(ssp == ssp_test))
+summary(lmmod_rc)
+
+mod_rc <- lmer(value ~ area_km2 + lat, data = cmar_sf_size %>% filter(period == "2050",ssp == ssp_test))
+summary(mod_rc)
+
+
+# NOTE you need to modify cmar_sf_size data in previous chunk to allow for asll scenarios to be tested
+
+
+
+mod_nr <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size %>% filter(scen == "nr",
+                                                                                     ssp == ssp_test))
+summary(mod_nr)
+
+mod_ri <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size %>% filter(scen == "ri",
+                                                                                     ssp == ssp_test))
+summary(mod_ri)
+mod_rp <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size%>% filter(scen == "rp",
+                                                                                    ssp == ssp_test))
+summary(mod_rp)
+mod_sq <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size %>% filter(scen == "sq",
+                                                                                     ssp == ssp_test))
+summary(mod_sq)
+
+
+
 ```
 
 # Exploration
@@ -970,642 +1613,5 @@ ggplot(
   geom_point() +
   geom_smooth(method = "loess") +
   facet_wrap(ssp ~ variable +scen, scales = "free")
-
-```
-
-# GAM
-
-```{r}
-
-cmar_grid <-
-  read.csv("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/gridded/all_mpa_grid_fe.csv") %>% 
-  select(-fe_prop)
-
-
-management_scen <- list.files("~/Library/CloudStorage/GoogleDrive-jepa88@gmail.com/My Drive/lenfest_mpa_project/data/01 spatial/compute_canada/", full.names = T)
-
-fe_data <- bind_cols(
-lapply(management_scen, read.table, quote="\"", comment.char="")
-)
-
-colnames(fe_data) <- c("nr","ri","rpc","rpp","sq")
-
-fe_data <-
-  fe_data %>% 
-  rowid_to_column("index") %>% 
-  right_join(cmar_grid, by = "index") %>% 
-  pivot_longer(
-    cols = c("nr","ri","rpc","rpp","sq"),
-    names_to = "scen",
-    values_to = "fe_prop"
-  ) %>% 
-  group_by(region = mpa,scen) %>%
-  # View()
-  summarise(
-    fe = mean(fe_prop, na.rm = T)
-  ) %>% 
-  #Change names to match 
-  mutate(
-    scen = case_when(
-      scen == "nr" ~ "nr",
-      scen == "ri" ~ "ri",
-      scen == "rpc" ~ "rc",
-      scen == "rpp" ~ "rp",
-      scen == "sq" ~ "sq"
-    )
-  )
-
-
-stats_data <- cmar_sf %>% #cmar_sf_size
-  mutate(area_m2 = st_area(geometry),
-         area_km2 = as.numeric(st_area(geometry)) / 1e6,
-         centroid = st_centroid(geometry),        # compute centroid
-    lon = st_coordinates(centroid)[,1],     # extract longitude
-    lat = st_coordinates(centroid)[,2]) %>% 
-  as.data.frame() %>% 
-  select(region,area_km2,lat) %>%
-  left_join(data_df) %>%
-  filter(stat == "mean_esm") %>% 
-  left_join(fe_data, by = c("region", "scen"))
-
-# write_csv(stats_data, paste0(results_path,"stats_data.csv"))
-
-```
-
-## Check for normality
-
-```{r}
-
-# ggplot2 histogram
-ggplot(stats_data, aes(x = value)) +
-  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
-  labs(title = "Histogram of Value", x = "Value", y = "Frequency") +
-  theme_minimal() +
-  facet_grid(ssp ~ period)
-
-# shapiro test per period and ssp
-stats_data %>%
-  group_by(ssp, period) %>%
-  summarise(
-    shapiro_result = list(shapiro.test(value)),
-    W = shapiro_result[[1]]$statistic,
-    p_value = shapiro_result[[1]]$p.value
-  ) %>%
-  select(ssp, period, W, p_value)
-
-# SSP1-2.6	2030	0.9852526	0.7824097	
-# SSP1-2.6	2050	0.9786990	0.4984939	
-# SSP5-8.5	2030	0.9821579	0.6458377	
-# SSP5-8.5	2050	0.9752006	0.3714282	
-
-# Interpretation:
-# In all cases, the p-values are greater than 0.05, indicating that we fail to reject the null hypothesis of normality.
-
-
-# 1. Compute Shapiro statistics
-stats_summary <- stats_data %>%
-  group_by(ssp, period,scen) %>%
-  summarise(
-    shapiro = list(shapiro.test(value)),
-    W = shapiro[[1]]$statistic,
-    p = shapiro[[1]]$p.value,
-    .groups = "drop"
-  ) %>%
-  mutate(
-    facet_label = str_glue("{scen}, {ssp}, {period}\nW = {round(W, 3)}, p = {round(p, 3)}")
-  )
-
-# 2. Join back to original data and plot with facet labels
-stats_data %>%
-  left_join(stats_summary, by = c("ssp", "period")) %>% 
-  ggplot(aes(x = value)) +
-  geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha = 0.7) +
-  facet_wrap(~ facet_label, ncol = 4) +
-  labs(
-    # title = "Histogram of Value with Shapiro-Wilk Statistics",
-       x = "Value", y = "Frequency") +
-  # theme_minimal()
-  my_ggtheme_p()
-
-ggsave(
-  paste0(results_path,"figures/relative_hist/all/shapiro_histograms.png"),
-  last_plot(),
-  height = 8,
-  width = 10
-)
-
-
-
-```
-
-
-## Check linearlity
-
-Previous analysis suggests that we have non-linearity in the data, mostly on area and maybe latitude. So I'll test that to pass it to the final GAM as a smooth (s()) term.
-
-Result: ONly area should be smoothed.
-
-
-<!-- we compared nested GAMs with linear and spline terms using an annova test. Introducing a smooth for area_km2 substantially improved model fit (ΔDeviance = 447.1, F = 23.05, p < 2 × 10⁻¹⁶), while smoothing latitude did not improve fit (F = 1.94, p = 0.15). -->
-
-
-
-
-```{r}
-m1 <- gam(value ~ lat + area_km2 + ssp + scen + period, data = stats_data)
-
-m2 <- gam(value ~ lat + s(area_km2) + ssp + scen + period, data = stats_data)
-
-m3 <- gam(value ~ s(lat) + s(area_km2) + ssp + scen + period, data = stats_data)
-
-anova(m1, m2, m3,test = "F")
-```
-## Model
-
-```{r}
-
-
-mod_spline <- gam(
-  value ~ lat + s(area_km2) + ssp + scen  + period,
-  data = stats_data
-)
-
-summary(mod_spline)
-# plot(mod_spline, pages = 1)
-
-
-```
-
-## Model output
-
-```{r}
-
-# Linear and smooth terms
-tidy_linear <- tidy(mod_spline, parametric = TRUE)
-tidy_smooth <- tidy(mod_spline, parametric = FALSE)
-
-# Combine for a full table
-tidy_full <- bind_rows(tidy_linear, tidy_smooth)
-tidy_full
-
-
-library(sjPlot)
-
-# Table for linear terms
-tab_model(mod_spline, show.se = TRUE, show.stat = TRUE, show.p = TRUE)
-```
-
-## Model diagnostics
-
-```{r}
-# Add predictions
-stats_data$pred <- predict(mod_spline)
-
-ggplot(stats_data, aes(x = pred, y = value)) +
-  geom_point(alpha = 0.5) +
-  geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
-  labs(x = "Predicted", y = "Observed", title = "GAM: Observed vs Predicted")
-
-# Example for scenario effect
-coef_scen <- coef(mod_spline)[grep("scen", names(coef(mod_spline)))]
-df <- data.frame(scenario = names(coef_scen), estimate = coef_scen)
-ggplot(df, aes(x = scenario, y = estimate)) +
-    geom_col(fill = "steelblue") +
-    labs(y = "Effect on value", x = "Scenario")
-
-
-
-# 1. Smooth term plot for area_km2
-p1 <- draw(mod_spline, select = "s(area_km2)") +
-      # ggtitle("Effect of Area (km²) on Value") +
-  ggtitle("C") +
-      my_ggtheme_p()
-
-# 2. Categorical/linear effects plot (ssp, scen, period, lat)
-# Extract parametric coefficients
-coefs <- summary(mod_spline)$p.table
-# Keep only predictors of interest
-coefs_df <- as.data.frame(coefs)
-coefs_df$term <- rownames(coefs_df)
-coefs_df <- coefs_df[!grepl("(Intercept)", coefs_df$term), ]
-# Plot estimates
-p2 <- ggplot(coefs_df, aes(x = reorder(term, Estimate), y = Estimate)) +
-      geom_point(size = 3, color = "steelblue") +
-      geom_errorbar(aes(ymin = Estimate - `Std. Error`, ymax = Estimate + `Std. Error`), width = 0.2) +
-      coord_flip() +
-      # labs(y = "Estimated Effect", x = "", title = "Linear Effects") +
-  labs(y = "Estimated Effect", x = "", title = "B") +
-      my_ggtheme_p()
-
-# 3. Observed vs Predicted plot
-stats_data$pred <- predict(mod_spline)
-p3 <- ggplot(stats_data, aes(x = pred, y = value)) +
-      geom_point(alpha = 0.5) +
-      geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
-      # labs(x = "Predicted Value", y = "Observed Value", title = "Observed vs Predicted") +
-  labs(x = "Predicted Value", y = "Observed Value", title = "A") +
-      my_ggtheme_p()
-
-# Combine panels
-p3 / p2 / p1 + plot_layout(nrow = 3)
-
-ggsave(
-  paste0(results_path,"figures/relative_hist/all/gam_diagnostics.png"),
-  last_plot(),
-  height = 6,
-  width = 8
-)
-
-# Figure caption: 
-
-```
-
-
-
-
-# Old code
-
-```{r}
-#plot function
-map_fx <- function(data, period_selected, ssp_selected){
-  
-  data_plot <- data %>% 
-    filter(ssp == ssp_selected,
-           period == period_selected)
-  
-  min_n <- round(min(data_plot$perchange,na.rm = T))-1
-  max_n <- round(max(data_plot$perchange,na.rm = T))+1
-  mid_n <- 0
-  breaks_n <- pretty(c(min_n, max_n), n = 5)
-  
-  
-  plot_name <- paste0(results_path,"figures/relative_hist/all/",period_selected,"_relative_historic_",ssp_selected,".png")
-  # ----------- #
-  
-  map <-
-    ggplot() +
-    geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(data_plot),
-            aes(fill = perchange),
-            color = "grey"
-    ) +
-    geom_sf(data = cmar_sf %>%  left_join(data_plot),
-            aes(fill = perchange),
-            color = "black"
-    ) +
-    facet_wrap(~scenario) +
-    scale_fill_gradient2("Change in biomass by 2050\nrelative to baseline (%)",
-                         limits = c(min_n,max_n),
-                         breaks = breaks_n
-    ) +
-    theme(
-      title = element_text(size = 4),
-      legend.background = element_rect(color = "grey",linewidth = 0.5,linetype = "solid"
-      )
-    )  +
-    my_ggtheme_m("Reg",
-                 facet_tl_s = 10,
-                 ax_tl_s = 10,
-                 ax_tx_s = 10,
-                 leg_tl_s = 2,
-                 leg_tx_s = 1,
-                 leg_pos = c(0.83, 0.25)) +
-    guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5, title.vjust = 0.5))  
-  
-  
-  
-  ggsave(
-    plot_name,
-    map,
-    height = 6,
-    width = 8
-  )
-  
-}
-
-# DO NOT MODIFY
-map_fx(
-  data = data_df,
-  ssp_selected =  "ssp585",
-  period_selected = "dif_2050"
-)
-
-```
-
-
-## Fig 3A. Relative to historic period (period)
-
-```{r}
-
-sq_data <- data_df %>% 
-  filter(scen == "sq") %>% 
-  scenario_names(leng = "eng") %>% 
-  spread(stat,value) %>% 
-  mutate(
-    z_score = mean_esm / sd_esm,
-    confidence_flag = case_when(
-      abs(z_score) > 2 ~ "high",
-      abs(z_score) > 1 ~ "moderate",
-      TRUE ~ "low"
-    )
-  )
-
-# Confidence
-sau_points_sf <-
-  sau_sf %>%
-  rename(region = name) %>% 
-  left_join(sq_data) %>%
-  select(region:scenario,confidence_flag) %>%
-  st_centroid()
-
-# Confidence
-cmar_points_sf <-
-  cmar_sf %>%
-  left_join(sq_data) %>%
-  select(region:scenario,confidence_flag) %>%
-  st_centroid()
-
-
-map <-
-  ggplot() +
-  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(sq_data),
-          aes(fill = mean_esm),
-          color = "grey"
-  ) +
-  geom_sf(data = cmar_sf %>%  left_join(sq_data),
-          aes(fill = mean_esm),
-          color = "black"
-  ) +
-  geom_sf(data = sau_points_sf,
-          aes(shape = confidence_flag)
-  ) +
-  geom_sf(data = cmar_points_sf,
-          aes(shape = confidence_flag)
-  ) +
-  facet_grid(ssp~period) +
-  # For SQ scenario change
-  scale_fill_gradient2("Change in biomass\nrelative to baseline (%)",
-                       limits = c(-15,1),
-                       breaks = seq(-15,1,5)
-  ) +
-  my_land_map() +
-  my_ggtheme_m("Reg",
-               facet_tl_s = 10,
-               ax_tl_s = 8,
-               ax_tx_s = 8,
-               leg_tl_s = 8,
-               leg_tx_s = 8,
-               leg_pos = "right" 
-  ) +
-  # theme(
-  # legend.key.width = unit(3, "line"),
-  # title = element_text(size = 4)
-  # )  +
-  # guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5)
-  # ) +
-  coord_sf(
-    xlim = c(-95,-77),
-    ylim = c(-5,9)
-  )
-
-
-ggsave(
-  paste0(results_path,"figures/relative_hist/all/aaaaasq_relative_map.png"),
-  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
-  map,
-  height = 7,
-  width = 8
-)
-
-
-```
-## Fig. 5A Relative to SQ (Delta Delta)
-
-Note that this step requires the preivous one and the usage of `dif_2040sq` or `dif_2040` will impact the results.
-
-```{r}
-
-data_df_sq <- data_df %>% 
-  filter(stat == "mean_esm") %>% 
-  pivot_wider(names_from = scen, values_from = value) %>% 
-  gather("scen","value",nr:rp) %>% 
-  mutate(dif_per = value-sq) %>% 
-  scenario_names(leng = "eng") %>% 
-  filter(
-    # ssp == "SSP1-2.6"
-    # ssp == "SSP5-8.5"
-    period == 2030
-    # period == 2050
-  )
-
-map <-
-  ggplot() +
-  geom_sf(data = sau_sf %>% select(region = name) %>%  left_join(data_df_sq),
-          aes(fill = dif_per),
-          color = "grey"
-  ) +
-  geom_sf(data = cmar_sf %>%  left_join(data_df_sq),
-          aes(fill = dif_per),
-          color = "black"
-  ) +
-  facet_grid(ssp~scenario) +
-  # For SQ scenario change
-  scale_fill_gradient2("Differnce in biomass change rlative to status quo (%)",
-                       # limits = c(-2,10),
-                       # breaks = seq(-2,10,2)
-                       # limits = c(-6,6), # for ssp-585
-                       # breaks = seq(-2,2,1) # for ssp-585
-  ) +
-  my_ggtheme_m("Reg",
-               facet_tl_s = 10,
-               ax_tl_s = 8,
-               ax_tx_s = 8,
-               leg_tl_s = 8,
-               leg_tx_s = 8) +
-  theme(
-    legend.key.width = unit(3, "line"),
-    title = element_text(size = 4)
-  )  +
-  guides(fill = guide_colorbar(title.position = "top", title.hjust = 0.5))
-
-
-ggsave(
-  # paste0(results_path,"figures/relative_scen/all/ssp585_sq_relative_map.png"),
-  # paste0(results_path,"figures/relative_scen/all/ssp126_sq_relative_map.png"),
-  paste0(results_path,"figures/relative_scen/all/2030_sq_relative_map.png"),
-  # paste0(results_path,"figures/relative_scen/all/2050_sq_relative_map.png"),
-  map,
-  height = 6,
-  width = 10
-)
-```
-
-
-
-### Normal
-
-### Size info
-
-```{r}
-
-library(broom) # for tidy lm outputs
-library(ggpubr) #for stat_regline_equation
-
-
-
-# Add a new column with the area in km² (or m² depending on CRS)
-cmar_sf_size <- cmar_sf %>%
-  mutate(area_m2 = st_area(geometry),
-         area_km2 = as.numeric(st_area(geometry)) / 1e6,
-         centroid = st_centroid(geometry),        # compute centroid
-    lon = st_coordinates(centroid)[,1],     # extract longitude
-    lat = st_coordinates(centroid)[,2]) %>% 
-  as.data.frame() %>% 
-  select(region,area_km2,lat) %>%
-  left_join(data_df) %>% 
-  filter(stat == "mean_esm",
-         scen == "sq") 
-
-
-# Check for co-linearity between latitutde and size
-# Keep unique region values to avoid repeated rows
-unique_regions <- cmar_sf_size %>%
-  select(region, area_km2, lat) %>%
-  distinct()
-
-# Correlation Pearson's
-cor(unique_regions$lat, unique_regions$area_km2) # -0.6401246
-
-
-# Latitude plot
-cmar_sf_size %>% 
-  ggplot(aes(
-      y = lat,
-      x = value,
-      color = region
-    )) +
-  geom_point(
-    size = 2,
-    alpha = 0.7
-  ) +
-  geom_smooth(data = cmar_sf_size,
-              aes(
-                y = lat,
-                x = value,
-                color = region
-              ),
-              method = "lm",
-              se = T, 
-              color = "black") +  # lm line
-  facet_grid(ssp~period,
-             scales = "free_x")  +
-  labs(
-    y = "Latitud",
-    x = "Biomass change relative to baseline (%)",
-    color = "Region"
-  ) +
-  # Show stats
-  geom_text(
-    data = size_stats,
-    aes(y = 10,
-        x = min(cmar_sf_size$value),
-        label = paste0("P = ",round(p.value,2),", R² = ", round(r.squared*100, 2))),
-    inherit.aes = FALSE,
-    hjust = 0,
-    vjust = 1,
-    size = 3
-  ) +
-  theme_minimal()
-
-
-# Size plot
-
-size_stats <- cmar_sf_size %>% 
-  group_by(scen, period, ssp) %>%
-  do(model = lm(value ~ area_km2, data = .)) %>%
-  mutate(glance = list(broom::glance(model))) %>%
-  tidyr::unnest(glance) %>% 
-  select(scen, period, ssp, r.squared, adj.r.squared, p.value)
-
-cmar_sf_size %>% 
-  ggplot(aes(
-      x = area_km2,
-      y = value,
-      color = region
-    )) +
-  geom_point(
-    size = 2,
-    alpha = 0.7
-  ) +
-  geom_smooth(data = cmar_sf_size,
-              aes(
-                x = area_km2,
-                y = value,
-                color = region
-              ),
-              method = "lm",
-              se = T, 
-              color = "black") +  # lm line
-  facet_grid(ssp~period,
-             scales = "free_x")  +
-  labs(
-    x = "Area (Km2)",
-    y = "Biomass change relative to baseline (%)",
-    color = "Region"
-  ) +
-  # Show stats
-  geom_text(
-    data = size_stats,
-    aes(x = min(cmar_sf_size$area_km2),
-        y = max(cmar_sf_size$value),
-        label = paste0("P = ",round(p.value,2),", R² = ", round(r.squared*100, 2))),
-    inherit.aes = FALSE,
-    hjust = 0,
-    vjust = 1,
-    size = 3
-  ) +
-  theme_minimal()
-
-```
-
-### Linear mixed model
-
-```{r}
-library(lme4)      # for mixed models
-library(lmerTest)  # for p-values
-library(broom.mixed) # tidy results
-
-# ssp_test <- "SSP1-2.6"
-ssp_test <- "SSP5-8.5"
-
-mod_rc <- lm(value ~ area_km2 + lat, data = cmar_sf_size %>% 
-               filter(period == "2050", ssp == ssp_test))
-
-
-lmmod_rc <- lm(value ~ area_km2, data = cmar_sf_size %>% filter(ssp == ssp_test))
-summary(lmmod_rc)
-
-mod_rc <- lmer(value ~ area_km2 + lat, data = cmar_sf_size %>% filter(period == "2050",ssp == ssp_test))
-summary(mod_rc)
-
-
-# NOTE you need to modify cmar_sf_size data in previous chunk to allow for asll scenarios to be tested
-
-
-
-mod_nr <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size %>% filter(scen == "nr",
-                                                                                     ssp == ssp_test))
-summary(mod_nr)
-
-mod_ri <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size %>% filter(scen == "ri",
-                                                                                     ssp == ssp_test))
-summary(mod_ri)
-mod_rp <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size%>% filter(scen == "rp",
-                                                                                    ssp == ssp_test))
-summary(mod_rp)
-mod_sq <- lmer(value ~ area_km2 + lat + (1 | region), data = cmar_sf_size %>% filter(scen == "sq",
-                                                                                     ssp == ssp_test))
-summary(mod_sq)
-
-
 
 ```
