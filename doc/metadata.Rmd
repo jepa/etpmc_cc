@@ -1,0 +1,99 @@
+---
+title: "ReadMe"
+author: "Juliano Palacios Abrantes"
+date: "`r Sys.Date()`"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+## General Information
+
+This repository contains the primary data for the paper "Projected impacts of climate change to key species in the Marine Corridor of the Eastern Tropical Pacific (CMAR)" submitted for peer review in December of 2025
+
+**Authors**: Juliano Palacios-Abrantes<sup>1</sup>, Tayler M. Clarke<sup>1,2</sup>, Andrés Beita Jiménez<sup>2</sup>, Raquel Romero Chaves<sup>2</sup>, Fresia Villalobos-Rojas<sup>2</sup>, Cristina Sánchez<sup>3</sup>, César Viteri Mejía<sup>5</sup>, Damián Martínez-Fernández<sup>4</sup>, Nicolas Moity<sup>5</sup>, Jorge Ramírez<sup>5</sup>, William W.L. Cheung<sup>1</sup>
+
+1.  The Institute for the Oceans and Fisheries, University of British Columbia, Canada
+2.  Fundación MarViva, Costa Rica
+3.  Fundación Costa Rica por Siempre
+4.  Federación Costarricense de Pesca, San José, Costa Rica
+5.  Charles Darwin Research Station, Charles Darwin Foundation, Santa Cruz, Galapagos, Ecuador
+
+-   \*Corresponding author: Juliano Palacios-Abrantes, [j.palacios\@oceans.ubc.ca](mailto:j.palacios@oceans.ubc.ca){.email}
+
+-   Data created in 2025 by the mentioned authors
+
+-   Geographic location: Eastern Tropical Pacific (marine realm)
+
+-   Keywords, fisheries, climate change, time of emergence, stock share ratio, shared fisheries, computer modelling, earth system model, species distribution model
+
+## License
+
+CC0 - "Public Domain Dedication"
+
+## Data Context
+
+Data produced over computer modelling exercises to understand the impacts of cliamte change to the abundance and distribution of key marine species in the Eastern Topical Pacific
+
+## Data methods
+
+Please see <https://github.com/jepa/etpmc_cc> for complete protocol of data creation
+
+## Structure of files
+
+Two datasets are .csv files with only one sheet while anotherone is a shapefile.
+
+-   *all_years_data_esm_gridded.csv* (7 variables x 67500 observations), this dataset relates to the absolute abundance projections from the DBEM
+-   *all_cmar_mpas.shp* (Simple feature collection with 10 features and 1 field), this dataset relates to the spatial polygons of the Marine Protected Areas (MPAs) in the Eastern Tropical Pacific. It pairs with the following:
+-   *all_cmar_mpas_sau.shx*
+    -   *all_cmar_mpas.prj*
+    -   *all_cmar_mpas.shx*
+    -   *all_cmar_mpas.dbf*
+-   *all_mpa_grid_fe.csv* (4 variables x 627 observations), CEMAR MPAs gridded to the DBEM format
+-   *fe_data_scen.csv* (5 variables x 259200 observations), fishing effort values used in each scenarios relative to MSY
+
+## Naming conventions
+
+-   Exclusive Economic Zones (EEZ) according to the Sea Around Us (<http://www.seaaroundus.org>)
+-   Marine Protected Areas (MPA) according to each region
+
+## Sources used
+
+Please see <https://github.com/jepa/etpmc_cc> for a complete list of external data-sources
+
+## Quality assurance
+
+Please see <https://github.com/jepa/etpmc_cc>
+
+## Data confidentiality and permissions
+
+These data sets are published under the Apache License 2.0. All other data sources are publicly available under their specific licenses available on their web pages (see section "Source used" above).
+
+## Variable naming
+
+### all_years_data_esm_gridded.csv
+
+-   `year`, year of projection from 1951 to 2100
+-   `region`, marine protected area or exclusive economic zone
+-   `value_region`, DBEM model output
+-   `esm`, Earth System Model coupled with the DBEM (gfdl,ipsl,mpis)
+-   `ssp`, Shared Socioeconomic Pathway (126 and 585)
+-   `scen`, management scenarios (nr - no regulations, ri - regulations implemented, rpc partial regulations for conservation, rpp - partial regulations for fishing, sq - status quo)
+-   `category`, related to DBEM output with fishing (Abc) or no-fishing (Abd) outputs
+
+### all_mpa_grid_fe.csv
+
+-   `index`, unique identity number for grid
+-   `status`, classification of grid cell, can be *protected* or *surrounding*
+-   `mpa`, marine protected area that the grid belongs to
+-   `fe_prop`, fishing proportion relative to maximum sustainable yield (*F/Fmsy*)
+
+### all_cmar_mpas.shp
+
+-   Simple feature collection with 10 features and 1 field
+-    `Geometry type`: MULTIPOLYGON
+-    `Dimension`: XY
+-   `Bounding box`: xmin: -93.00765 ymin: -2.081746 xmax: -78.09683 ymax: 7.88888
+-    `Geodetic CRS`: WGS 84
+-    `region`, marine protected area or exclusive economic zone
+-    `geometry`, coordinates
