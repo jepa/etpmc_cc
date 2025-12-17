@@ -29,7 +29,7 @@ This repository contains the primary data for the paper "Projected impacts of cl
 
 ## License
 
-CC0 - "Public Domain Dedication"
+CC-BY 4.0
 
 ## Data Context
 
