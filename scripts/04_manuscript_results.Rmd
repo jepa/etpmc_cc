@@ -183,7 +183,8 @@ scenarios_data_abs %>%
   mutate(esm_mean = mean(per_change, na.rm = T)) %>% 
   group_by(scen,ssp,esm) %>%
   mutate(
-    rolling_mean_sem = rollmean(esm_mean, k = 5, fill = NA, align = "right")
+    rolling_mean_sem = rollmean(esm_mean, k = 5, fill = NA, align = "right"),
+    ssp = ifelse(ssp == "ssp126", "SSP1-2.6","SSP5-8.5")
   ) %>%
   filter(year > 2015) %>% 
   # View()
