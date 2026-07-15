@@ -10,7 +10,8 @@ This repository supports the publication *Projected impacts of climate change to
 4.	Federación Costarricense de Pesca, San José, Costa Rica
 5.	Charles Darwin Research Station, Charles Darwin Foundation, Santa Cruz, Galapagos, Ecuador
 
-[![DOI](https://zenodo.org/badge/699500904.svg)](https://doi.org/10.5281/zenodo.17952597)  [![Paper-DOI](https://img.shields.io/badge/paper--DOI-10.1007%2Fs44289--026--00151--3-ff69b4)](https://doi.org/10.1007/s44289-026-00151-3)  [![Data-DOI](https://img.shields.io/badge/Data--DOI-10.5683%2FSP3%2FINWOTL-f59e0b)](https://doi.org/10.5683/SP3/INWOTL)
+[![DOI](https://zenodo.org/badge/699500904.svg)](https://doi.org/10.5281/zenodo.17952597) 
+  [![Paper-DOI](https://img.shields.io/badge/paper--DOI-10.1007%2Fs44289--026--00151--3-ff69b4)](https://doi.org/10.1007/s44289-026-00151-3)  [![Data-DOI](https://img.shields.io/badge/Data--DOI-10.5683%2FSP3%2FINWOTL-f59e0b)](https://doi.org/10.5683/SP3/INWOTL)
 
 
 # Project Goal:
